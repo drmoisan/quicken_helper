@@ -3,11 +3,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, Set, Tuple
+from typing import Callable, Optional, Set, Tuple
 
 try:
     # Keep import local to the module for easy monkeypatching in tests
-    from quicken_helper.controllers import merge_excel as mex
+    from quicken_helper.controllers import match_excel as mex
 except Exception:  # pragma: no cover
     mex = None  # will raise at runtime if used without being available
 
@@ -16,8 +16,8 @@ except Exception:  # pragma: no cover
 class _MB:
     """Minimal interface we expect from a messagebox-like object."""
 
-    showinfo: callable
-    showerror: callable
+    showinfo: Callable
+    showerror: Callable
 
 
 def compute_category_sets(session, xlsx_path: Path | str) -> Tuple[Set[str], Set[str]]:

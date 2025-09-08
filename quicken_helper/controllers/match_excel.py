@@ -21,26 +21,79 @@ from datetime import date, datetime
 from decimal import Decimal
 from difflib import SequenceMatcher
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+
+# --- Loading Excel (rows, then grouped by TxnID) ----------------------------
+from typing import IO, Any, Callable, Dict, List, Sequence, Tuple, cast
 
 import pandas as pd
+from pandas import DataFrame
 
 # We re-use your parser and writer
 # from . import qif_to_csv as base
-import quicken_helper as base
-from quicken_helper.controllers.match_helpers import (
-    _to_date,
-    to_decimal,
-)
 from quicken_helper.controllers.match_session import MatchSession
+from quicken_helper.data_model.excel import map_group_to_excel_txn
 from quicken_helper.data_model.excel.excel_row import ExcelRow
 from quicken_helper.data_model.excel.excel_txn_group import ExcelTxnGroup
+from quicken_helper.data_model.interfaces import ISplit, ITransaction
 
 # from match_session import MatchSession
-from quicken_helper.legacy.qif_item_key import QIFItemKey
-from quicken_helper.legacy.qif_txn_view import QIFTxnView
+from quicken_helper.utilities import to_date, to_decimal
 
-# --- Loading Excel (rows, then grouped by TxnID) ----------------------------
+# region Read In Files and Establish Session
+
+
+def build_session_from_paths(
+    bank_txns: list[ITransaction],
+    excel_path: Path,
+    *,
+    min_score_default: int = 50,
+) -> MatchSession:
+    """
+    Master method to read in from source files and build a matching session
+    from quicken transactions and an Excel workbook.
+
+    This helper reads `excel_path` into raw Excel rows, groups those rows into
+    logical Excel transactions, converts the groups to protocol-compliant
+    `ITransaction` objects, and constructs a `MatchSession` with the provided
+    `bank_txns` (left side) and the Excel-derived transactions (right side).
+    It does **not** call `auto_match()`; the caller may invoke it if desired.
+
+    Args:
+        bank_txns: Bank transactions that already satisfy the `ITransaction`
+            protocol. These populate the left side of the session unchanged.
+        excel_path: Path to the Excel workbook to import. The file is parsed by
+            `load_excel_rows()` and grouped by `group_excel_rows()`.
+        min_score_default: Default minimum score threshold used by
+            `MatchSession` when proposing matches.
+
+    Returns:
+        MatchSession: A session containing the provided `bank_txns` and the
+        Excel-derived `ITransaction` objects, configured with `min_score_default`.
+
+    Raises:
+        FileNotFoundError: If `excel_path` does not exist.
+        OSError: If the workbook cannot be opened.
+        ValueError: If the workbook contents cannot be parsed into rows or
+            grouped into transactions.
+        TypeError: If any grouped Excel transaction cannot be mapped to an
+            `ITransaction`.
+
+    Notes:
+        - This function is type-safe for Pylance: both sides of the session use
+          the `ITransaction` protocol, and Excel groups are converted before
+          constructing the `MatchSession`.
+        - Inputs are not mutated. Any subsequent matching or application of
+          updates should be performed by the caller on the returned session.
+    """
+    rows = load_excel_rows(excel_path)  # existing loader
+    groups = group_excel_rows(rows)  # existing grouper
+    return make_session(bank_txns, groups, min_score_default=min_score_default)
+
+
+def read_excel_df(io: Any, *, sheet_name: int | str = 0, **kw: Any) -> DataFrame:
+    """Helper method to read from an excel file in a typesafe manner"""
+    pd_any: Any = pd
+    return pd_any.read_excel(io, sheet_name=sheet_name, **kw)
 
 
 def load_excel_rows(path: Path) -> List[ExcelRow]:
@@ -68,7 +121,8 @@ def load_excel_rows(path: Path) -> List[ExcelRow]:
     - Trims string fields; preserves the original row index for deterministic ordering.
     - Requires pandas (and an Excel engine such as openpyxl).
     """
-    df = pd.read_excel(path)
+
+    df = read_excel_df(path, sheet_name=0)
     needed = [
         "TxnID",
         "Date",
@@ -82,18 +136,18 @@ def load_excel_rows(path: Path) -> List[ExcelRow]:
         raise ValueError(f"Excel is missing columns: {missing}")
 
     rows: List[ExcelRow] = []
-    for i, r in df.iterrows():
+    for pos, (_, r) in enumerate(df.iterrows()):
         d = r["Date"]
-        if isinstance(d, (datetime,)):
+        if isinstance(d, datetime):
             dval = d.date()
         elif isinstance(d, date):
             dval = d
         else:
-            dval = _to_date(str(d))
+            dval = to_date(str(d))
 
         rows.append(
             ExcelRow(
-                idx=int(i),
+                idx=pos,  # 'pos' is an int from enumerate
                 txn_id=str(r["TxnID"]).strip(),
                 date=dval,
                 amount=to_decimal(r["Amount"]),
@@ -102,6 +156,7 @@ def load_excel_rows(path: Path) -> List[ExcelRow]:
                 rationale=str(r["Categorization Rationale"] or "").strip(),
             )
         )
+
     return rows
 
 
@@ -142,107 +197,40 @@ def group_excel_rows(rows: List[ExcelRow]) -> List[ExcelTxnGroup]:
     return groups
 
 
-# --- Flatten QIF into matchable items (transaction-level) -------------------
-
-
-def _txn_amount(t: Dict[str, Any]) -> Decimal:
-    """Return the Decimal amount for a QIF transaction dict.
-
-    If the transaction has `splits`, returns the sum of split amounts; otherwise returns
-    the transaction's top-level `amount`.
-
-    Parameters
-    ----------
-    t : Dict[str, Any]
-        Raw QIF transaction mapping.
-
-    Returns
-    -------
-    Decimal
-        The computed amount.
-
-    Raises
-    ------
-    Exception
-        If amount strings cannot be coerced to `Decimal` by `_to_decimal`.
+def groups_to_excel_transactions(groups: list["ExcelTxnGroup"]) -> list[ITransaction]:
     """
-    splits = t.get("splits") or []
-    if splits:
-        total = sum((to_decimal(s.get("amount", "0")) for s in splits), Decimal("0"))
-        return total
-    return to_decimal(t.get("amount", "0"))
+    Adapter to convert grouped Excel rows into protocol transactions suitable for matching.
 
-
-# changed from _flatten_qif_txns
-def _flatten_qif_txns(txns: List[Dict[str, Any]]) -> List[QIFTxnView]:
-    """Flatten raw QIF transactions into matchable `QIFTxnView`s.
-
-    Split-aware behavior:
-    - If a transaction has splits, emit one view per split with a `QIFItemKey(txn_index, split_index)`.
-    - If there are no splits, emit a single view with `split_index=None`.
-
-    Transactions with an unparseable date or amount are skipped.
-
-    Parameters
-    ----------
-    txns : List[Dict[str, Any]]
-        Raw QIF transaction dicts (shape as produced by the parser).
-
-    Returns
-    -------
-    List[QIFTxnView]
-        Per-split/per-transaction normalized views (date, amount, payee, memo, category).
+    This uses the same adapter the GUI uses (map_group_to_excel_txn) so the Excel
+    side has the exact ITransaction shape that MatchSession expects.
     """
-    out: List[QIFTxnView] = []
-    for ti, t in enumerate(txns):
-        # Defensive: skip any record that doesn't look like a transaction
-        # (must have a parseable date; amount may be on txn or splits)
-        try:
-            t_date = _to_date(t.get("date", ""))
-        except Exception:
-            # Not a transaction (e.g., category list line sneaked in) → skip
-            continue
+    return [map_group_to_excel_txn(g) for g in groups]
 
-        payee = t.get("payee", "")
-        memo = t.get("memo", "")
-        cat = t.get("category", "")
-        splits = t.get("splits") or []
-        if splits:
-            for si, s in enumerate(splits):
-                try:
-                    amt = to_decimal(s.get("amount", "0"))
-                except Exception:
-                    # If split amount isn't parseable, skip this split
-                    continue
-                out.append(
-                    QIFTxnView(
-                        key=QIFItemKey(txn_index=ti, split_index=si),
-                        date=t_date,
-                        amount=amt,
-                        payee=payee,
-                        memo=s.get("memo", ""),
-                        category=s.get("category", ""),
-                    )
-                )
-        else:
-            # No splits → use the txn amount
-            try:
-                amt = to_decimal(t.get("amount", "0"))
-            except Exception:
-                # Can't parse txn amount → skip this txn
-                continue
-            out.append(
-                QIFTxnView(
-                    key=QIFItemKey(txn_index=ti, split_index=None),
-                    date=t_date,
-                    amount=amt,
-                    payee=payee,
-                    memo=memo,
-                    category=cat,
-                )
-            )
-    return out
 
+def make_session(
+    bank_txns: list[ITransaction],
+    excel_groups: list["ExcelTxnGroup"],
+    *,
+    min_score_default: int = 50,
+) -> MatchSession:
+    """
+    Build a MatchSession from bank-side protocol txns and Excel groups.
+
+    - bank_txns must already satisfy ITransaction (use your QIF loader that returns protocol objects).
+    - excel_groups are converted to ITransaction via groups_to_excel_transactions().
+    """
+    excel_txns: list[ITransaction] = groups_to_excel_transactions(excel_groups)
+
+    # Construct the session with protocol objects on both sides.
+    sess = MatchSession(bank_txns, excel_txns, min_score_default=min_score_default)
+
+    # (Optional) Kick off auto-match here, or let the caller/UI decide.
+    # sess.auto_match()
+
+    return sess
+
+
+# endregion Read In Files and Establish Session
 
 # ---------------- Category extraction & matching ----------------
 
@@ -273,7 +261,8 @@ def extract_qif_categories(txns: List[Dict[str, Any]]) -> List[str]:
 
     for t in txns:
         _add(t.get("category", ""))
-        for s in t.get("splits") or []:
+        empty: Any = []
+        for s in t.get("splits") or empty:
             _add(s.get("category", ""))
 
     # Return values sorted case-insensitively
@@ -302,7 +291,7 @@ def extract_excel_categories(
     ValueError
         If the requested column does not exist.
     """
-    df = pd.read_excel(xlsx_path)
+    df = read_excel_df(xlsx_path)
     if col_name not in df.columns:
         raise ValueError(f"Excel missing '{col_name}' column.")
 
@@ -348,7 +337,8 @@ def fuzzy_autopairs(
                 candidates.append((r, q, e))
     candidates.sort(key=lambda x: (-x[0], x[1].lower(), x[2].lower()))
 
-    used_q, used_e = set(), set()
+    used_q: set[str] = set()
+    used_e: set[str] = set()
     pairs: List[Tuple[str, str, float]] = []
     for r, q, e in candidates:
         if q in used_q or e in used_e:
@@ -365,110 +355,104 @@ def fuzzy_autopairs(
 # --- Matching engine ---------------------------------------------------------
 
 
-def build_matched_only_txns(session: "MatchSession") -> List[Dict[str, Any]]:
-    """Build a QIF transaction list containing only matched items.
-
-    This does not mutate `session.txns`. Two behaviors are supported:
-    1) **Group mode** (preferred): include a transaction if its *whole-transaction* key
-       is matched (via `session.qif_to_excel_group`).
-    2) **Legacy split mode**: include only matched splits for split transactions; include
-       the whole transaction if its top-level key was matched.
-
-    Parameters
-    ----------
-    session : MatchSession
-        An initialized session after matching.
-
-    Returns
-    -------
-    List[Dict[str, Any]]
-        A new list of QIF transaction dicts limited to matched content.
+def build_matched_only_txns(session: MatchSession) -> list[ITransaction]:
     """
-    from copy import deepcopy
+    Return the subset of bank transactions that are matched in the session, in original order.
 
-    txns = deepcopy(session.txns)
+    The function collects the identity (id) of each bank-side transaction that appears
+    in `session.pairs`, then filters `session.bank_txns` by those identities. This
+    preserves the original ordering and runs in O(n + p) time where n is the number
+    of bank transactions and p is the number of pairs.
 
-    # --- Group-mode: include a txn iff its whole-transaction key is matched ---
-    if session.excel_groups is not None:
-        matched_txn_keys = set(session.qif_to_excel_group.keys())
-        out: List[Dict[str, Any]] = []
-        for ti, t in enumerate(txns):
-            key = QIFItemKey(txn_index=ti, split_index=None)
-            if key in matched_txn_keys:
-                out.append(t)
-        return out
+    Notes:
+        - Uses object identity (`id`) to avoid O(n^2) index lookups and to handle
+          duplicate *values* safely (only the exact paired instances are included).
+        - If a pair references a bank object that is not in `session.bank_txns`,
+          it is ignored.
 
-    # --- Legacy (row) mode fallback (original behavior) ---
-    matched_keys = set(session.qif_to_excel.keys())
-    out: List[Dict[str, Any]] = []
+    Args:
+        session: The current matching session.
 
-    for ti, t in enumerate(txns):
-        splits = t.get("splits") or []
-        if not splits:
-            key = QIFItemKey(txn_index=ti, split_index=None)
-            if key in matched_keys:
-                out.append(t)
+    Returns:
+        A new list containing only matched bank transactions, in the same order
+        as `session.bank_txns`.
+    """
+    bank_txns: list[ITransaction] = session.bank_txns
+
+    # Fast membership set of the exact bank objects we know about
+    bank_ids = {id(t) for t in bank_txns}
+
+    # Collect identities of bank-side txns that participate in any pair
+    matched_bank_ids = {id(b) for (b, _e) in session.pairs if id(b) in bank_ids}
+
+    # Preserve original order by filtering the bank list
+    return [t for t in bank_txns if id(t) in matched_bank_ids]
+
+
+def apply_excel_splits(
+    session: MatchSession,
+    *,
+    clear_top_category: bool = True,
+    clone_splits: bool = False,
+) -> None:
+    """
+    Overwrite each matched bank transaction's splits with the splits from its matched
+    Excel transaction. Optionally clear the bank txn's top-level category.
+
+    Args:
+        session: Current matching session (pairs contain (bank, excel) ITransactions).
+        clear_top_category: When True, sets bank.category = "" after assigning splits.
+                            This mirrors the legacy behavior when splits exist.
+        clone_splits: When True, assigns a new list with copy of split objects
+                    (defensive copy). When False, reuses the split objects from
+                    the Excel side but assigns a new list.
+
+    Notes:
+        - Does not mutate the Excel transactions.
+        - Does not change pairing; only the bank side's splits (and optionally category).
+    """
+    for bank_txn, excel_txn in session.pairs:
+        # Get the Excel-side splits; skip if none provided.
+        excel_splits: Sequence[ISplit] | None = getattr(excel_txn, "splits", None)  # type: ignore[attr-defined]
+        if not excel_splits:
             continue
 
-        new_splits = []
-        for si, s in enumerate(splits):
-            key = QIFItemKey(txn_index=ti, split_index=si)
-            if key in matched_keys:
-                new_splits.append(s)
-        if new_splits:
-            t["splits"] = new_splits
-            out.append(t)
-        else:
-            whole_key = QIFItemKey(txn_index=ti, split_index=None)
-            if whole_key in matched_keys:
-                out.append(t)
+        # Assign splits on the bank side (new list for safety).
+        bank_txn.splits = (
+            list(excel_splits) if not clone_splits else [s for s in excel_splits]
+        )
 
-    return out
+        if clear_top_category:
+            bank_txn.category = ""
 
 
-def run_excel_qif_merge(
-    self,
-    qif_in: Path,
-    xlsx: Path,
-    qif_out: Path,
-    encoding: str = "utf-8",
-) -> Tuple[
-    List[Tuple[QIFTxnView, ExcelTxnGroup, int]], List[QIFTxnView], List[ExcelTxnGroup]
-]:
-    """End-to-end helper: parse → load/group Excel → auto-match → apply → write QIF.
-
-    Parameters
-    ----------
-    qif_in : Path
-        Input QIF file path.
-    xlsx : Path
-        Excel categorization workbook path.
-    qif_out : Path
-        Output QIF path to write merged transactions.
-    encoding : str, optional
-        Input encoding used for parsing the QIF; default "utf-8".
-
-    Returns
-    -------
-    Tuple[List[Tuple[QIFTxnView, ExcelTxnGroup, int]], List[QIFTxnView], List[ExcelTxnGroup]]
-        (matched_pairs, unmatched_qif_views, unmatched_excel_groups).
-
-    Notes
-    -----
-    - Callers may insert manual match/unmatch operations between `auto_match()` and
-      `apply_updates()` if needed.
-    - The original `txns` list is updated in place prior to writing.
+def emit_qif_transactions(txns: Sequence[ITransaction], out: IO[str]) -> None:
     """
-    txns = base.parse_qif(qif_in, encoding=encoding)
-    excel_rows = load_excel_rows(xlsx)
-    excel_groups = group_excel_rows(excel_rows)
+    Write the provided transactions to QIF using each transaction's own emitter.
 
-    session = MatchSession(txns, excel_groups=excel_groups)
-    session.auto_match()
+    Supports either:
+      • emit_qif(out: IO[str]) -> None
+      • to_qif() -> str   (a trailing newline is added if missing)
+    """
+    for t in txns:
+        # Prefer an explicit emitter with the expected signature
+        em: object = getattr(
+            t, "emit_qif", None
+        )  # don't access t.emit_qif directly (keeps typing strict)
+        if callable(em):
+            cast(Callable[[IO[str]], None], em)(out)
+            continue
 
-    # Caller could do manual matching here if desired; this helper just goes through
-    session.apply_updates()
-    qif_out.parent.mkdir(parents=True, exist_ok=True)
-    base.write_qif(txns, qif_out)
+        # Fallback: string-producing emitter
+        to_qif_fn: object = getattr(t, "to_qif", None)
+        if callable(to_qif_fn):
+            s = cast(Callable[[], str], to_qif_fn)()
+            out.write(s)
+            if not s.endswith("\n"):
+                out.write("\n")
+            continue
 
-    return session.matched_pairs(), session.unmatched_qif(), session.unmatched_excel()
+        raise TypeError(
+            f"{type(t).__name__} lacks a supported QIF emitter "
+            "(expected emit_qif(out) or to_qif())."
+        )

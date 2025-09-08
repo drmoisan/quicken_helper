@@ -32,40 +32,87 @@ Migration notes:
 
 from __future__ import annotations
 
-from math import inf
-from typing import Dict, Iterable, List, Optional, Tuple, cast
+from typing import (
+    Any,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Tuple,
+    TypeGuard,
+    cast,
+)
 
 # Protocols / utilities
 from quicken_helper.data_model.interfaces import ITransaction
 
-# convert_value MUST be wired to use _PROTOCOL_IMPLEMENTATION so it can adapt arbitrary objects to ITransaction
-from quicken_helper.utilities.core_util import convert_value
-
-# Scoring (amount-gated, date proximity, payee similarity)
 from .transaction_compare import MatchScore, compare_txn
 
 # ---------- helpers ----------
 
 
-def _coerce_txns(src: Iterable[object]) -> List[ITransaction]:
-    """Coerce an iterable of arbitrary objects into ITransaction using convert_value."""
-    out: List[ITransaction] = []
-    for x in src:
-        out.append(convert_value(ITransaction, x))
+def _is_transaction(obj: Any) -> TypeGuard["ITransaction"]:
+    """Structural check for ITransaction."""
+    # Only presence is required for Protocol narrowing; values can be None.
+    required_attrs = (
+        "account",
+        "type",
+        "date",
+        "action_chk",
+        "amount",
+        "cleared",
+        "payee",
+    )
+    for name in required_attrs:
+        if not hasattr(obj, name):
+            return False
+    return True
+
+
+def _coerce_txns(txns: Iterable[object]) -> list["ITransaction"]:
+    """Ensure all items conform to ITransaction (structural)."""
+    out: list["ITransaction"] = []
+    for item in txns:
+        if _is_transaction(item):
+            out.append(item)  # narrowed to ITransaction by the TypeGuard
+        else:
+            raise TypeError(
+                f"Expected ITransaction; got {type(item).__name__} lacking required attributes."
+            )
     return out
 
 
-def _sort_key_for_match(ms: MatchScore) -> tuple:
-    """
-    Deterministic tie-breaker:
-      • Highest score first
-      • Then smallest date delta (None → lowest priority)
-      • Then highest payee similarity
-    """
-    dd = cast(Optional[int], ms.features.get("date_days"))
-    date_component = inf if dd is None else dd
-    payee_sim = cast(float, ms.features.get("payee_sim", 0.0))
-    return (-ms.score, date_component, -payee_sim)
+def _sort_key_for_match(ms: MatchScore) -> tuple[float, float, float]:
+    # 1) Higher score wins → negate
+    score_component = -float(ms.score)
+
+    # 2) Smaller date delta wins; None → +inf
+    dd_raw = ms.features.get("date_days")
+    if dd_raw is None:
+        date_component = float("inf")
+    elif isinstance(dd_raw, (int, float)):
+        date_component = float(dd_raw)
+    elif isinstance(dd_raw, str):
+        try:
+            date_component = float(int(dd_raw))
+        except ValueError:
+            date_component = float("inf")
+    else:
+        date_component = float("inf")
+
+    # 3) Higher payee similarity wins → negate
+    ps_raw = ms.features.get("payee_sim", 0.0)
+    if isinstance(ps_raw, (int, float)):
+        payee_component = -float(ps_raw)
+    elif isinstance(ps_raw, str):
+        try:
+            payee_component = -float(ps_raw)
+        except ValueError:
+            payee_component = -0.0
+    else:
+        payee_component = -0.0
+
+    return (score_component, date_component, payee_component)
 
 
 # ---------- core class ----------
