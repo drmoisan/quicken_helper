@@ -11,14 +11,13 @@ from .qif_code import QifCode
 from .qif_header import QifHeader
 
 __all__ = [
-    QifCode,
-    QifHeader,
-    QAccount,
-    QCategory,
-    QCategory,
-    QTag,
-    QSplit,
-    QSecurity,
-    QTransaction,
-    QuickenFile,
+    "QifCode",
+    "QifHeader",
+    "QAccount",
+    "QCategory",
+    "QTag",
+    "QSplit",
+    "QSecurity",
+    "QTransaction",
+    "QuickenFile",
 ]

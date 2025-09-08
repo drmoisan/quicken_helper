@@ -30,7 +30,7 @@ def _norm(s: Optional[str]) -> str:
     if not s:
         return ""
     # basic normalization: strip punctuation-like chars, collapse spaces, lowercase
-    out = []
+    out: list[str] = []
     for ch in s.lower():
         out.append(ch if ch.isalnum() or ch.isspace() else " ")
     return " ".join("".join(out).split())
