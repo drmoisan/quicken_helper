@@ -4,7 +4,7 @@ from _decimal import Decimal
 from dataclasses import dataclass, field
 from datetime import date
 from functools import total_ordering
-from typing import TYPE_CHECKING, Any, overload
+from typing import TYPE_CHECKING, Any, ClassVar, overload
 
 from quicken_helper.data_model.interfaces import (
     EnumClearedStatus,
@@ -26,10 +26,14 @@ from .q_split import QSplit
 from .qif_header import QifHeader
 
 # sentinels for "not set"
-_MISSING_SECURITY = QSecurity("", Decimal(0), Decimal(0), Decimal(0), Decimal(0))
-_MISSING_DATE = date(1900, 1, 1)
-_MISSING_SPLITS: list[ISplit] = [QSplit(category="", amount=Decimal(0))]
-_MISSING_CLEARED = EnumClearedStatus.UNKNOWN
+_MISSING_SECURITY: ClassVar[ISecurity] = QSecurity(
+    "", Decimal(0), Decimal(0), Decimal(0), Decimal(0)
+)
+_MISSING_DATE: ClassVar[date] = date(1900, 1, 1)
+_MISSING_SPLITS: ClassVar[list[ISplit]] = [
+    QSplit(category="", amount=Decimal(0))
+]
+_MISSING_CLEARED: ClassVar[EnumClearedStatus] = EnumClearedStatus.UNKNOWN
 
 
 @total_ordering
@@ -43,10 +47,10 @@ class QTransaction:
 
     account: IAccount = field(default_factory=QAccount)
     type: IHeader = field(default_factory=lambda: QifHeader(code=""))
-    date: date = _MISSING_DATE
+    date: date = field(default_factory=lambda: _MISSING_DATE)
     action_chk: str = ""
     amount: Decimal = Decimal(0)
-    cleared: EnumClearedStatus = _MISSING_CLEARED
+    cleared: EnumClearedStatus = field(default_factory=lambda: _MISSING_CLEARED)
     payee: str = field(default_factory=str)
     memo: str = field(default_factory=str)
     category: str = field(default_factory=str)
@@ -56,8 +60,8 @@ class QTransaction:
 
     # region Optional Fields With Sentinel Pattern
 
-    splits: list[ISplit] = _MISSING_SPLITS
-    security: ISecurity = _MISSING_SECURITY
+    splits: list[ISplit] = field(default_factory=lambda: _MISSING_SPLITS)
+    security: ISecurity = field(default_factory=lambda: _MISSING_SECURITY)
 
     def is_valid(self) -> bool:
         return (

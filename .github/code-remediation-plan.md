@@ -30,6 +30,14 @@
 - Files touched: `i_account.py`, `i_category.py`, `i_header.py`, `i_quicken_file.py`, `i_security.py`, `i_split.py`, `i_tag.py`, `i_transaction.py`.
 - Verify via `poetry run pytest` that `TypeError: Cannot create a consistent method resolution order` is gone once the inheritance order is fixed.
 
+### Phase 0c - restore helper exports
+- `tests/controllers/test_match_helpers.py` expects `_candidate_cost` and `_flatten_qif_txns` to exist in `quicken_helper.controllers.match_helpers`.
+- Reintroduce these helpers (or provide compatibility shims) so the controller module exports the tested functions. Once restored, rerun `pytest tests/controllers/test_match_helpers.py`.
+
+### Phase 0d - declare `pyparsing` dependency
+- `quicken_helper/data_model/qif_parsers_emitters/qif_file_parser_emitter.py` imports `pyparsing`, but the dependency is absent from `pyproject.toml`.
+- Add `pyparsing` to `[tool.poetry.dependencies]`, run `poetry lock` / `poetry install`, and rerun `pytest tests/controllers/test_qif_loader_protocol.py`.
+
 ### Phase 1 — tame pandas/Excel entry points
 - Modules: `controllers/category_match_session.py`, `controllers/match_excel.py`, `controllers/qif_loader.py`, `gui_viewers/merge_tab.py`.
 - Actions:

@@ -17,22 +17,11 @@ c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\con
   ┬á┬áType of "qif_txns" is "list[Unknown]" (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\controllers\data_session.py:41:5 - error: Type of "excel_txns" is partially unknown
   ┬á┬áType of "excel_txns" is "list[Unknown]" (reportUnknownVariableType)
-c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\interfaces\i_account.py
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\interfaces\i_account.py:17:7 - error: Cannot create consistent method ordering (reportGeneralTypeIssues)
-c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\interfaces\i_category.py
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\interfaces\i_category.py:12:7 - error: Cannot create consistent method ordering (reportGeneralTypeIssues)
-c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\interfaces\i_header.py
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\interfaces\i_header.py:12:7 - error: Cannot create consistent method ordering (reportGeneralTypeIssues)
-c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\interfaces\i_quicken_file.py
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\interfaces\i_quicken_file.py:20:7 - error: Cannot create consistent method ordering (reportGeneralTypeIssues)
-c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\interfaces\i_security.py
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\interfaces\i_security.py:12:7 - error: Cannot create consistent method ordering (reportGeneralTypeIssues)
-c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\interfaces\i_split.py
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\interfaces\i_split.py:12:7 - error: Cannot create consistent method ordering (reportGeneralTypeIssues)
-c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\interfaces\i_tag.py
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\interfaces\i_tag.py:13:7 - error: Cannot create consistent method ordering (reportGeneralTypeIssues)
-c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\interfaces\i_transaction.py
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\interfaces\i_transaction.py:19:7 - error: Cannot create consistent method ordering (reportGeneralTypeIssues)
+c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\q_wrapper\q_transaction.py
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\q_wrapper\q_transaction.py:29:20 - error: "ClassVar" is not allowed in this context (reportInvalidTypeForm)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\q_wrapper\q_transaction.py:32:16 - error: "ClassVar" is not allowed in this context (reportInvalidTypeForm)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\q_wrapper\q_transaction.py:33:18 - error: "ClassVar" is not allowed in this context (reportInvalidTypeForm)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\q_wrapper\q_transaction.py:36:19 - error: "ClassVar" is not allowed in this context (reportInvalidTypeForm)
 c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\qif_parsers_emitters\qif_file_parser_emitter.py
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\qif_parsers_emitters\qif_file_parser_emitter.py:10:6 - error: Import "pyparsing" could not be resolved (reportMissingImports)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\qif_parsers_emitters\qif_file_parser_emitter.py:10:23 - error: Type of "Empty" is unknown (reportUnknownVariableType)
@@ -4144,4 +4133,4 @@ c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\te
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_from_dict.py:90:29 - error: Argument type is partially unknown
   ┬á┬áArgument corresponds to parameter "src" in function "from_dict"
   ┬á┬áArgument type is "dict[str, str | dict[str, int] | tuple[int, int] | list[Unknown]]" (reportUnknownArgumentType)
-2684 errors, 0 warnings, 0 informations
+2680 errors, 0 warnings, 0 informations

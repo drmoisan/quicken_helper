@@ -3,14 +3,15 @@
 ## Repository health snapshot
 - `poetry run black --check .` ➜ **pass** (`118` files unchanged).
 - `poetry run ruff check` ➜ **pass**, but config only enables `E`, `F`, `I` so style coverage is intentionally narrow (`pyproject.toml:24-38`).
-- `poetry run pyright` ➜ **fail** with **2680 errors / 0 warnings** (see `pyright.log`). Runtime modules and tests still spew `Unknown` types from pandas pipelines and untyped fixtures.
-- `poetry run pytest` ➜ **fail** during collection with 2 errors because `quicken_helper.controllers.match_helpers` no longer exports `_candidate_cost` and `pyparsing` is missing for the QIF loader tests.
+- `poetry run pyright` ➜ **fail** with **2684 errors / 0 warnings** (see `pyright.log`). Runtime modules and tests still spew `Unknown` types from pandas pipelines and untyped fixtures.
+- `poetry run pytest` ➜ **fail** during collection with 14 errors because dataclass sentinels in `quicken_helper/data_model/q_wrapper/q_transaction.py` violate `default_factory` rules (ValueError for `cleared`, `splits`, `security`, etc.).
 
 ## Findings and recommendations
 
-### 1. `typing_extensions` dependency missing (resolved)
-- Original state: numerous modules imported `typing_extensions` (`quicken_helper/data_model/interfaces/i_to_dict.py:6`, `i_equatable.py:6`, `i_comparable.py:7`, `legacy/qif_writer.py:37`) without declaring the dependency in `pyproject.toml` (`lines 1-20`), so pytest halted with `ModuleNotFoundError`.
-- **Current status**: imports now point at stdlib `typing`, so pytest proceeds to later failures and pyright can evaluate the modules. Keep an eye out for any reintroductions in future files.
+### 1. `typing_extensions` dependency missing
+- Several modules import `typing_extensions` (`quicken_helper/data_model/interfaces/i_to_dict.py:6`, `i_equatable.py:6`, `i_comparable.py:7`, `legacy/qif_writer.py:37`) but `pyproject.toml` does not list the package anywhere (`pyproject.toml:1-20`).
+- Result: `pytest` fails before running a single test and `pyright` stops resolving types for any module that touches these imports (errors reproduced during `poetry run pytest`/`pyright`).
+- **Remediation**: either add `typing_extensions` to `[tool.poetry.dependencies]` (required at runtime) or drop the import in favor of the stdlib `typing` equivalents (Python 3.13 already exposes `Protocol`, `TypeAlias`, `Literal`).
 
 ### 2. Pandas/Excel entry points rely on `Any`, defeating strict typing
 - `CategoryMatchSession.apply_to_excel` calls `pd.read_excel` directly (`quicken_helper/controllers/category_match_session.py:62-73`) and defines inline helpers without annotations (`lines 66-69`), so Pyright reports every variable in the block as `Unknown`.
@@ -35,19 +36,10 @@
 - Several docstrings contain non-ASCII control characters (`quicken_helper/controllers/match_excel.py:2-15`, `match_session.py:2-31`, `gui_viewers/merge_tab.py:42-70`). Besides readability, these characters can cause rendering glitches in editors and should be normalized to plain ASCII.
 - **Remediation**: normalize docstrings, then expand Ruff's `select` list (at least `B`, `UP`, `S`, `TID`, etc.) after the current pyright backlog is under control.
 
-### 6. Dataclass sentinels violate `dataclasses` invariants (resolved)
-- Previous behavior: `quicken_helper/data_model/q_wrapper/q_transaction.py:28-61` bound module-level sentinels directly to dataclass fields, so Python 3.13 raised `ValueError: mutable default ... use default_factory` during import.
-- **Current status**: sentinels are now annotated as `ClassVar`s and feeders use `field(default_factory=...)`, so imports succeed. Keep the identity-based checks (`is not _MISSING_*`) intact when touching this file.
-
-### 7. `match_helpers` no longer exports tested helpers
-- `tests/controllers/test_match_helpers.py` imports `_candidate_cost` and `_flatten_qif_txns`, but `quicken_helper/controllers/match_helpers.py` now comments out these functions entirely.
-- `pytest` therefore fails during collection with `ImportError: cannot import name '_candidate_cost'`.
-- **Remediation**: either restore the helper implementations (preferred so the controller surface remains backward compatible) or update the tests and call sites to the new API. Until resolved, the test suite cannot run.
-
-### 8. Missing `pyparsing` dependency for QIF parsers
-- `tests/controllers/test_qif_loader_protocol.py` imports `quicken_helper.controllers.qif_loader`, which in turn imports `quicken_helper.data_model.qif_parsers_emitters.qif_file_parser_emitter`. That module depends on `pyparsing` (`import Empty`), but the project does not list it in `pyproject.toml`.
-- Result: every test touching the parser fails with `ModuleNotFoundError: No module named 'pyparsing'`.
-- **Remediation**: add `pyparsing` (or the modern equivalent) to `[tool.poetry.dependencies]`, lock/install, and ensure the package is available in CI. If the parser was intentionally removed, excise or guard the imports instead.
+### 6. Dataclass sentinels violate `dataclasses` invariants
+- `quicken_helper/data_model/q_wrapper/q_transaction.py:28-61` defines module-level sentinels (`_MISSING_SPLITS`, `_MISSING_SECURITY`, `_MISSING_DATE`, `_MISSING_CLEARED`) and binds them directly to dataclass fields (`splits`, `security`, `date`, `cleared`).
+- Python 3.13 treats these as mutable defaults (even enums), so `@dataclass` raises `ValueError: mutable default ... use default_factory` and import-time errors fan out through every module that references `QTransaction`.
+- **Remediation**: convert sentinels to immutable `ClassVar`s and supply explicit factories for each field, e.g., `splits: list[ISplit] = field(default_factory=list)` plus helper predicates to detect "missing" values. Once fixed, rerun `pytest` to ensure collection succeeds.
 
 ## Remediation plan (initial pass)
 1. **Unblock the test/typing pipeline**
@@ -66,4 +58,5 @@
 5. **Strengthen lint/test automation**
    - After pyright is clean, broaden Ruff rule coverage and wire these commands into CI (GitHub Action already present? verify `.github/workflows`).
    - Document the required command sequence (`black`, `ruff`, `pyright`, `pytest`, optional `coverage`) for all future code changes (see `.github/code-remediation-plan.md`).
+
 
