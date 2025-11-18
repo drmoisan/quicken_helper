@@ -28,13 +28,12 @@ from typing import (
     Dict,
     Iterable,
     List,
+    Literal,
     Optional,
     TextIO,
     cast,
     overload,
 )
-
-from typing_extensions import Literal
 
 from quicken_helper.utilities import to_date
 

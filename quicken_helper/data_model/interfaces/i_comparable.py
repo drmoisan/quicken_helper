@@ -2,9 +2,7 @@
 from __future__ import annotations
 
 from functools import total_ordering
-from typing import runtime_checkable
-
-from typing_extensions import Protocol
+from typing import Protocol, runtime_checkable
 
 
 @total_ordering

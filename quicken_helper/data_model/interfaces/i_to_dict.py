@@ -1,9 +1,7 @@
 # quicken_helper/data_model/interfacts/i_to_dict.py
 from __future__ import annotations
 
-from typing import runtime_checkable
-
-from typing_extensions import Protocol, TypeAlias
+from typing import Protocol, TypeAlias, runtime_checkable
 
 RecursiveDictStr: TypeAlias = (
     str | dict[str, "RecursiveDictStr"] | list["RecursiveDictStr"]
