@@ -1,4 +1,4 @@
-# quicken_helper code transformation plan
+# quicken_helper code remediation plan
 
 ## Environment setup (run once per workstation)
 1. `poetry install` — creates the managed `.venv` with runtime + dev dependencies.
@@ -16,7 +16,7 @@
 
 ## Backlog reduction plan
 
-### Phase 0 — unblock imports
+### Phase 0 - unblock imports
 - Replace `typing_extensions` usages with stdlib `typing` (`Protocol`, `TypeAlias`, `Literal`) in:
   - `quicken_helper/data_model/interfaces/i_to_dict.py`
   - `quicken_helper/data_model/interfaces/i_equatable.py`
@@ -24,6 +24,11 @@
   - `quicken_helper/legacy/qif_writer.py`
 - Alternatively, add `typing_extensions = "^4.12"` under `[tool.poetry.dependencies]` if backward compatibility is required.
 - Re-run `poetry lock` and `poetry install`, then `poetry run pytest` to confirm import errors disappear.
+
+### Phase 0b - protocol mix-in order
+- `typing.Protocol` is stricter about MRO than `typing_extensions.Protocol`. Any interface inheriting multiple Protocols must list `Protocol` last (or omit it if every other base already inherits from Protocol).
+- Files touched: `i_account.py`, `i_category.py`, `i_header.py`, `i_quicken_file.py`, `i_security.py`, `i_split.py`, `i_tag.py`, `i_transaction.py`.
+- Verify via `poetry run pytest` that `TypeError: Cannot create a consistent method resolution order` is gone once the inheritance order is fixed.
 
 ### Phase 1 — tame pandas/Excel entry points
 - Modules: `controllers/category_match_session.py`, `controllers/match_excel.py`, `controllers/qif_loader.py`, `gui_viewers/merge_tab.py`.
@@ -41,10 +46,11 @@
   - Introduce typed aliases/protocols for GUI stubs (`_ListboxProtocol`, `_TextProtocol`) in `tests/gui_viewers/test_merge_tab.py`.
 - After each module batch, run `poetry run pyright tests/<module>` to keep the workload incremental, followed by the full suite when completed.
 
-### Phase 3 — finish protocol/data-model typing
+### Phase 3 - finish protocol/data-model typing
 - Focus on data-model packages (`quicken_helper/data_model/q_wrapper`, `data_model/interfaces`, `utilities/core_util.py`).
 - Ensure every protocol and helper exports concrete `TypedDict`/`Protocol` definitions so controllers no longer return `Any`.
 - Add unit tests (with policy-compliant docstrings) that cover conversion helpers (`core_util.convert_value`, `utilities.converters_*`) to guard future refactors.
+- Fix dataclass sentinels that currently break imports: `quicken_helper/data_model/q_wrapper/q_transaction.py` uses module-level `_MISSING_*` helpers as direct defaults. Convert them to `ClassVar`s and switch fields to `field(default_factory=...)` (e.g., `cleared` uses a lambda returning `EnumClearedStatus.UNKNOWN`, `splits` uses `list`). Re-run `poetry run pytest` afterwards to confirm collection succeeds.
 
 ### Phase 4 — strengthen automation
 - Expand Ruff rules once pyright is green (add `["B", "UP", "S", "TID", "TCH"]` etc. in `pyproject.toml`).

@@ -9,7 +9,7 @@ from .i_to_dict import IToDict
 
 
 @runtime_checkable
-class ICategory(HasEmitQifWithHeader, Protocol, IComparable, IEquatable, IToDict):
+class ICategory(HasEmitQifWithHeader, IComparable, IEquatable, IToDict, Protocol):
     """
     Protocol for QIF Category list entries (i.e., records in !Type:Cat).
 

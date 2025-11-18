@@ -9,7 +9,7 @@ from .i_to_dict import IToDict
 
 
 @runtime_checkable
-class IHeader(Protocol, IComparable, IEquatable, IToDict):
+class IHeader(IComparable, IEquatable, IToDict, Protocol):
     # data attributes
     code: str
     description: str

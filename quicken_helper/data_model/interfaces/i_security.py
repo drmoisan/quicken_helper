@@ -9,7 +9,7 @@ from .i_to_dict import IToDict
 
 
 @runtime_checkable
-class ISecurity(Protocol, IComparable, IEquatable, IToDict):
+class ISecurity(IComparable, IEquatable, IToDict, Protocol):
     """Structural shape of an investment/security adornment on a txn."""
 
     name: str

@@ -14,7 +14,7 @@ from .i_to_dict import IToDict
 
 
 @runtime_checkable
-class IAccount(Protocol, IComparable, IEquatable, IToDict):
+class IAccount(IComparable, IEquatable, IToDict, Protocol):
     # --- data attributes ---
     name: str
     type: str

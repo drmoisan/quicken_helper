@@ -17,7 +17,7 @@ from .i_transaction import ITransaction
 
 
 @runtime_checkable
-class IQuickenFile(Protocol, IToDict):
+class IQuickenFile(IToDict, Protocol):
     # --- data ---
     sections: QuickenSections
     tags: list[ITag]

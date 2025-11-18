@@ -9,7 +9,7 @@ from .i_to_dict import IToDict
 
 
 @runtime_checkable
-class ISplit(Protocol, IComparable, IEquatable, IToDict):
+class ISplit(IComparable, IEquatable, IToDict, Protocol):
     """Structural shape of a split row (S/E/$) that can be sorted and emitted."""
 
     category: str

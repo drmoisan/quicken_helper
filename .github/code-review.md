@@ -3,8 +3,8 @@
 ## Repository health snapshot
 - `poetry run black --check .` ➜ **pass** (`118` files unchanged).
 - `poetry run ruff check` ➜ **pass**, but config only enables `E`, `F`, `I` so style coverage is intentionally narrow (`pyproject.toml:24-38`).
-- `poetry run pyright` ➜ **fail** with **2676 errors / 4 warnings**. Errors span both runtime modules and tests (sample excerpt shown below).
-- `poetry run pytest` ➜ **fail** during collection with 27 import errors because `typing_extensions` is missing.
+- `poetry run pyright` ➜ **fail** with **2684 errors / 0 warnings** (see `pyright.log`). Runtime modules and tests still spew `Unknown` types from pandas pipelines and untyped fixtures.
+- `poetry run pytest` ➜ **fail** during collection with 14 errors because dataclass sentinels in `quicken_helper/data_model/q_wrapper/q_transaction.py` violate `default_factory` rules (ValueError for `cleared`, `splits`, `security`, etc.).
 
 ## Findings and recommendations
 
@@ -36,6 +36,11 @@
 - Several docstrings contain non-ASCII control characters (`quicken_helper/controllers/match_excel.py:2-15`, `match_session.py:2-31`, `gui_viewers/merge_tab.py:42-70`). Besides readability, these characters can cause rendering glitches in editors and should be normalized to plain ASCII.
 - **Remediation**: normalize docstrings, then expand Ruff's `select` list (at least `B`, `UP`, `S`, `TID`, etc.) after the current pyright backlog is under control.
 
+### 6. Dataclass sentinels violate `dataclasses` invariants
+- `quicken_helper/data_model/q_wrapper/q_transaction.py:28-61` defines module-level sentinels (`_MISSING_SPLITS`, `_MISSING_SECURITY`, `_MISSING_DATE`, `_MISSING_CLEARED`) and binds them directly to dataclass fields (`splits`, `security`, `date`, `cleared`).
+- Python 3.13 treats these as mutable defaults (even enums), so `@dataclass` raises `ValueError: mutable default ... use default_factory` and import-time errors fan out through every module that references `QTransaction`.
+- **Remediation**: convert sentinels to immutable `ClassVar`s and supply explicit factories for each field, e.g., `splits: list[ISplit] = field(default_factory=list)` plus helper predicates to detect "missing" values. Once fixed, rerun `pytest` to ensure collection succeeds.
+
 ## Remediation plan (initial pass)
 1. **Unblock the test/typing pipeline**
    - Replace `typing_extensions` imports with stdlib `typing` equivalents or add the package as a dependency.
@@ -52,4 +57,5 @@
    - Track progress in batches (e.g., drive error count to <500, then <100, etc.) to avoid releasing partially typed modules.
 5. **Strengthen lint/test automation**
    - After pyright is clean, broaden Ruff rule coverage and wire these commands into CI (GitHub Action already present? verify `.github/workflows`).
-   - Document the required command sequence (`black`, `ruff`, `pyright`, `pytest`, optional `coverage`) for all future code changes (see `.github/code-transformation-plan.md`).
+   - Document the required command sequence (`black`, `ruff`, `pyright`, `pytest`, optional `coverage`) for all future code changes (see `.github/code-remediation-plan.md`).
+

@@ -16,7 +16,7 @@ from .i_to_dict import IToDict
 
 
 @runtime_checkable
-class ITransaction(Protocol, IComparable, IEquatable, IToDict):
+class ITransaction(IComparable, IEquatable, IToDict, Protocol):
     """Structural shape of a QIF transaction sufficient for file emission."""
 
     account: IAccount

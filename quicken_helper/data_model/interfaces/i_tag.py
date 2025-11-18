@@ -10,7 +10,7 @@ from .i_to_dict import IToDict
 
 
 @runtime_checkable
-class ITag(HasEmitQifWithHeader, Protocol, IComparable, IEquatable, IToDict):
+class ITag(HasEmitQifWithHeader, IComparable, IEquatable, IToDict, Protocol):
     """
     Protocol for objects that behave like QifTag.
 
