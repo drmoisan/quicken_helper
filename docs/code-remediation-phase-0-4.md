@@ -72,7 +72,7 @@
 - VS Code tasks (`.vscode/tasks.json`) now run Black, Ruff, Pyright, Pytest, coverage reports, and Codecov uploads in one click.
 - Next step: wire these tasks into CI once typing is green.
 
-### Phase 3 - finish protocol/data-model typing _(in progress)_
+### Phase 3 - finish protocol/data-model typing ✅
 
 #### Phase 3a - dataclasses ✅
 
@@ -94,7 +94,7 @@
 - Tests cover positive flows, negative flows (error cases), and edge cases
 - All 123 new tests pass successfully
 
-#### Phase 3d - Ruff rule expansion and compliance ✅⚠️
+#### Phase 3d - Ruff rule expansion and compliance ✅
 
 - Expand Ruff rules once pyright is green (add `['B', 'UP', 'S', 'TID', 'TCH']` etc. in `pyproject.toml`).
 - **Status**: Rules expanded and applied despite Pyright not being green (167 errors remain from Phase 3b-c)
@@ -111,12 +111,12 @@
   - These appear to be pre-existing test/API alignment issues, not Ruff-related regressions
   - Should be addressed in Phase 4b (fix failing tests)
 
-### Phase 4 - update tests to satisfy strict typing + policy _(blocked until earlier phases are complete)_
+### Phase 4 - update tests to satisfy strict typing + policy 
 
 - **Temporary deviation**: pyright currently excludes the `tests/` tree entirely to unblock work on the rest of the codebase. This will be re-enabled in phase 4c piece by piece.
 - For all changes in phase 4, please prioritize tests in the order of the Canonical Prioritization Hierarchy
 
-#### Phase 4a - remove obsolete tests
+#### Phase 4a - remove obsolete tests ✅
 
 - Sweep the `tests/` tree:
   - Remove any test that was designed for code functionality that no longer exists.
@@ -124,7 +124,7 @@
   - If shims exist in production code for functionality that is not used elsewhere, please remove both the tests and the shims
   - In a later phase I will address code coverage, but the code is changing too much at this point
 
-#### Phase 4b - fix failing tests
+#### Phase 4b - fix failing tests ✅
 
 - If the tests are addressing current production code, but the tests fail, please fix them
   - Determine whether test assertions are appropriate for the current code state. If not change them
