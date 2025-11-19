@@ -3,5 +3,6 @@
 .idea/
 .ruff_cache/
 __pycache__/
-.vscode/
+.vscode/*
+!.vscode/tasks.json
 *.pyc

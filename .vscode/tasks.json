@@ -1,0 +1,48 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Black: format",
+      "type": "shell",
+      "command": "poetry run black .",
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Ruff: lint",
+      "type": "shell",
+      "command": "poetry run ruff check",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Pyright: type-check",
+      "type": "shell",
+      "command": "poetry run pyright",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Pytest: run tests",
+      "type": "shell",
+      "command": "poetry run pytest",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Coverage: html report",
+      "type": "shell",
+      "command": "poetry run coverage run -m pytest && poetry run coverage html",
+      "problemMatcher": []
+    },
+    {
+      "label": "Coverage: Codecov upload",
+      "type": "shell",
+      "command": "poetry run coverage xml && codecov -t ${env:CODECOV_TOKEN}",
+      "problemMatcher": []
+    }
+  ]
+}
