@@ -6,8 +6,9 @@ from math import isnan
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from .match_excel import fuzzy_autopairs
 from quicken_helper.utilities.excel_io import read_excel_df
+
+from .match_excel import fuzzy_autopairs
 
 
 class CategoryMatchSession:

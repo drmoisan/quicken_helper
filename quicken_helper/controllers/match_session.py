@@ -45,11 +45,11 @@ from typing import (
 
 # Protocols / utilities
 from quicken_helper.data_model.interfaces import ITransaction
-
-from .transaction_compare import MatchScore, compare_txn
 from quicken_helper.utilities.core_util import (
     convert_value as _core_convert_value,
 )
+
+from .transaction_compare import MatchScore, compare_txn
 
 # ---------- helpers ----------
 
@@ -75,24 +75,35 @@ def _is_transaction(obj: Any) -> TypeGuard["ITransaction"]:
 def _coerce_txns(txns: Iterable[object]) -> list["ITransaction"]:
     """Ensure all items conform to ITransaction, converting when possible."""
 
-    out: list["ITransaction"] = []
+    out: list[ITransaction] = []
     for item in txns:
-        try:
-            converted = convert_value(ITransaction, item)
-            out.append(converted)
-            continue
-        except Exception:
-            pass
-
-        if _is_transaction(item):
-            out.append(cast(ITransaction, item))
-            continue
-
-        raise TypeError(
-            f"Expected ITransaction; got {type(item).__name__} lacking required attributes."
-        )
-
+        txn = _ensure_transaction(item)
+        out.append(txn)
     return out
+
+
+def _ensure_transaction(item: object) -> ITransaction:
+    """
+    Convert ``item`` to ``ITransaction`` via ``convert_value`` and structural validation.
+
+    Raises ``TypeError`` if the object cannot satisfy the protocol.
+    """
+
+    candidate: object | None
+    try:
+        candidate = convert_value(ITransaction, item)
+    except Exception:
+        candidate = None
+
+    if candidate is not None and _is_transaction(candidate):
+        return candidate
+
+    if _is_transaction(item):
+        return item
+
+    raise TypeError(
+        f"Expected ITransaction; got {type(item).__name__} lacking required attributes."
+    )
 
 
 def _sort_key_for_match(ms: MatchScore) -> tuple[float, float, float]:

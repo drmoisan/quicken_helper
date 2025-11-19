@@ -35,10 +35,10 @@ from quicken_helper.data_model.excel.excel_txn_group import ExcelTxnGroup
 from quicken_helper.data_model.interfaces import ISplit, ITransaction
 from quicken_helper.legacy.qif_item_key import QIFItemKey
 from quicken_helper.legacy.qif_txn_view import QIFTxnView
-from quicken_helper.utilities.excel_io import read_excel_df
 
 # from match_session import MatchSession
 from quicken_helper.utilities import to_date, to_decimal
+from quicken_helper.utilities.excel_io import read_excel_df
 
 __all__ = [
     "build_session_from_paths",
@@ -66,6 +66,7 @@ def _normalize_split_sequence(raw: object) -> list[Mapping[str, Any]]:
             if isinstance(item, Mapping):
                 normalized.append(cast(Mapping[str, Any], item))
     return normalized
+
 
 # region Read In Files and Establish Session
 
@@ -425,11 +426,15 @@ def build_matched_only_txns(session: MatchSession) -> list[MatchedTxn]:
 
     legacy_txns_attr = getattr(session, "txns", None)
     if legacy_txns_attr is None:
-        raise AttributeError("Session lacks bank_txns/txns attributes required for filtering.")
+        raise AttributeError(
+            "Session lacks bank_txns/txns attributes required for filtering."
+        )
 
     legacy_txns = cast(Sequence[LegacyTxn], legacy_txns_attr)
     if getattr(session, "excel_groups", None):
-        mapping = cast(dict[QIFItemKey, int], getattr(session, "qif_to_excel_group", {}) or {})
+        mapping = cast(
+            dict[QIFItemKey, int], getattr(session, "qif_to_excel_group", {}) or {}
+        )
         matched_indices = {key.txn_index for key in mapping}
         return [
             cast(MatchedTxn, txn)
@@ -437,7 +442,9 @@ def build_matched_only_txns(session: MatchSession) -> list[MatchedTxn]:
             if idx in matched_indices
         ]
 
-    qif_map_attr = getattr(session, "qif_to_excel", None) or getattr(session, "qif_to_excel_row", None)
+    qif_map_attr = getattr(session, "qif_to_excel", None) or getattr(
+        session, "qif_to_excel_row", None
+    )
     qif_map = cast(dict[QIFItemKey, int], qif_map_attr or {})
     matched_keys = set(qif_map.keys())
     if not matched_keys:
@@ -447,7 +454,9 @@ def build_matched_only_txns(session: MatchSession) -> list[MatchedTxn]:
     for idx, txn in enumerate(legacy_txns):
         splits = _normalize_split_sequence(txn.get("splits"))
         matched_whole = QIFItemKey(idx, None) in matched_keys
-        matched_split_indices = [si for si in range(len(splits)) if QIFItemKey(idx, si) in matched_keys]
+        matched_split_indices = [
+            si for si in range(len(splits)) if QIFItemKey(idx, si) in matched_keys
+        ]
         if splits:
             new_splits = [splits[si] for si in matched_split_indices]
             if new_splits:

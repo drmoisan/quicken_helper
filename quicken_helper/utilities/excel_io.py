@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Any
 
 import pandas as pd
@@ -29,4 +28,3 @@ def read_excel_df(
         if "sheet_name" in str(exc) and not kwargs:
             return pd_any.read_excel(io)
         raise
-

@@ -4,7 +4,7 @@ from _decimal import Decimal
 from dataclasses import dataclass, field
 from datetime import date
 from functools import total_ordering
-from typing import TYPE_CHECKING, Any, ClassVar, overload
+from typing import TYPE_CHECKING, Any, Final, overload
 
 from quicken_helper.data_model.interfaces import (
     EnumClearedStatus,
@@ -26,14 +26,12 @@ from .q_split import QSplit
 from .qif_header import QifHeader
 
 # sentinels for "not set"
-_MISSING_SECURITY: ClassVar[ISecurity] = QSecurity(
+_MISSING_SECURITY: Final[ISecurity] = QSecurity(
     "", Decimal(0), Decimal(0), Decimal(0), Decimal(0)
 )
-_MISSING_DATE: ClassVar[date] = date(1900, 1, 1)
-_MISSING_SPLITS: ClassVar[list[ISplit]] = [
-    QSplit(category="", amount=Decimal(0))
-]
-_MISSING_CLEARED: ClassVar[EnumClearedStatus] = EnumClearedStatus.UNKNOWN
+_MISSING_DATE: Final[date] = date(1900, 1, 1)
+_MISSING_SPLITS: Final[list[ISplit]] = [QSplit(category="", amount=Decimal(0))]
+_MISSING_CLEARED: Final[EnumClearedStatus] = EnumClearedStatus.UNKNOWN
 
 
 @total_ordering
@@ -250,8 +248,8 @@ class QTransaction:
                 else:
                     d[key] = str(value)
 
-        _addif("account", self.account, field(default_factory=QAccount))
-        _addif("type", self.type, field(default_factory=lambda: QifHeader(code="")))
+        _addif("account", self.account, QAccount())
+        _addif("type", self.type, QifHeader(code=""))
         _addif("action_chk", self.action_chk, "")
         _addif("cleared", self.cleared, _MISSING_CLEARED)
         _addif("payee", self.payee, "")
