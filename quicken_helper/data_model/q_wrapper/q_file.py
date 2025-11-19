@@ -3,7 +3,7 @@ from __future__ import annotations
 import inspect
 import io
 from collections.abc import Iterable
-from dataclasses import field
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
@@ -19,7 +19,22 @@ from ..interfaces import (
     QuickenSections,
     RecursiveDictStr,
 )
-from .q_account import QAccount
+
+
+def _empty_tags() -> list[ITag]:
+    return []
+
+
+def _empty_categories() -> list[ICategory]:
+    return []
+
+
+def _empty_accounts() -> list[IAccount]:
+    return []
+
+
+def _empty_transactions() -> list[ITransaction]:
+    return []
 
 
 def _emit_qif_text(item: object, with_header: bool) -> str:
@@ -105,18 +120,18 @@ def _emit_qif_text(item: object, with_header: bool) -> str:
     )
 
 
+@dataclass
 class QuickenFile:
     """
     Represents a complete QIF file, including header and multiple transactions.
     """
 
-    def __init__(self):
-        self.sections: QuickenSections = QuickenSections.NONE
-        self.tags: list[ITag] = []
-        self.categories: list[ICategory] = []
-        self.accounts: list[IAccount] = []
-        self.transactions: list[ITransaction] = []
-        self.emitter: "IParserEmitter[IQuickenFile] | None" = None
+    sections: QuickenSections = QuickenSections.NONE
+    tags: list[ITag] = field(default_factory=_empty_tags)
+    categories: list[ICategory] = field(default_factory=_empty_categories)
+    accounts: list[IAccount] = field(default_factory=_empty_accounts)
+    transactions: list[ITransaction] = field(default_factory=_empty_transactions)
+    emitter: "IParserEmitter[IQuickenFile] | None" = None
 
     def emit_section(self, xs: Iterable[HasEmitQifWithHeader]) -> str:
         # texts_iter = map(lambda x: x[1].emit_qif(with_header=(x[0] == 0)), enumerate(xs))
