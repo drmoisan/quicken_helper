@@ -5,7 +5,7 @@ import csv
 import re
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 # --- constants expected by tests ---
 WIN_HEADERS = [
@@ -36,7 +36,7 @@ MAC_HEADERS = [
 _DATE_FORMATS = ["%m/%d'%y", "%m/%d/%Y", "%Y-%m-%d"]
 
 
-def parse_date_maybe(s: str) -> Optional[datetime]:
+def parse_date_maybe(s: str) -> datetime | None:
     s = (s or "").strip()
     if not s:
         return None
@@ -56,8 +56,8 @@ def parse_date_maybe(s: str) -> Optional[datetime]:
 
 
 def filter_date_range(
-    txns: List[Dict[str, Any]], start_str: str, end_str: str
-) -> List[Dict[str, Any]]:
+    txns: list[dict[str, Any]], start_str: str, end_str: str
+) -> list[dict[str, Any]]:
     def _d(s: str):
         d = parse_date_maybe(s)
         return d.date() if d else None
@@ -67,7 +67,7 @@ def filter_date_range(
     if not start and not end:
         return txns
 
-    out: List[Dict[str, Any]] = []
+    out: list[dict[str, Any]] = []
     for t in txns:
         d = parse_date_maybe(str(t.get("date", "")).strip())
         if not d:
@@ -81,7 +81,7 @@ def filter_date_range(
 
 
 # --- CSV writers expected by tests ---
-def write_csv_quicken_windows(txns: List[Dict[str, Any]], out_path: Path):
+def write_csv_quicken_windows(txns: list[dict[str, Any]], out_path: Path):
     with out_path.open("w", encoding="utf-8", newline="") as f:
         w = csv.writer(f)
         w.writerow(WIN_HEADERS)
@@ -103,7 +103,7 @@ def write_csv_quicken_windows(txns: List[Dict[str, Any]], out_path: Path):
             w.writerow(row)
 
 
-def write_csv_quicken_mac(txns: List[Dict[str, Any]], out_path: Path):
+def write_csv_quicken_mac(txns: list[dict[str, Any]], out_path: Path):
     with out_path.open("w", encoding="utf-8", newline="") as f:
         w = csv.writer(f)
         w.writerow(MAC_HEADERS)
@@ -132,14 +132,14 @@ def write_csv_quicken_mac(txns: List[Dict[str, Any]], out_path: Path):
 
 # --- payee filter helper used in tests via App._run() ---
 def apply_multi_payee_filters(
-    txns: List[Dict[str, Any]],
-    queries: List[str],
+    txns: list[dict[str, Any]],
+    queries: list[str],
     mode: str = "contains",
     case_sensitive: bool = False,
     combine: str = "any",
-) -> List[Dict[str, Any]]:
+) -> list[dict[str, Any]]:
     # Minimal local implementation to avoid importing the whole convert tab.
-    def local_filter(tlist: list[Dict[str, Any]], q: str) -> list[Dict[str, Any]]:
+    def local_filter(tlist: list[dict[str, Any]], q: str) -> list[dict[str, Any]]:
         q = str(q or "")
         if not q:
             return tlist
@@ -185,7 +185,7 @@ def apply_multi_payee_filters(
         return cur
     # any (union)
     seen: set[int] = set()
-    out: list[Dict[str, Any]] = []
+    out: list[dict[str, Any]] = []
     for q in queries:
         subset = local_filter(txns, q)
         for t in subset:

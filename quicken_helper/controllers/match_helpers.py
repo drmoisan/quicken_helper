@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import date
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from quicken_helper.legacy.qif_item_key import QIFItemKey
 from quicken_helper.legacy.qif_txn_view import QIFTxnView
@@ -19,10 +19,10 @@ __all__ = [
 ]
 
 
-def _flatten_qif_txns(txns: List[Dict[str, Any]]) -> List[QIFTxnView]:
+def _flatten_qif_txns(txns: list[dict[str, Any]]) -> list[QIFTxnView]:
     """Convert loosely typed QIF dicts into deterministic ``QIFTxnView`` rows."""
 
-    out: List[QIFTxnView] = []
+    out: list[QIFTxnView] = []
     for txn_index, raw in enumerate(txns):
         try:
             txn_date: date = to_date(raw.get("date", ""))
@@ -70,7 +70,7 @@ def _flatten_qif_txns(txns: List[Dict[str, Any]]) -> List[QIFTxnView]:
     return out
 
 
-def _candidate_cost(qif_date: date, excel_date: date) -> Optional[int]:
+def _candidate_cost(qif_date: date, excel_date: date) -> int | None:
     """Return the absolute day gap when <= 3 days apart; otherwise ``None``."""
 
     delta = abs((qif_date - excel_date).days)

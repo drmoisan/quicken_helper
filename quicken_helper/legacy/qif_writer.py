@@ -20,16 +20,13 @@ from __future__ import annotations
 import csv
 import fnmatch
 import re
+from collections.abc import Iterable
 from dataclasses import asdict, is_dataclass
 from pathlib import Path
 from typing import (
     IO,
     Any,
-    Dict,
-    Iterable,
-    List,
     Literal,
-    Optional,
     TextIO,
     cast,
     overload,
@@ -69,11 +66,11 @@ def _match_one(payee: str, query: str, mode: str, case_sensitive: bool) -> bool:
 
 
 def filter_by_payee(
-    txns: List[Dict[str, Any]],
+    txns: list[dict[str, Any]],
     query: str,
     mode: str = "contains",
     case_sensitive: bool = False,
-) -> List[Dict[str, Any]]:
+) -> list[dict[str, Any]]:
     """Filter transactions by a single payee query."""
     return [
         t for t in txns if _match_one(t.get("payee", ""), query, mode, case_sensitive)
@@ -81,18 +78,18 @@ def filter_by_payee(
 
 
 def filter_by_payees(
-    txns: List[Dict[str, Any]],
+    txns: list[dict[str, Any]],
     queries: Iterable[str],
     mode: str = "contains",
     case_sensitive: bool = False,
     combine: str = "any",
-) -> List[Dict[str, Any]]:
+) -> list[dict[str, Any]]:
     """
     Filter transactions by multiple payee queries.
     combine: 'any' (OR) or 'all' (AND)
     """
     qlist = list(queries)
-    out: List[Dict[str, Any]] = []
+    out: list[dict[str, Any]] = []
     for t in txns:
         payee = t.get("payee", "")
         matches = [_match_one(payee, q, mode, case_sensitive) for q in qlist]
@@ -106,15 +103,15 @@ def filter_by_payees(
 
 
 def filter_by_date_range(
-    txns: List[Dict[str, Any]], date_from: Optional[str], date_to: Optional[str]
-) -> List[Dict[str, Any]]:
+    txns: list[dict[str, Any]], date_from: str | None, date_to: str | None
+) -> list[dict[str, Any]]:
     """Filter by date range. Dates inclusive. Accepts mm/dd'yy, mm/dd/yyyy, or yyyy-mm-dd strings."""
-    df = to_date(date_from) if date_from else None
-    dt = to_date(date_to) if date_to else None
-    out: List[Dict[str, Any]] = []
+    df = to_date(date_from, False) if date_from else None
+    dt = to_date(date_to, False) if date_to else None
+    out: list[dict[str, Any]] = []
     for t in txns:
         ds = t.get("date", "")
-        d = to_date(ds)
+        d = to_date(ds, False)
         if not d:
             continue
         if df and d < df:
@@ -177,21 +174,23 @@ def _open_for_write(
             pass
 
     if binary:
-        return cast(IO[bytes], open(path, "wb", **kwargs))
+        return cast("IO[bytes]", open(path, "wb", **kwargs))
 
     if "newline" in kwargs:
         newline = kwargs.pop("newline")
     if "encoding" in kwargs:
         encoding = kwargs.pop("encoding")
 
-    return cast(IO[str], open(path, "w", newline=newline, encoding=encoding, **kwargs))
+    return cast(
+        "IO[str]", open(path, "w", newline=newline, encoding=encoding, **kwargs)
+    )
 
 
 # ------------------------ Writers ------------------------
 
 
 def write_csv_flat(
-    txns: List[Dict[str, Any]], out_path: Path, newline: str = ""
+    txns: list[dict[str, Any]], out_path: Path, newline: str = ""
 ) -> None:
     """
     Write a flat CSV - One row per transaction; splits flattened into pipe-delimited columns.
@@ -242,7 +241,7 @@ def write_csv_flat(
 
 
 def write_csv_exploded(
-    txns: List[Dict[str, Any]], out_path: Path, newline: str = ""
+    txns: list[dict[str, Any]], out_path: Path, newline: str = ""
 ) -> None:
     """
     Write an exploded CSV (one row per split; transactions without splits
@@ -290,7 +289,7 @@ def write_csv_exploded(
                 writer.writerow(base)
 
 
-def _safe_float(s: str) -> Optional[float]:
+def _safe_float(s: str) -> float | None:
     try:
         return float(s.replace(",", ""))
     except Exception:
@@ -298,7 +297,7 @@ def _safe_float(s: str) -> Optional[float]:
 
 
 def write_csv_quicken_windows(
-    txns: List[Dict[str, Any]], out_path: Path, newline: str = ""
+    txns: list[dict[str, Any]], out_path: Path, newline: str = ""
 ) -> None:
     """
     Quicken Windows CSV header order:
@@ -338,7 +337,7 @@ def write_csv_quicken_windows(
 
 
 def write_csv_quicken_mac(
-    txns: List[Dict[str, Any]], out_path: Path, newline: str = ""
+    txns: list[dict[str, Any]], out_path: Path, newline: str = ""
 ) -> None:
     """
     Quicken Mac (Mint) CSV:
@@ -418,8 +417,8 @@ def write_qif(
     """
     p = Path(path)
 
-    current_account: Optional[str] = None
-    current_type: Optional[str] = None
+    current_account: str | None = None
+    current_type: str | None = None
     written = 0
 
     with _open_for_write(
@@ -429,13 +428,13 @@ def write_qif(
         newline=newline,
         encoding=encoding,
     ) as fp:
-        tfp: TextIO = cast(TextIO, fp)
+        tfp: TextIO = cast("TextIO", fp)
 
         for rec in txns:
             # Normalize record to a dict[str, Any]
             if isinstance(rec, dict):
                 d: dict[str, Any] = rec  # type: ignore[assignment]
-            elif hasattr(rec, "to_dict") and callable(getattr(rec, "to_dict")):
+            elif hasattr(rec, "to_dict") and callable(rec.to_dict):
                 d = cast("dict[str, Any]", rec.to_dict())
             elif _is_dataclass_instance(rec):
                 # Pylance: rec is still Any here; acceptable for asdict()
@@ -482,11 +481,11 @@ def write_qif(
 
 
 def legacy_write(
-    current_account: Optional[str],
-    current_type: Optional[str],
+    current_account: str | None,
+    current_type: str | None,
     fp: TextIO,
-    r: Dict[str, Any],
-) -> tuple[Optional[str], Optional[str]]:
+    r: dict[str, Any],
+) -> tuple[str | None, str | None]:
     """Emit a single QIF record from a legacy dict and return updated writer state."""
     # Normalize basic fields
     txn_type = str(r.get("type") or "Bank").strip()
@@ -564,7 +563,7 @@ def legacy_write(
         fp.write(f"O{commission}\n")
 
     # 4) Splits
-    splits: List[dict[str, Any]] = r.get("splits", [])
+    splits: list[dict[str, Any]] = r.get("splits", [])
     for s in splits:
         sc = s.get("category", "")
         if sc:

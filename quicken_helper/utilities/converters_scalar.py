@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal, InvalidOperation
-from typing import Any, Dict, Final, Optional, overload
+from typing import Any, Final, overload
 
 __all__ = [
     "to_datetime",
@@ -54,7 +54,7 @@ def to_datetime(value: object, /) -> datetime:
     if isinstance(value, date):
         return datetime.combine(value, time())
     # POSIX timestamp → datetime (naive, local time)
-    if isinstance(value, (int, float)):
+    if isinstance(value, int | float):
         return datetime.fromtimestamp(value)
     # ISO 8601 string → datetime
     if isinstance(value, str):
@@ -100,7 +100,7 @@ def to_decimal(value: Any) -> Decimal:
     # Fast-path for numeric types
     if isinstance(value, Decimal):
         return value
-    if isinstance(value, (int,)):
+    if isinstance(value, int):
         return Decimal(value)
     if isinstance(value, float):
         # Avoid binary float artifacts
@@ -157,7 +157,7 @@ def clean_number_like_string(value: str, decimal_char: str = "") -> str:
     has_comma = "," in s
     has_dot = "." in s
 
-    def _apply_decimal_sep(txt: str, decimal_sep: Optional[str]) -> str:
+    def _apply_decimal_sep(txt: str, decimal_sep: str | None) -> str:
         if decimal_sep is None:
             # Remove all separators (integers with thousand marks only)
             return txt.replace(",", "").replace(".", "")
@@ -232,7 +232,7 @@ def _to_int(v: Any) -> int:
 def _to_float(v: Any) -> float:
     if isinstance(v, float):
         return v
-    if isinstance(v, (int, bool, Decimal)):
+    if isinstance(v, int | bool | Decimal):
         return float(v)
     if isinstance(v, str):
         return float(v.strip())
@@ -244,7 +244,7 @@ def _to_bool(v: Any) -> bool:
         return v
     if isinstance(v, str):
         return v.strip().lower() in _TRUE_STRINGS
-    if isinstance(v, (int, float, Decimal)):
+    if isinstance(v, int | float | Decimal):
         return bool(v)
     raise _bad(v, "bool")
 
@@ -401,7 +401,7 @@ _DATE_RE_01: Final[re.Pattern[str]] = re.compile(
 _DATE_RE_02: Final[re.Pattern[str]] = re.compile(r"[/\-.]")
 _ALLOW_BOOL_TO_INT = True
 _TRUE_STRINGS = {"1", "true", "t", "yes", "y", "on"}
-SCALAR_CONVERTERS: Dict[type, Any] = {
+SCALAR_CONVERTERS: dict[type, Any] = {
     Decimal: to_decimal,
     int: _to_int,
     float: _to_float,

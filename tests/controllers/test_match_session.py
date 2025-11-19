@@ -3,7 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
-from typing import List
 
 import pytest
 
@@ -25,18 +24,18 @@ class StubTxn:
 # ---- Helpers -----------------------------------------------------------------
 
 
-def _mk_bank(*rows: tuple[str, str, str]) -> List[StubTxn]:
+def _mk_bank(*rows: tuple[str, str, str]) -> list[StubTxn]:
     """
     Build bank txns from triples: (YYYY-MM-DD, amount_str, payee).
     """
-    out: List[StubTxn] = []
+    out: list[StubTxn] = []
     for d, a, p in rows:
         y, m, dd = map(int, d.split("-"))
         out.append(StubTxn(date=date(y, m, dd), amount=Decimal(a), payee=p))
     return out
 
 
-def _mk_excel(*rows: tuple[str, str, str]) -> List[StubTxn]:
+def _mk_excel(*rows: tuple[str, str, str]) -> list[StubTxn]:
     """
     Build excel txns from triples: (YYYY-MM-DD, amount_str, payee).
     """

@@ -1,7 +1,8 @@
 # quicken_helper/data_model/interfaces/i_quicken_file.py
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterable, Protocol, runtime_checkable
+from collections.abc import Iterable
+from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 # typing-only to avoid runtime import cycles
 if TYPE_CHECKING:
@@ -31,4 +32,4 @@ class IQuickenFile(IToDict, Protocol):
     def emit_qif(self) -> str: ...
 
     # --- optional back-reference to the emitter (typing-only) ---
-    emitter: "IParserEmitter[IQuickenFile] | None"  # new
+    emitter: IParserEmitter[IQuickenFile] | None  # new

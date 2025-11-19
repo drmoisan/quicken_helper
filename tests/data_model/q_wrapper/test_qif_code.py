@@ -25,9 +25,9 @@ def test_qif_code_stores_fields_and_is_frozen():
 
     # Immutability / frozen dataclass behavior
     with pytest.raises(FrozenInstanceError):
-        setattr(c, "code", "X")
+        c.code = "X"
     with pytest.raises(FrozenInstanceError):
-        setattr(c, "description", "Changed")
+        c.description = "Changed"
 
 
 def test_qif_code_equality_relies_on_code_only():

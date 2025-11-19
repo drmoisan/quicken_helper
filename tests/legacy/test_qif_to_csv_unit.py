@@ -6,7 +6,6 @@ import contextlib
 import csv
 import io
 from pathlib import Path
-from typing import Dict
 
 import pytest
 
@@ -27,7 +26,7 @@ def memfs(monkeypatch):
     Patch builtins.open so writes go to StringIO keyed by path.
     You can then read back the content via memfs.read(path).
     """
-    files: Dict[str, io.StringIO] = {}
+    files: dict[str, io.StringIO] = {}
     real_open = builtins.open
 
     def fake_open(file, mode="r", encoding=None, newline=None, **kwargs):

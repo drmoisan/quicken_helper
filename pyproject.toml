@@ -11,6 +11,7 @@ coverage = "^7.0"
 pre-commit = "^4.3.0"
 pandas-stubs = "^2.3.2.250827"
 viztracer = "^1.0.4"
+pytest-cov = "^7.0.0"
 
 [tool.poetry.group.lint.dependencies]
 black = "25.1.0"
@@ -32,8 +33,39 @@ fix = true
 show-fixes = true
 
 [tool.ruff.lint]
-select = ["E", "F", "I"]
-ignore = ["E501"]
+select = [
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "I",    # isort
+    "B",    # flake8-bugbear
+    "UP",   # pyupgrade
+    "S",    # flake8-bandit (security)
+    "TID",  # flake8-tidy-imports
+    "TCH",  # flake8-type-checking
+]
+ignore = [
+    "E501",  # line-too-long (handled by formatter)
+    "S101",  # assert-used (allowed in tests)
+    "S110",  # try-except-pass (acceptable for non-critical operations)
+    "S112",  # try-except-continue (acceptable for robust error handling)
+    "TID252", # prefer-absolute-imports (relative imports acceptable within packages)
+    "TC001", # typing-only-first-party-import (deferred; requires runtime refactor)
+    "TC003", # typing-only-standard-library-import (deferred; requires runtime refactor)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = [
+    "S101",  # assert statements are expected in tests
+]
+"tests/utilities/test_convert_value.py" = [
+    "UP007",  # Tests for Union syntax conversion
+    "UP045",  # Tests for Optional syntax conversion
+]
+"quicken_helper/gui_viewers/probe_tab.py" = [
+    "S603",  # subprocess-without-shell-equals-true (intentional for opening folders)
+    "S606",  # start-process-with-no-shell (intentional for opening folders)
+    "S607",  # start-process-with-partial-path (intentional for opening folders)
+]
 
 [tool.ruff.lint.isort]
 combine-as-imports = true

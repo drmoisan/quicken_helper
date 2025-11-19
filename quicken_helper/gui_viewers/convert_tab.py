@@ -6,7 +6,7 @@ import logging.config
 import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
-from typing import Any, Dict, List, Optional, Protocol, cast
+from typing import Any, Protocol, cast
 
 import quicken_helper.controllers.qif_loader
 from quicken_helper.controllers.data_session import DataSession
@@ -24,18 +24,18 @@ from quicken_helper.utilities import LOGGING
 logging.config.dictConfig(LOGGING)
 log = logging.getLogger(__name__)
 
-TxnDict = Dict[str, Any]
+TxnDict = dict[str, Any]
 
 
 def _txn_to_dict(obj: Any) -> TxnDict:
     if isinstance(obj, dict):
-        typed = cast(Dict[Any, Any], obj)
+        typed = cast("dict[Any, Any]", obj)
         return {str(k): v for k, v in typed.items()}
     to_dict = getattr(obj, "to_dict", None)
     if callable(to_dict):
         result = to_dict()
         if isinstance(result, dict):
-            typed_result = cast(Dict[Any, Any], result)
+            typed_result = cast("dict[Any, Any]", result)
             return {str(k): v for k, v in typed_result.items()}
     raise TypeError(f"Cannot convert transaction to dict: {type(obj)!r}")
 
@@ -54,12 +54,12 @@ class ConvertTab(ttk.Frame):
     def __init__(
         self,
         master: tk.Misc,
-        mb: Optional[MessageBoxProtocol] = None,
-        session: Optional[DataSession] = None,
+        mb: MessageBoxProtocol | None = None,
+        session: DataSession | None = None,
     ) -> None:
         super().__init__(master)
         self.mb: MessageBoxProtocol = mb or messagebox
-        self.session: Optional[DataSession] = session
+        self.session: DataSession | None = session
         self.payees_text: tk.Text
         self.log: tk.Text
         self._build()
@@ -212,11 +212,11 @@ class ConvertTab(ttk.Frame):
         self.log.see("end")
         self.update_idletasks()
 
-    def _parse_payee_filters(self) -> List[str]:
+    def _parse_payee_filters(self) -> list[str]:
         raw = self.payees_text.get("1.0", "end").strip()
         if not raw:
             return []
-        parts: List[str] = []
+        parts: list[str] = []
         for chunk in raw.replace(",", "\n").splitlines():
             s = chunk.strip()
             if s:
@@ -271,7 +271,7 @@ class ConvertTab(ttk.Frame):
             case_sensitive = self.case_var.get()
             combine = self.combine_var.get()
 
-            txns: List[TxnDict]
+            txns: list[TxnDict]
             session = self.session
             # Prefer cached session when available and matches the chosen path
             if session is not None and session.qif_path == in_path:

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import copy
 from dataclasses import asdict
-from typing import Any, Dict
+from typing import Any
 
 from quicken_helper.legacy.qif_parsed import ParsedQIF
 
@@ -98,7 +98,7 @@ def test_parsedqif_asdict_roundtrip():
     )
 
     # Act
-    d: Dict[str, Any] = asdict(original)
+    d: dict[str, Any] = asdict(original)
     roundtrip = ParsedQIF(**d)
 
     # Assert

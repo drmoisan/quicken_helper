@@ -41,7 +41,7 @@ inheritance.
 
 from __future__ import annotations
 
-from typing import Generic, Protocol, TypeVar, runtime_checkable
+from typing import Protocol, TypeVar, runtime_checkable
 
 from .enum_quicken_file_types import QuickenFileType
 
@@ -158,7 +158,7 @@ class IParserEmitter(Protocol[T]):
         ...
 
 
-class GenericParserEmitter(Generic[T], IParserEmitter[T]):
+class GenericParserEmitter[T](IParserEmitter[T]):
     file_format: QuickenFileType
 
     def parse(self, unparsed_string: str) -> T: ...

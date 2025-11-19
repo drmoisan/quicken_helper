@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
 from difflib import SequenceMatcher
-from typing import Dict, List, Optional
 
 from quicken_helper.data_model.interfaces import ITransaction
 
@@ -22,11 +21,11 @@ class MatchScore:
     """Composite score & explainability for a candidate ITransaction pair."""
 
     score: int  # higher is better
-    reasons: List[str]  # human-readable components explaining the score
-    features: Dict[str, object]  # raw numbers to aid debugging/thresholding
+    reasons: list[str]  # human-readable components explaining the score
+    features: dict[str, object]  # raw numbers to aid debugging/thresholding
 
 
-def _norm(s: Optional[str]) -> str:
+def _norm(s: str | None) -> str:
     if not s:
         return ""
     # basic normalization: strip punctuation-like chars, collapse spaces, lowercase
@@ -44,7 +43,7 @@ def _payee_similarity(a: str, b: str) -> float:
     return SequenceMatcher(a=_norm(a), b=_norm(b)).ratio()
 
 
-def _date_delta_days(d1: Optional[date], d2: Optional[date]) -> Optional[int]:
+def _date_delta_days(d1: date | None, d2: date | None) -> int | None:
     if d1 is None or d2 is None:
         return None
     return abs((d1 - d2).days)
@@ -66,13 +65,13 @@ def compare_txn(a: ITransaction, b: ITransaction) -> MatchScore:
     amount_b: Decimal = b.amount
     amount_diff: Decimal = (amount_a - amount_b).copy_abs()
 
-    date_days: Optional[int] = _date_delta_days(a.date, b.date)
+    date_days: int | None = _date_delta_days(a.date, b.date)
     payee_sim: float = _payee_similarity(
         getattr(a, "payee", ""), getattr(b, "payee", "")
     )
 
-    reasons: List[str] = []
-    features: Dict[str, object] = {
+    reasons: list[str] = []
+    features: dict[str, object] = {
         "amount_a": str(amount_a),
         "amount_b": str(amount_b),
         "amount_diff": str(amount_diff),
@@ -98,7 +97,7 @@ def compare_txn(a: ITransaction, b: ITransaction) -> MatchScore:
         date_points = max(0, _W_DATE_BASE - _W_DATE_PER_DAY * date_days)
         score += date_points
         if date_days == 0:
-            reasons.append("Same date (+{})".format(date_points))
+            reasons.append(f"Same date (+{date_points})")
         else:
             reasons.append(f"{date_days} day(s) apart (+{date_points})")
     else:

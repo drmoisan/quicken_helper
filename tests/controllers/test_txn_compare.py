@@ -3,7 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
-from typing import Optional
 
 from quicken_helper.controllers.transaction_compare import compare_txn
 
@@ -12,12 +11,12 @@ from quicken_helper.controllers.transaction_compare import compare_txn
 class StubTxn:
     """Minimal ITransaction-shaped stub (only attributes used by compare_txn)."""
 
-    date: Optional[date]
+    date: date | None
     amount: Decimal
     payee: str = ""
 
 
-def _t(d: Optional[str], a: str, p: str) -> StubTxn:
+def _t(d: str | None, a: str, p: str) -> StubTxn:
     """Helper to build a StubTxn from strings."""
     dt = None if d is None else date.fromisoformat(d)
     return StubTxn(date=dt, amount=Decimal(a), payee=p)

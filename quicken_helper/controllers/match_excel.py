@@ -17,13 +17,14 @@ Primary responsibilities:
 # quicken_helper/controllers/match_excel.py
 from __future__ import annotations
 
+from collections.abc import Callable, Mapping, Sequence
 from datetime import date, datetime
 from decimal import Decimal
 from difflib import SequenceMatcher
 from pathlib import Path
 
 # --- Loading Excel (rows, then grouped by TxnID) ----------------------------
-from typing import IO, Any, Callable, Dict, List, Mapping, Sequence, Tuple, cast
+from typing import IO, Any, cast
 
 # We re-use your parser and writer
 # from . import qif_to_csv as base
@@ -55,16 +56,16 @@ __all__ = [
 ]
 
 TxnMapping = Mapping[str, object]
-LegacyTxn = Dict[str, Any]
+LegacyTxn = dict[str, Any]
 MatchedTxn = ITransaction | LegacyTxn
 
 
 def _normalize_split_sequence(raw: object) -> list[Mapping[str, Any]]:
     normalized: list[Mapping[str, Any]] = []
-    if isinstance(raw, Sequence) and not isinstance(raw, (str, bytes)):
-        for item in cast(Sequence[object], raw):
+    if isinstance(raw, Sequence) and not isinstance(raw, str | bytes):
+        for item in cast("Sequence[object]", raw):
             if isinstance(item, Mapping):
-                normalized.append(cast(Mapping[str, Any], item))
+                normalized.append(cast("Mapping[str, Any]", item))
     return normalized
 
 
@@ -119,7 +120,7 @@ def build_session_from_paths(
     return make_session(bank_txns, groups, min_score_default=min_score_default)
 
 
-def load_excel_rows(path: Path) -> List[ExcelRow]:
+def load_excel_rows(path: Path) -> list[ExcelRow]:
     """Load and validate an Excel categorization sheet.
 
     Parameters
@@ -158,7 +159,7 @@ def load_excel_rows(path: Path) -> List[ExcelRow]:
     if missing:
         raise ValueError(f"Excel is missing columns: {missing}")
 
-    rows: List[ExcelRow] = []
+    rows: list[ExcelRow] = []
     for pos, (_, r) in enumerate(df.iterrows()):
         d = r["Date"]
         if isinstance(d, datetime):
@@ -183,7 +184,7 @@ def load_excel_rows(path: Path) -> List[ExcelRow]:
     return rows
 
 
-def group_excel_rows(rows: List[ExcelRow]) -> List[ExcelTxnGroup]:
+def group_excel_rows(rows: list[ExcelRow]) -> list[ExcelTxnGroup]:
     """Group `ExcelRow`s by `TxnID` into `ExcelTxnGroup`s.
 
     The grouping is deterministic: rows within a group keep their original order (by `idx`),
@@ -199,14 +200,14 @@ def group_excel_rows(rows: List[ExcelRow]) -> List[ExcelTxnGroup]:
     List[ExcelTxnGroup]
         One group per unique `TxnID`, each containing an immutable tuple of member rows.
     """
-    by_id: Dict[str, List[ExcelRow]] = {}
+    by_id: dict[str, list[ExcelRow]] = {}
     for r in rows:
         by_id.setdefault(r.txn_id, []).append(r)
-    groups: List[ExcelTxnGroup] = []
+    groups: list[ExcelTxnGroup] = []
     for gid, items in by_id.items():
         items_sorted = sorted(items, key=lambda r: r.idx)
         total = sum((r.amount for r in items_sorted), Decimal("0"))
-        first_date = min((r.date for r in items_sorted))
+        first_date = min(r.date for r in items_sorted)
         groups.append(
             ExcelTxnGroup(
                 gid=gid,
@@ -220,7 +221,7 @@ def group_excel_rows(rows: List[ExcelRow]) -> List[ExcelTxnGroup]:
     return groups
 
 
-def groups_to_excel_transactions(groups: list["ExcelTxnGroup"]) -> list[ITransaction]:
+def groups_to_excel_transactions(groups: list[ExcelTxnGroup]) -> list[ITransaction]:
     """
     Adapter to convert grouped Excel rows into protocol transactions suitable for matching.
 
@@ -232,7 +233,7 @@ def groups_to_excel_transactions(groups: list["ExcelTxnGroup"]) -> list[ITransac
 
 def make_session(
     bank_txns: list[ITransaction],
-    excel_groups: list["ExcelTxnGroup"],
+    excel_groups: list[ExcelTxnGroup],
     *,
     min_score_default: int = 50,
 ) -> MatchSession:
@@ -258,7 +259,7 @@ def make_session(
 # ---------------- Category extraction & matching ----------------
 
 
-def extract_qif_categories(txns: List[Dict[str, Any]]) -> List[str]:
+def extract_qif_categories(txns: list[dict[str, Any]]) -> list[str]:
     """Collect unique category names from QIF transactions and their splits.
 
     Parameters
@@ -271,7 +272,7 @@ def extract_qif_categories(txns: List[Dict[str, Any]]) -> List[str]:
     List[str]
         Case-insensitively de-duplicated and sorted category names (first-seen casing retained).
     """
-    first_by_lower: Dict[str, str] = {}
+    first_by_lower: dict[str, str] = {}
 
     def _add(cat: str):
         s = (cat or "").strip()
@@ -294,7 +295,7 @@ def extract_qif_categories(txns: List[Dict[str, Any]]) -> List[str]:
 
 def extract_excel_categories(
     xlsx_path: Path, col_name: str = "Canonical MECE Category"
-) -> List[str]:
+) -> list[str]:
     """Load Excel and return unique category names from a target column.
 
     Parameters
@@ -318,7 +319,7 @@ def extract_excel_categories(
     if col_name not in df.columns:
         raise ValueError(f"Excel missing '{col_name}' column.")
 
-    first_by_lower: Dict[str, str] = {}
+    first_by_lower: dict[str, str] = {}
     for v in df[col_name].dropna().astype(str):
         s = v.strip()
         if not s:
@@ -342,17 +343,17 @@ def _ratio(a: str, b: str) -> float:
 
 
 def fuzzy_autopairs(
-    qif_cats: List[str],
-    excel_cats: List[str],
+    qif_cats: list[str],
+    excel_cats: list[str],
     threshold: float = 0.84,
-) -> Tuple[List[Tuple[str, str, float]], List[str], List[str]]:
+) -> tuple[list[tuple[str, str, float]], list[str], list[str]]:
     """
     Greedy one-to-one fuzzy matching:
       - considers all pairs >= threshold similarity
       - picks highest ratio first, then alphabetical tie-breakers
     Returns: (pairs [(data_model, excel, score)], unmatched_qif, unmatched_excel)
     """
-    candidates: List[Tuple[float, str, str]] = []
+    candidates: list[tuple[float, str, str]] = []
     for q in qif_cats:
         for e in excel_cats:
             r = _ratio(q, e)
@@ -362,7 +363,7 @@ def fuzzy_autopairs(
 
     used_q: set[str] = set()
     used_e: set[str] = set()
-    pairs: List[Tuple[str, str, float]] = []
+    pairs: list[tuple[str, str, float]] = []
     for r, q, e in candidates:
         if q in used_q or e in used_e:
             continue
@@ -396,7 +397,7 @@ def _txn_amount(txn: TxnMapping) -> Decimal:
     return to_decimal(txn.get("amount", "0"))
 
 
-def _flatten_qif_txns(txns: List[Dict[str, Any]]) -> List[QIFTxnView]:
+def _flatten_qif_txns(txns: list[dict[str, Any]]) -> list[QIFTxnView]:
     """Compatibility shim exposing the legacy helper from this module."""
 
     return flatten_qif_txns(txns)
@@ -419,10 +420,10 @@ def build_matched_only_txns(session: MatchSession) -> list[MatchedTxn]:
     """
     bank_txns_attr = getattr(session, "bank_txns", None)
     if bank_txns_attr is not None:
-        bank_txns = list(cast(Sequence[ITransaction], bank_txns_attr))
+        bank_txns = list(cast("Sequence[ITransaction]", bank_txns_attr))
         bank_ids = {id(t) for t in bank_txns}
         matched_bank_ids = {id(b) for (b, _e) in session.pairs if id(b) in bank_ids}
-        return [cast(MatchedTxn, t) for t in bank_txns if id(t) in matched_bank_ids]
+        return [cast("MatchedTxn", t) for t in bank_txns if id(t) in matched_bank_ids]
 
     legacy_txns_attr = getattr(session, "txns", None)
     if legacy_txns_attr is None:
@@ -430,14 +431,14 @@ def build_matched_only_txns(session: MatchSession) -> list[MatchedTxn]:
             "Session lacks bank_txns/txns attributes required for filtering."
         )
 
-    legacy_txns = cast(Sequence[LegacyTxn], legacy_txns_attr)
+    legacy_txns = cast("Sequence[LegacyTxn]", legacy_txns_attr)
     if getattr(session, "excel_groups", None):
         mapping = cast(
-            dict[QIFItemKey, int], getattr(session, "qif_to_excel_group", {}) or {}
+            "dict[QIFItemKey, int]", getattr(session, "qif_to_excel_group", {}) or {}
         )
         matched_indices = {key.txn_index for key in mapping}
         return [
-            cast(MatchedTxn, txn)
+            cast("MatchedTxn", txn)
             for idx, txn in enumerate(legacy_txns)
             if idx in matched_indices
         ]
@@ -445,7 +446,7 @@ def build_matched_only_txns(session: MatchSession) -> list[MatchedTxn]:
     qif_map_attr = getattr(session, "qif_to_excel", None) or getattr(
         session, "qif_to_excel_row", None
     )
-    qif_map = cast(dict[QIFItemKey, int], qif_map_attr or {})
+    qif_map = cast("dict[QIFItemKey, int]", qif_map_attr or {})
     matched_keys = set(qif_map.keys())
     if not matched_keys:
         return []
@@ -462,9 +463,9 @@ def build_matched_only_txns(session: MatchSession) -> list[MatchedTxn]:
             if new_splits:
                 clone = dict(txn)
                 clone["splits"] = new_splits
-                filtered.append(cast(MatchedTxn, clone))
+                filtered.append(cast("MatchedTxn", clone))
         elif matched_whole:
-            filtered.append(cast(MatchedTxn, txn))
+            filtered.append(cast("MatchedTxn", txn))
 
     return filtered
 
@@ -520,13 +521,13 @@ def emit_qif_transactions(txns: Sequence[ITransaction], out: IO[str]) -> None:
             t, "emit_qif", None
         )  # don't access t.emit_qif directly (keeps typing strict)
         if callable(em):
-            cast(Callable[[IO[str]], None], em)(out)
+            cast("Callable[[IO[str]], None]", em)(out)
             continue
 
         # Fallback: string-producing emitter
         to_qif_fn: object = getattr(t, "to_qif", None)
         if callable(to_qif_fn):
-            s = cast(Callable[[], str], to_qif_fn)()
+            s = cast("Callable[[], str]", to_qif_fn)()
             out.write(s)
             if not s.endswith("\n"):
                 out.write("\n")

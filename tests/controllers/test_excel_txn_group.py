@@ -55,7 +55,7 @@ def test_excel_txn_group_is_immutable_and_hashable():
 
     # Act / Assert: immutability
     with pytest.raises(FrozenInstanceError):
-        setattr(g, "total_amount", Decimal("-11.00"))  # frozen dataclass
+        g.total_amount = Decimal("-11.00")  # frozen dataclass
 
     # Act / Assert: hashable & equality semantics
     same = ExcelTxnGroup(gid="Z9", date=d, total_amount=Decimal("-10.00"), rows=(r,))

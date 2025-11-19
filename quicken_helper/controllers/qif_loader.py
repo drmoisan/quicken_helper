@@ -1,10 +1,12 @@
 # quicken_helper/controllers/qif_loader.py
 from __future__ import annotations
 
+from collections.abc import Mapping
+
 # --- ADD near the top of the file (after existing imports) ---
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, List, Mapping
+from typing import Any
 
 from quicken_helper.data_model import IQuickenFile
 
@@ -24,9 +26,9 @@ from quicken_helper.utilities.core_util import open_for_read
 
 @dataclass
 class UnifiedQifProtocol:
-    transactions: List[ITransaction]
-    accounts: List[IAccount]
-    headers: List[IHeader]
+    transactions: list[ITransaction]
+    accounts: list[IAccount]
+    headers: list[IHeader]
     other_sections: Mapping[str, Any]  # keep whatever structure you already use
 
 
@@ -51,7 +53,7 @@ def parse_qif_unified_protocol(path: Path, encoding: str = "utf-8") -> IQuickenF
 
 def load_transactions_protocol(
     path: Path, encoding: str = "utf-8"
-) -> List[ITransaction]:
+) -> list[ITransaction]:
     """
     Return transactions adapted to the ITransaction/ISplit interfaces.
     Delegates parsing to parse_qif(...) and adapts each dict record.

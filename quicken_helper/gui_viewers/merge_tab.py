@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 from tkinter import filedialog, ttk
-from typing import Any, Dict, Optional
+from typing import Any
 
 from quicken_helper.controllers import match_excel as mex
 from quicken_helper.controllers.data_session import DataSession
@@ -59,7 +59,7 @@ class MergeTab(ttk.Frame):
         super().__init__(master)
         self.mb = mb
         self.session = session
-        self._merge_session: Optional[MatchSession] = None
+        self._merge_session: MatchSession | None = None
 
         # Ensure test-visible lists always exist (even if load/refresh bails early)
         self.m_pairs: list = []
@@ -260,7 +260,7 @@ class MergeTab(ttk.Frame):
         return " "
 
     @classmethod
-    def _txn_to_dict(cls, t: ITransaction) -> Dict[str, Any]:
+    def _txn_to_dict(cls, t: ITransaction) -> dict[str, Any]:
         """Shape a protocol transaction for display (robust to missing optional attrs)."""
         category = getattr(t, "category", "") or ""
         tag = getattr(t, "tag", "") or ""
@@ -753,7 +753,7 @@ class MergeTab(ttk.Frame):
                 # Preview is non-critical; ignore errors to keep UI stable
                 pass
 
-    def _m_selected_unqif_index(self) -> Optional[int]:
+    def _m_selected_unqif_index(self) -> int | None:
         if not getattr(self, "_unqif_sorted", None):
             return None
         sel = self.lbx_unqif.curselection()
@@ -763,7 +763,7 @@ class MergeTab(ttk.Frame):
         bi, _ = self._unqif_sorted[sel[0]]
         return bi
 
-    def _m_selected_unx_index(self) -> Optional[int]:
+    def _m_selected_unx_index(self) -> int | None:
         if not getattr(self, "_unx_sorted", None):
             return None
         sel = self.lbx_unx.curselection()

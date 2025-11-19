@@ -2,7 +2,8 @@
 from __future__ import annotations
 
 from collections import deque
-from typing import Any, Callable, cast
+from collections.abc import Callable
+from typing import Any, cast
 
 
 def _to_list(
@@ -19,7 +20,7 @@ def _to_list(
     """
     T = args[0] if args else object
     # Treat text/bytes as atomic
-    if isinstance(value, (str, bytes, bytearray)):
+    if isinstance(value, str | bytes | bytearray):
         seq = [value]
     else:
         # Require an iterable; raise a helpful error otherwise
@@ -47,7 +48,7 @@ def _to_set(
     """
     T = args[0] if args else object
     # Treat text/bytes as atomic (avoid character splitting)
-    if isinstance(value, (str, bytes, bytearray)):
+    if isinstance(value, str | bytes | bytearray):
         seq = [value]
     else:
         try:
@@ -80,7 +81,7 @@ def _to_frozenset(
     """
     T = args[0] if args else object
     # Treat text/bytes as atomic (avoid character splitting)
-    if isinstance(value, (str, bytes, bytearray)):
+    if isinstance(value, str | bytes | bytearray):
         seq = [value]
     else:
         try:
@@ -112,7 +113,7 @@ def _to_tuple(
     - ``cv``: callable that converts a single element to type ``T``.
     """
     T = args[0] if args else object
-    if isinstance(value, (str, bytes, bytearray)):
+    if isinstance(value, str | bytes | bytearray):
         seq = [value]
     else:
         try:
@@ -148,11 +149,11 @@ def _to_dict(
 
     if isinstance(value, Mapping):
         # Cast to a typed Mapping so Pylance can infer K/V as Any rather than Unknown.
-        m = cast(Mapping[Any, Any], value)
+        m = cast("Mapping[Any, Any]", value)
         items = list(m.items())  # list[tuple[Any, Any]]
     else:
         # Reject atomic text/bytes
-        if isinstance(value, (str, bytes, bytearray)):
+        if isinstance(value, str | bytes | bytearray):
             raise TypeError(
                 "Expected a mapping or iterable of 2-item pairs for dict conversion; got text/bytes."
             )
@@ -167,10 +168,10 @@ def _to_dict(
         for idx, pair in enumerate(raw_iter):
             try:
                 k, v = pair  # type: ignore[misc]
-            except Exception:
+            except Exception as e:
                 raise TypeError(
                     f"Element at index {idx} is not a 2-item pair: {pair!r}"
-                )
+                ) from e
             pairs.append((k, v))
         items = pairs
 
@@ -203,7 +204,7 @@ def _to_deque(
     - ``cv``: callable that converts a single element to type ``T``.
     """
     T = args[0] if args else object
-    if isinstance(value, (str, bytes, bytearray)):
+    if isinstance(value, str | bytes | bytearray):
         seq = [value]
     else:
         try:

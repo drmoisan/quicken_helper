@@ -32,13 +32,9 @@ Migration notes:
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from typing import (
     Any,
-    Dict,
-    Iterable,
-    List,
-    Optional,
-    Tuple,
     TypeGuard,
     cast,
 )
@@ -54,7 +50,7 @@ from .transaction_compare import MatchScore, compare_txn
 # ---------- helpers ----------
 
 
-def _is_transaction(obj: Any) -> TypeGuard["ITransaction"]:
+def _is_transaction(obj: Any) -> TypeGuard[ITransaction]:
     """Structural check for ITransaction."""
     # Only presence is required for Protocol narrowing; values can be None.
     required_attrs = (
@@ -72,7 +68,7 @@ def _is_transaction(obj: Any) -> TypeGuard["ITransaction"]:
     return True
 
 
-def _coerce_txns(txns: Iterable[object]) -> list["ITransaction"]:
+def _coerce_txns(txns: Iterable[object]) -> list[ITransaction]:
     """Ensure all items conform to ITransaction, converting when possible."""
 
     out: list[ITransaction] = []
@@ -114,7 +110,7 @@ def _sort_key_for_match(ms: MatchScore) -> tuple[float, float, float]:
     dd_raw = ms.features.get("date_days")
     if dd_raw is None:
         date_component = float("inf")
-    elif isinstance(dd_raw, (int, float)):
+    elif isinstance(dd_raw, int | float):
         date_component = float(dd_raw)
     elif isinstance(dd_raw, str):
         try:
@@ -126,7 +122,7 @@ def _sort_key_for_match(ms: MatchScore) -> tuple[float, float, float]:
 
     # 3) Higher payee similarity wins → negate
     ps_raw = ms.features.get("payee_sim", 0.0)
-    if isinstance(ps_raw, (int, float)):
+    if isinstance(ps_raw, int | float):
         payee_component = -float(ps_raw)
     elif isinstance(ps_raw, str):
         try:
@@ -171,14 +167,14 @@ class MatchSession:
             excel_txns: Excel side transactions or objects convertible to ITransaction.
             min_score_default: default threshold used by auto_match if not overridden.
         """
-        self._bank_txns: List[ITransaction] = _coerce_txns(txns)
-        self._excel_txns: List[ITransaction] = _coerce_txns(excel_txns)
+        self._bank_txns: list[ITransaction] = _coerce_txns(txns)
+        self._excel_txns: list[ITransaction] = _coerce_txns(excel_txns)
 
         # Greedy assignment state (index pairs). Keep simple for GUI wiring.
-        self._pairs_ix: Dict[int, int] = {}  # bank_index -> excel_index
+        self._pairs_ix: dict[int, int] = {}  # bank_index -> excel_index
 
         # Cache of last auto-match call (convenience, non-authoritative)
-        self._auto_pairs_cache: List[Tuple[ITransaction, ITransaction]] = []
+        self._auto_pairs_cache: list[tuple[ITransaction, ITransaction]] = []
 
         # Default threshold for acceptance
         self._min_score_default: int = int(min_score_default)
@@ -186,36 +182,36 @@ class MatchSession:
     # --- public properties ---
 
     @property
-    def bank_txns(self) -> List[ITransaction]:
+    def bank_txns(self) -> list[ITransaction]:
         return self._bank_txns
 
     @property
-    def excel_txns(self) -> List[ITransaction]:
+    def excel_txns(self) -> list[ITransaction]:
         return self._excel_txns
 
     @property
-    def pairs(self) -> List[Tuple[ITransaction, ITransaction]]:
+    def pairs(self) -> list[tuple[ITransaction, ITransaction]]:
         """Return current pairs in bank index order."""
-        out: List[Tuple[ITransaction, ITransaction]] = []
+        out: list[tuple[ITransaction, ITransaction]] = []
         for bi, ei in sorted(self._pairs_ix.items()):
             out.append((self._bank_txns[bi], self._excel_txns[ei]))
         return out
 
     @property
-    def unmatched_bank(self) -> List[ITransaction]:
+    def unmatched_bank(self) -> list[ITransaction]:
         matched_bank = set(self._pairs_ix.keys())
         return [t for i, t in enumerate(self._bank_txns) if i not in matched_bank]
 
     @property
-    def unmatched_excel(self) -> List[ITransaction]:
+    def unmatched_excel(self) -> list[ITransaction]:
         matched_excel = set(self._pairs_ix.values())
         return [t for j, t in enumerate(self._excel_txns) if j not in matched_excel]
 
     # --- matching ---
 
     def auto_match(
-        self, min_score: Optional[int] = None
-    ) -> List[Tuple[ITransaction, ITransaction]]:
+        self, min_score: int | None = None
+    ) -> list[tuple[ITransaction, ITransaction]]:
         """
         Greedy one-to-one matching between bank and excel transactions using compare_txn.
 
@@ -240,7 +236,7 @@ class MatchSession:
         self._auto_pairs_cache.clear()
 
         # Pre-index excel candidates by amount for quick filtering
-        by_amount: Dict[str, List[int]] = {}  # str(amount) -> list of excel indices
+        by_amount: dict[str, list[int]] = {}  # str(amount) -> list of excel indices
         for j, et in enumerate(self._excel_txns):
             by_amount.setdefault(str(et.amount), []).append(j)
 
@@ -253,7 +249,7 @@ class MatchSession:
             if not candidates_ix:
                 continue
 
-            scored: List[Tuple[MatchScore, int]] = []
+            scored: list[tuple[MatchScore, int]] = []
             for j in candidates_ix:
                 ms = compare_txn(bt, self._excel_txns[j])
                 scored.append((ms, j))
@@ -334,7 +330,7 @@ class MatchSession:
         bt = self._bank_txns[bank_index]
 
         matched_excel = set(self._pairs_ix.values())
-        candidates: List[Tuple[MatchScore, int]] = []
+        candidates: list[tuple[MatchScore, int]] = []
         for j, et in enumerate(self._excel_txns):
             if j in matched_excel:
                 continue
@@ -351,11 +347,11 @@ class MatchSession:
         best_ms, best_j = equal_amount[0]
 
         feat = best_ms.features
-        parts: List[str] = []
+        parts: list[str] = []
         parts.append(f"Best candidate index {best_j} (score {best_ms.score}).")
         if feat.get("date_days") is not None:
             parts.append(f"Date Δ = {feat['date_days']} day(s)")
-        payee_sim_val = cast(float, feat.get("payee_sim", 0.0))
+        payee_sim_val = cast("float", feat.get("payee_sim", 0.0))
         parts.append(f"Payee sim = {payee_sim_val:.2f}")
         parts.extend(best_ms.reasons)
 

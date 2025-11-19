@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import csv
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 WIN_HEADERS = [
     "Date",
@@ -30,7 +30,7 @@ MAC_HEADERS = [
 ]
 
 
-def write_csv_quicken_windows(txns: List[Dict[str, Any]], out_path: Path):
+def write_csv_quicken_windows(txns: list[dict[str, Any]], out_path: Path):
     with out_path.open("w", encoding="utf-8", newline="") as f:
         w = csv.writer(f)
         w.writerow(WIN_HEADERS)
@@ -52,7 +52,7 @@ def write_csv_quicken_windows(txns: List[Dict[str, Any]], out_path: Path):
             w.writerow(row)
 
 
-def write_csv_quicken_mac(txns: List[Dict[str, Any]], out_path: Path):
+def write_csv_quicken_mac(txns: list[dict[str, Any]], out_path: Path):
     with out_path.open("w", encoding="utf-8", newline="") as f:
         w = csv.writer(f)
         w.writerow(MAC_HEADERS)

@@ -95,7 +95,7 @@ def test_emit_section_sets_with_header_true_only_for_first_item():
     b = _StubItem("B")
     items = [a, b]
     # tell the type checker these satisfy the protocol
-    proto_items = cast(list[HasEmitQifWithHeader], items)
+    proto_items = cast("list[HasEmitQifWithHeader]", items)
 
     # Act
     out = f.emit_section(proto_items)
@@ -124,10 +124,10 @@ def test_emit_qif_concatenates_selected_sections_in_order_and_ends_with_newline(
 
     t1, t2 = _StubTag("tag1"), _StubTag("tag2")
     items = [t1, t2]
-    proto_items = cast(list[ITag], items)
+    proto_items = cast("list[ITag]", items)
 
     c1 = _StubCategory("cat1")
-    c1_proto = cast(ICategory, c1)
+    c1_proto = cast("ICategory", c1)
 
     f.tags = proto_items
     f.categories = [c1_proto]
@@ -152,7 +152,7 @@ def test_emit_qif_can_emit_any_subset_of_sections_independently():
     # Only CATEGORIES selected
     f.sections = QuickenSections.CATEGORIES
     c1, c2 = _StubCategory("c1"), _StubCategory("c2")
-    f.categories = cast(list[ICategory], [c1, c2])
+    f.categories = cast("list[ICategory]", [c1, c2])
 
     # Act
     out = f.emit_qif()

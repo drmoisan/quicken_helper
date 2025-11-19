@@ -11,7 +11,12 @@ Features:
 from __future__ import annotations
 
 import types
-from collections.abc import Iterable as ABCIterable, Mapping as ABCMapping
+from collections.abc import (
+    Callable,
+    Iterable as ABCIterable,
+    Mapping,
+    Mapping as ABCMapping,
+)
 from dataclasses import fields, is_dataclass
 from decimal import Decimal
 from enum import Enum
@@ -20,11 +25,7 @@ from typing import (
     IO,
     Annotated,
     Any,
-    Callable,
-    Dict,
     Literal,
-    Mapping,
-    Optional,
     TypeGuard,
     TypeVar,
     Union,
@@ -41,7 +42,7 @@ from quicken_helper.utilities.converters_scalar import SCALAR_CONVERTERS
 # region Common functions
 
 
-def is_null_or_whitespace(s: Optional[str]) -> bool:
+def is_null_or_whitespace(s: str | None) -> bool:
     """Check if a string is None, empty, or consists only of whitespace."""
     return s is None or s.strip() == ""
 
@@ -63,7 +64,7 @@ def open_for_read(path: Path, binary: bool = False, **kwargs: Any) -> IO[Any]:
 
 # region Convert Protocol
 
-protocol_implementation: Dict[type, type] = {}
+protocol_implementation: dict[type, type] = {}
 
 
 # near the other helpers
@@ -162,14 +163,14 @@ E = TypeVar("E", bound=Enum)
 @overload
 def __convert_enum(target_type: type[E], value: E, /) -> E: ...
 @overload
-def __convert_enum(target_type: type[E], value: int, /) -> E: ...
+def __convert_enum[E: Enum](target_type: type[E], value: int, /) -> E: ...
 @overload
-def __convert_enum(target_type: type[E], value: str, /) -> E: ...
+def __convert_enum[E: Enum](target_type: type[E], value: str, /) -> E: ...
 @overload
-def __convert_enum(target_type: type[E], value: object, /) -> E: ...
+def __convert_enum[E: Enum](target_type: type[E], value: object, /) -> E: ...
 
 
-def __convert_enum(target_type: type[E], value: object, /) -> E:
+def __convert_enum[E: Enum](target_type: type[E], value: object, /) -> E:
     """
     Convert `value` to the given Enum subclass.
 
@@ -213,6 +214,7 @@ def _normalize_type(t: object) -> object:
       • a runtime type (e.g., int, Decimal, MyClass) → returned as-is
       • Annotated[X, ...] → returns X
       • a few string aliases ("int", "float", "str", "bool", "Decimal") → mapped
+      • Generic types (e.g., list[int], dict[str, Any]) → returned as-is
 
     Raises:
       TypeError if `t` cannot be normalized to a runtime type.
@@ -225,8 +227,8 @@ def _normalize_type(t: object) -> object:
             return base  # type: ignore[return-value]  # (Pylance usually infers fine)
         # Allow generic typing constructs to pass through (e.g., list[int], dict[str, Any], Union[..., ...])
         # so callers can continue to use get_origin/get_args on them downstream.
-        if get_origin(t) is not None:
-            return t
+        if get_origin(base) is not None:
+            return base
         raise TypeError(f"Cannot normalize to a runtime type: {t!r}")
 
     # Strings → a small safe mapping
@@ -247,6 +249,10 @@ def _normalize_type(t: object) -> object:
     if isinstance(t, type):
         return t
 
+    # Allow generic types like list[str], dict[str, int], Optional[int], etc.
+    if get_origin(t) is not None:
+        return t
+
     raise TypeError(f"Cannot normalize to a runtime type: {t!r}")
 
 
@@ -257,17 +263,17 @@ def _coerce_mapping_like(value: object, ctx: str) -> Mapping[object, object]:
     """
     if isinstance(value, ABCMapping):
         # Keys/values are unknown at this point; expose as Mapping[object, object]
-        return cast(Mapping[object, object], value)
+        return cast("Mapping[object, object]", value)
 
     if isinstance(value, ABCIterable):
         # Pylance wants an Iterable[tuple[object, object]], so we cast and validate via dict().
-        value_iter: ABCIterable[object] = cast(ABCIterable[object], value)
+        value_iter: ABCIterable[object] = cast("ABCIterable[object]", value)
         try:
             pairs_iter: ABCIterable[tuple[object, object]] = cast(
-                ABCIterable[tuple[object, object]], value_iter
+                "ABCIterable[tuple[object, object]]", value_iter
             )
             tmp = dict(pairs_iter)  # may raise if not (k, v) pairs
-            return cast(Mapping[object, object], tmp)
+            return cast("Mapping[object, object]", tmp)
         except Exception as e:
             raise TypeError(
                 f"Expected mapping or iterable of (key, value) pairs for {ctx}; got {type(value_iter).__name__}"
@@ -378,13 +384,13 @@ def convert_value(target_type: object, value: object) -> Any:
 def _is_mapping_of_str_any(m: object) -> TypeGuard[Mapping[str, Any]]:
     if not isinstance(m, Mapping):
         return False
-    nm: Mapping[object, Any] = cast(Mapping[object, Any], m)
+    nm: Mapping[object, Any] = cast("Mapping[object, Any]", m)
     return all(isinstance(k, str) for k in nm.keys())
 
 
 # Overloads give precise types to callers.
 @overload
-def from_dict(target_type: type[DC], src: Mapping[str, Any], /) -> DC: ...
+def from_dict[DC](target_type: type[DC], src: Mapping[str, Any], /) -> DC: ...
 @overload
 def from_dict(target_type: object, src: Any, /) -> Any: ...
 

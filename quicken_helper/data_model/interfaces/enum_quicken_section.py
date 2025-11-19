@@ -1,5 +1,5 @@
+from collections.abc import Iterable
 from enum import IntFlag, auto
-from typing import Iterable
 
 
 class QuickenSections(IntFlag):

@@ -279,7 +279,7 @@ def test_build_matched_only_txns_group_mode_includes_only_matched_txns():
 
     from quicken_helper.controllers.match_session import MatchSession
 
-    out = mx.build_matched_only_txns(cast(MatchSession, session))
+    out = mx.build_matched_only_txns(cast("MatchSession", session))
 
     assert len(out) == 1 and out[0]["amount"] == "-1.00"
 
@@ -312,7 +312,7 @@ def test_build_matched_only_txns_legacy_mode_filters_splits_and_includes_whole_t
 
     from quicken_helper.controllers.match_session import MatchSession
 
-    out = mx.build_matched_only_txns(cast(MatchSession, session))
+    out = mx.build_matched_only_txns(cast("MatchSession", session))
 
     assert len(out) == 2
     s0 = out[0]["splits"]

@@ -4,7 +4,7 @@ from __future__ import annotations
 from decimal import Decimal
 from math import isnan
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 from quicken_helper.utilities.excel_io import read_excel_df
 
@@ -19,17 +19,17 @@ class CategoryMatchSession:
       - mapping: excel_name -> qif_name
     """
 
-    def __init__(self, qif_cats: List[str], excel_cats: List[str]):
+    def __init__(self, qif_cats: list[str], excel_cats: list[str]):
         self.qif_cats = list(qif_cats)
         self.excel_cats = list(excel_cats)
-        self.mapping: Dict[str, str] = {}
+        self.mapping: dict[str, str] = {}
 
     def auto_match(self, threshold: float = 0.84):
         pairs, _, _ = fuzzy_autopairs(self.qif_cats, self.excel_cats, threshold)
         for qif_name, excel_name, _score in [(p[0], p[1], p[2]) for p in pairs]:
             self.mapping[excel_name] = qif_name
 
-    def manual_match(self, excel_name: str, qif_name: str) -> Tuple[bool, str]:
+    def manual_match(self, excel_name: str, qif_name: str) -> tuple[bool, str]:
         if excel_name not in self.excel_cats:
             return False, "Excel category not in list."
         if qif_name not in self.qif_cats:
@@ -44,7 +44,7 @@ class CategoryMatchSession:
     def manual_unmatch(self, excel_name: str) -> bool:
         return self.mapping.pop(excel_name, None) is not None
 
-    def unmatched(self) -> Tuple[List[str], List[str]]:
+    def unmatched(self) -> tuple[list[str], list[str]]:
         used_q = set(self.mapping.values())
         used_e = set(self.mapping.keys())
         uq = [q for q in self.qif_cats if q not in used_q]
@@ -54,7 +54,7 @@ class CategoryMatchSession:
     def apply_to_excel(
         self,
         xlsx_in: Path,
-        xlsx_out: Optional[Path] = None,
+        xlsx_out: Path | None = None,
         col_name: str = "Canonical MECE Category",
     ) -> Path:
         """

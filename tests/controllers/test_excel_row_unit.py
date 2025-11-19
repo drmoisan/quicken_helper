@@ -61,7 +61,7 @@ def test_excel_row_is_immutable_and_hashable():
     # Act / Assert immutability
     with pytest.raises(FrozenInstanceError):
         # Use setattr to avoid IDE “read-only” warning while still triggering runtime error
-        setattr(r, "idx", 9)
+        r.idx = 9
 
     # Act / Assert hashability (usable as dict key / set member)
     d = {r: "ok"}

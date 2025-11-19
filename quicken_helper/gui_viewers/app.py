@@ -64,7 +64,7 @@ class App(tk.Tk):
             tab_font = ("Segoe UI", 12, "bold")
 
         # Define a custom Notebook style so we can target its Tab style precisely
-        cast(Any, self.style).configure(
+        cast("Any", self.style).configure(
             "Custom.TNotebook",
             background="#d1d5db",
             borderwidth=2,
@@ -73,7 +73,7 @@ class App(tk.Tk):
         )
 
         # Tab base (unselected) appearance
-        cast(Any, self.style).configure(
+        cast("Any", self.style).configure(
             "Custom.TNotebook.Tab",
             font=tab_font,
             padding=(18, 10),
@@ -84,7 +84,7 @@ class App(tk.Tk):
         )
 
         # State-driven colors: selected and hover
-        cast(Any, self.style).map(
+        cast("Any", self.style).map(
             "Custom.TNotebook.Tab",
             background=[
                 ("selected", "#2563eb"),  # vivid blue when selected
@@ -110,7 +110,7 @@ class App(tk.Tk):
 
         # Dependency-injected messagebox wrapper; calls module functions at call time
         self.mb: MessageBoxAPI = cast(
-            MessageBoxAPI,
+            "MessageBoxAPI",
             (
                 messagebox_api
                 if messagebox_api is not None

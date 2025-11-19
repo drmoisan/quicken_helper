@@ -2,15 +2,11 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Mapping, Sequence
 from datetime import date, datetime
 from typing import (
     Any,
-    Dict,
-    List,
-    Mapping,
-    Optional,
     Protocol,
-    Sequence,
     cast,
     runtime_checkable,
 )
@@ -18,7 +14,7 @@ from typing import (
 # Project module is optional here; we use hasattr-guard in apply_multi_payee_filters
 from quicken_helper.legacy import qif_writer as mod
 
-TxnDict = Dict[str, Any]
+TxnDict = dict[str, Any]
 _DATE_FORMATS = ["%m/%d'%y", "%m/%d/%Y", "%Y-%m-%d"]
 
 
@@ -57,7 +53,7 @@ __all__ = [
 ]
 
 
-def parse_date_maybe(s: str) -> Optional[datetime]:
+def parse_date_maybe(s: str) -> datetime | None:
     s = (s or "").strip()
     if not s:
         return None
@@ -78,8 +74,8 @@ def parse_date_maybe(s: str) -> Optional[datetime]:
 
 def filter_date_range(
     txns: Sequence[TxnDict], start_str: str, end_str: str
-) -> List[TxnDict]:
-    def _d(s: str) -> Optional[date]:
+) -> list[TxnDict]:
+    def _d(s: str) -> date | None:
         parsed = parse_date_maybe(s)
         return parsed.date() if parsed else None
 
@@ -87,7 +83,7 @@ def filter_date_range(
     end = _d(end_str) if end_str else None
     if not start and not end:
         return list(txns)
-    out: List[TxnDict] = []
+    out: list[TxnDict] = []
     for t in txns:
         d = parse_date_maybe(str(t.get("date", "")).strip())
         if not d:
@@ -105,11 +101,11 @@ def local_filter_by_payee(
     query: str,
     mode: str = "contains",
     case_sensitive: bool = False,
-) -> List[TxnDict]:
+) -> list[TxnDict]:
     query_cmp = (
         query if (mode in {"regex", "glob"} or case_sensitive) else query.lower()
     )
-    out: List[TxnDict] = []
+    out: list[TxnDict] = []
     for t in txns:
         payee_raw = str(t.get("payee", ""))
         payee_cmp = (
@@ -149,12 +145,12 @@ def apply_multi_payee_filters(
     mode: str = "contains",
     case_sensitive: bool = False,
     combine: str = "any",
-) -> List[TxnDict]:
+) -> list[TxnDict]:
     queries = [q.strip() for q in queries if q and q.strip()]
     if not queries:
         return list(txns)
 
-    def run_filter(tlist: Sequence[TxnDict], q: str) -> List[TxnDict]:
+    def run_filter(tlist: Sequence[TxnDict], q: str) -> list[TxnDict]:
         tlist_materialized = list(tlist)
         if hasattr(mod, "filter_by_payee"):
             return [
@@ -171,7 +167,7 @@ def apply_multi_payee_filters(
 
     if combine == "any":
         seen: set[int] = set()
-        out: List[TxnDict] = []
+        out: list[TxnDict] = []
         for q in queries:
             subset = run_filter(txns, q)
             for t in subset:
@@ -181,7 +177,7 @@ def apply_multi_payee_filters(
                     out.append(t)
         return out
     else:
-        cur: List[TxnDict] = list(txns)
+        cur: list[TxnDict] = list(txns)
         for q in queries:
             cur = run_filter(cur, q)
         return cur
@@ -218,7 +214,7 @@ def fmt_txn(t: Any) -> str:
     """
     if not isinstance(t, Mapping):
         return str(t)
-    mapping = cast(Mapping[str, Any], t)
+    mapping = cast("Mapping[str, Any]", t)
 
     def g(k: str, d: str = "") -> str:
         return str(mapping.get(k, d) or "")
@@ -232,17 +228,17 @@ def fmt_txn(t: Any) -> str:
         f"Transfer Account: {g('transfer_account')}",
     ]
     splits_raw = mapping.get("splits")
-    splits: List[Mapping[str, Any]] = []
+    splits: list[Mapping[str, Any]] = []
     if isinstance(splits_raw, Sequence):
-        seq = cast(Sequence[Any], splits_raw)
+        seq = cast("Sequence[Any]", splits_raw)
         for entry in seq:
             entry_obj: Any = entry
             if isinstance(entry_obj, Mapping):
-                splits.append(cast(Mapping[str, Any], entry_obj))
+                splits.append(cast("Mapping[str, Any]", entry_obj))
             elif hasattr(entry_obj, "to_dict"):
                 converted = entry_obj.to_dict()  # type: ignore[attr-defined]
                 if isinstance(converted, Mapping):
-                    splits.append(cast(Mapping[str, Any], converted))
+                    splits.append(cast("Mapping[str, Any]", converted))
     if splits:
         lines.append("Splits:")
         for i, s in enumerate(splits, 1):
@@ -268,7 +264,7 @@ def fmt_excel_row(row: Any) -> str:
     candidate = row.to_dict() if hasattr(row, "to_dict") else row
     if not isinstance(candidate, Mapping):
         return str(candidate)
-    mapping = cast(Mapping[str, Any], candidate)
+    mapping = cast("Mapping[str, Any]", candidate)
 
     def g(c: str) -> str:
         return str(mapping.get(c, "") or "")
@@ -309,7 +305,7 @@ def _too_many_controls(s: str) -> bool:
     return controls / max(1, len(sample)) > 0.10
 
 
-def decode_best_effort(data: bytes) -> Optional[str]:
+def decode_best_effort(data: bytes) -> str | None:
     if _looks_binary(data):
         return None
     for enc in ("utf-8", "utf-16le", "utf-16be", "latin-1"):

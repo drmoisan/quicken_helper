@@ -766,8 +766,8 @@ def _install_project_stubs(monkeypatch, tmp_path=None):
     # ---- match_session (stub) ----
     ms = types.ModuleType(names["match_session"])
 
+    from collections.abc import Iterable
     from dataclasses import dataclass, field
-    from typing import Iterable, List, Tuple
 
     @dataclass(frozen=True)
     class _ExcelTxnStub:
@@ -779,7 +779,7 @@ def _install_project_stubs(monkeypatch, tmp_path=None):
         payee: str = ""
         memo: str = ""
         category: str = ""
-        splits: List[object] = field(default_factory=list)
+        splits: list[object] = field(default_factory=list)
 
     class MatchSession:
         """
@@ -795,20 +795,20 @@ def _install_project_stubs(monkeypatch, tmp_path=None):
         def __init__(self, bank_txns: Iterable[object], excel_txns: Iterable[object]):
             self.bank_txns = list(bank_txns)
             self.excel_txns = list(excel_txns)
-            self.pairs: List[Tuple[object, object]] = []
+            self.pairs: list[tuple[object, object]] = []
 
         def auto_match(self, *_a, **_k):
             if self.bank_txns and self.excel_txns:
                 self.pairs = [(self.bank_txns[0], self.excel_txns[0])]
 
         @property
-        def unmatched_bank(self) -> List[object]:
+        def unmatched_bank(self) -> list[object]:
             # Identity-based (no hashing of txn objects)
             matched_ids = {id(b) for b, _ in self.pairs}
             return [b for b in self.bank_txns if id(b) not in matched_ids]
 
         @property
-        def unmatched_excel(self) -> List[object]:
+        def unmatched_excel(self) -> list[object]:
             # Identity-based (no hashing of txn objects)
             matched_ids = {id(e) for _, e in self.pairs}
             return [e for e in self.excel_txns if id(e) not in matched_ids]
@@ -875,9 +875,9 @@ def _install_project_stubs(monkeypatch, tmp_path=None):
 
     # ----belt and suspenders: tag stubs for cleanup ----
     for _m in (ql, qw, mex, ms, cms):
-        setattr(_m, "_is_merge_tab_test_stub", True)
+        _m._is_merge_tab_test_stub = True
     if created_controllers:
-        setattr(controllers_mod, "_is_merge_tab_test_stub", True)
+        controllers_mod._is_merge_tab_test_stub = True
 
     # ---- bind subpackages on parent packages ----
     # Bind controllers submodules as attributes
@@ -1291,7 +1291,7 @@ def test_open_normalize_modal_headless_object_behaves(merge_mod, monkeypatch):
 
     # Use the session’s own unmatched sets (robust to stub changes)
     uq, ue = headless.unmatched()
-    assert isinstance(uq, (list, set)) and isinstance(ue, (list, set))
+    assert isinstance(uq, list | set) and isinstance(ue, list | set)
     # Pick any available names; if empty, skip matching step (still exercise pairs/apply)
     pre_pairs = list(headless.pairs())
     if ue and uq:

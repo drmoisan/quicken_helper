@@ -1,10 +1,11 @@
 # quicken_helper/data_model/excel/excel_transaction.py
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
-from typing import TYPE_CHECKING, List, Sequence
+from typing import TYPE_CHECKING
 
 from quicken_helper.utilities import to_decimal
 
@@ -230,7 +231,7 @@ def build_transaction_with_splits(
             setattr(txn, kvp[1], val)
 
     # Splits: one per row
-    split_list: List[ISplit] = []
+    split_list: list[ISplit] = []
     for r in group.rows:
         split: ExcelSplit = ExcelSplit()
         if r.category and r.category != defaults.category:

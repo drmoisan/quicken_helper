@@ -1,9 +1,10 @@
 # quicken_helper/qfx_to_txns.py
 from __future__ import annotations
 
+from collections.abc import Sequence
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Sequence, cast
+from typing import Any, cast
 
 
 def _to_date(s: str) -> str:
@@ -26,7 +27,7 @@ def _to_date(s: str) -> str:
 
 def _tx(
     amount: float, payee: str = "", memo: str = "", date: str = "", checknum: str = ""
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     # conform to your existing schema used in qif_to_csv paths
     return {
         "date": date,  # "mm/dd/YYYY"
@@ -40,7 +41,7 @@ def _tx(
     }
 
 
-def parse_qfx(path: Path | str) -> List[Dict[str, Any]]:
+def parse_qfx(path: Path | str) -> list[dict[str, Any]]:
     """
     Parse a QFX/OFX file into the same txns dict schema as parse_qif().
     Prefers ofxparse if installed; falls back to a light SGML parser.
@@ -52,13 +53,13 @@ def parse_qfx(path: Path | str) -> List[Dict[str, Any]]:
     try:
         import ofxparse  # type: ignore
 
-        parser_cls = cast(Any, getattr(ofxparse, "OfxParser", None))
+        parser_cls = cast("Any", getattr(ofxparse, "OfxParser", None))
         if parser_cls is None:
             raise ImportError("ofxparse.OfxParser is unavailable")
         with p.open("rb") as f:
             ofx_root: Any = parser_cls.parse(f)
-        out: List[Dict[str, Any]] = []
-        accounts = cast(Optional[Sequence[Any]], getattr(ofx_root, "accounts", None))
+        out: list[dict[str, Any]] = []
+        accounts = cast("Sequence[Any] | None", getattr(ofx_root, "accounts", None))
         if accounts:
             for acct in accounts:
                 statement = getattr(acct, "statement", None)
@@ -93,7 +94,7 @@ def parse_qfx(path: Path | str) -> List[Dict[str, Any]]:
     # We’ll scan for <STMTTRN> blocks and pick child tags we care about.
     # This won’t cover every OFX variant, but handles common QFX exports.
     lower = raw.lower()
-    out: List[Dict[str, Any]] = []
+    out: list[dict[str, Any]] = []
     start = 0
     while True:
         i = lower.find("<stmttrn>", start)
@@ -104,24 +105,24 @@ def parse_qfx(path: Path | str) -> List[Dict[str, Any]]:
             break
         block = raw[i:j]
 
-        def tagval(tag: str) -> str:
+        def tagval(tag: str, text_block: str) -> str:
             # <TAG>value on same line OR <TAG>value</TAG>
             # do a simple search ignoring case
             t = tag.lower()
-            k = block.lower().find(f"<{t}>")
+            k = text_block.lower().find(f"<{t}>")
             if k == -1:
                 return ""
             k2 = k + len(t) + 2
             # read to end of line or next angle bracket
-            end = block.find("<", k2)
-            val = block[k2:end] if end != -1 else block[k2:]
+            end = text_block.find("<", k2)
+            val = text_block[k2:end] if end != -1 else text_block[k2:]
             return val.strip()
 
-        amount_s = tagval("TRNAMT")
-        name = tagval("NAME")
-        memo = tagval("MEMO")
-        dtposted = tagval("DTPOSTED")
-        checknum = tagval("CHECKNUM")
+        amount_s = tagval("TRNAMT", block)
+        name = tagval("NAME", block)
+        memo = tagval("MEMO", block)
+        dtposted = tagval("DTPOSTED", block)
+        checknum = tagval("CHECKNUM", block)
 
         try:
             amt = float(amount_s.replace(",", ""))

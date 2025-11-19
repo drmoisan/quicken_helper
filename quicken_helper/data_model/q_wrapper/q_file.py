@@ -131,7 +131,7 @@ class QuickenFile:
     categories: list[ICategory] = field(default_factory=_empty_categories)
     accounts: list[IAccount] = field(default_factory=_empty_accounts)
     transactions: list[ITransaction] = field(default_factory=_empty_transactions)
-    emitter: "IParserEmitter[IQuickenFile] | None" = None
+    emitter: IParserEmitter[IQuickenFile] | None = None
 
     def emit_section(self, xs: Iterable[HasEmitQifWithHeader]) -> str:
         # texts_iter = map(lambda x: x[1].emit_qif(with_header=(x[0] == 0)), enumerate(xs))
@@ -175,11 +175,11 @@ class QuickenFile:
             lines.append(self.emit_section(self.categories))
         if self.sections.has_flag(QuickenSections.ACCOUNTS):
             lines.append(
-                self.emit_section(cast(list[HasEmitQifWithHeader], self.accounts))
+                self.emit_section(cast("list[HasEmitQifWithHeader]", self.accounts))
             )
         if self.sections.has_flag(QuickenSections.TRANSACTIONS):
             lines.append(
-                self.emit_section(cast(list[HasEmitQifWithHeader], self.transactions))
+                self.emit_section(cast("list[HasEmitQifWithHeader]", self.transactions))
             )
         return "\n".join(lines)  # Ensure file ends with newline
 

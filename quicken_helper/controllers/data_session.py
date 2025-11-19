@@ -5,7 +5,6 @@ import logging
 import logging.config
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
 
 from quicken_helper.controllers import match_excel as mex
 from quicken_helper.controllers.qif_loader import load_transactions_protocol
@@ -49,10 +48,10 @@ class DataSession:
     • Provide lightweight invalidation when file paths change.
     """
 
-    qif_path: Optional[Path] = None
+    qif_path: Path | None = None
     qif_txns: list[ITransaction] = field(default_factory=_empty_txn_list)
 
-    excel_path: Optional[Path] = None
+    excel_path: Path | None = None
     excel_rows: list[ExcelRow] = field(default_factory=_empty_excel_row_list)
     excel_groups: list[ExcelTxnGroup] = field(default_factory=_empty_excel_group_list)
     excel_txns: list[ExcelTransaction] = field(default_factory=_empty_excel_txn_list)

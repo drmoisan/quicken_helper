@@ -71,7 +71,7 @@ def detect_system_font_scale(default: float = 1.0) -> float:
             screen = NSScreen.mainScreen() or (NSScreen.screens()[0] if NSScreen.screens() else None)  # type: ignore
             if screen is not None:
                 scale = screen.backingScaleFactor()  # type: ignore[attr-defined]
-                if isinstance(scale, (int, float)) and scale > 0:
+                if isinstance(scale, int | float) and scale > 0:
                     return float(scale)
         except Exception:
             pass

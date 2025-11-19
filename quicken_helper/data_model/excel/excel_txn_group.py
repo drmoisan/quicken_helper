@@ -3,7 +3,6 @@ from __future__ import annotations
 from _decimal import Decimal
 from dataclasses import dataclass
 from datetime import date
-from typing import Tuple
 
 from quicken_helper.data_model.excel.excel_row import ExcelRow
 
@@ -18,4 +17,4 @@ class ExcelTxnGroup:
     gid: str
     date: date
     total_amount: Decimal
-    rows: Tuple[ExcelRow, ...]  # immutable tuple for safety
+    rows: tuple[ExcelRow, ...]  # immutable tuple for safety

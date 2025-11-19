@@ -24,8 +24,9 @@ import math
 import os
 import sys
 import zlib
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Final, Iterator, List, Optional, Tuple
+from typing import Final
 
 try:
     import zipfile
@@ -165,8 +166,8 @@ def count_qif_transactions(qif_path: Path) -> int:
 
 
 def run_probe(
-    qdx: Path, qif: Optional[Path] = None, out: Optional[Path] = None
-) -> Tuple[str, List[Path]]:
+    qdx: Path, qif: Path | None = None, out: Path | None = None
+) -> tuple[str, list[Path]]:
     """
     Run the QDX structural probe and return:
       - report_text: str
@@ -178,10 +179,10 @@ def run_probe(
     import io
 
     data = read_bytes(qdx)
-    artifacts: List[Path] = []
+    artifacts: list[Path] = []
 
-    out_dir: Optional[Path] = None
-    out_report: Optional[Path] = None
+    out_dir: Path | None = None
+    out_report: Path | None = None
     if out:
         if out.suffix.lower() == ".txt":
             out_report = out

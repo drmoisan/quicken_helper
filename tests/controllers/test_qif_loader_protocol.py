@@ -5,7 +5,6 @@ from dataclasses import dataclass, field
 from datetime import date
 from decimal import Decimal
 from pathlib import Path
-from typing import List, Optional
 
 import pytest
 
@@ -31,15 +30,15 @@ class _StubTxn:
     cleared: EnumClearedStatus = field(
         default_factory=lambda: EnumClearedStatus.UNKNOWN
     )
-    splits: Optional[List] = None
-    action: Optional[str] = None
+    splits: list | None = None
+    action: str | None = None
 
 
 @dataclass
 class _StubFile:
     """Lightweight file stub exposing the single attribute the loader consumes."""
 
-    transactions: List[_StubTxn] = field(default_factory=list)
+    transactions: list[_StubTxn] = field(default_factory=list)
 
 
 # ---- Tests -------------------------------------------------------------------

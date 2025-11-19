@@ -5,7 +5,7 @@ import logging.config
 import re
 from collections.abc import Callable
 from itertools import pairwise  # Python 3.10+
-from typing import TYPE_CHECKING, Any, Dict, List, Tuple
+from typing import TYPE_CHECKING, Any
 
 from pyparsing import Empty
 
@@ -214,7 +214,7 @@ class QifFileParserEmitter(GenericParserEmitter[IQuickenFile]):
         cuts = [-1] + [i for i, ln in enumerate(lines) if ln == "^"] + [len(lines)]
         return [
             lines[i + 1 : j]
-            for i, j in zip(cuts, cuts[1:])
+            for i, j in zip(cuts, cuts[1:], strict=False)
             if keep_empty or (i + 1 < j)
         ]
 
@@ -410,7 +410,7 @@ class QifFileParserEmitter(GenericParserEmitter[IQuickenFile]):
         ]
         return tags
 
-    def _normalize_group_0(self, text: str) -> Tuple[IAccount, IHeader] | None:
+    def _normalize_group_0(self, text: str) -> tuple[IAccount, IHeader] | None:
         account_map = self._FIELD_MAP.get("Account", {})
         lines = text.splitlines()
         cleaned_lines = self._preprocess_section(lines, drop_if_contains=["!Account"])
@@ -432,8 +432,8 @@ class QifFileParserEmitter(GenericParserEmitter[IQuickenFile]):
         return entries
 
     def _normalize_group(
-        self, group: Tuple[str, str]
-    ) -> list[Tuple[IAccount, IHeader, list[str]]]:
+        self, group: tuple[str, str]
+    ) -> list[tuple[IAccount, IHeader, list[str]]]:
         null0 = is_null_or_whitespace(group[0])
         null1 = is_null_or_whitespace(group[1])
         if null0 and null1:
@@ -456,7 +456,7 @@ class QifFileParserEmitter(GenericParserEmitter[IQuickenFile]):
             )
             return []
 
-        x: Tuple[IAccount, IHeader] | None = self._normalize_group_0(group[0])
+        x: tuple[IAccount, IHeader] | None = self._normalize_group_0(group[0])
         if x is None:
             return []
         account, header = x
@@ -464,7 +464,7 @@ class QifFileParserEmitter(GenericParserEmitter[IQuickenFile]):
         transaction_tuples = [(account, header, entry) for entry in entries if entry]
         return transaction_tuples
 
-    def _extract_transaction_groups(self, text: str) -> List[Tuple[str, str]]:
+    def _extract_transaction_groups(self, text: str) -> list[tuple[str, str]]:
         """
         Return [(group1, group2), ...] for each match of the pattern.
         """
@@ -473,9 +473,9 @@ class QifFileParserEmitter(GenericParserEmitter[IQuickenFile]):
     def _parse_transaction_entry(
         self,
         field_map: dict[str, str],
-        entry: Tuple[IAccount, IHeader, list[str]],
+        entry: tuple[IAccount, IHeader, list[str]],
     ) -> ITransaction | None:
-        rec: Dict[str, Any] = {}
+        rec: dict[str, Any] = {}
         rec["account"] = entry[0]
         rec["type"] = entry[1]
         lines = entry[2]
@@ -483,7 +483,7 @@ class QifFileParserEmitter(GenericParserEmitter[IQuickenFile]):
         split_map = self._FIELD_MAP.get("Split", {})
         is_security_transaction = rec["type"].code.lower().startswith("!type:invst")
         security_data: dict[str, Any] = {}
-        splits: List[RecursiveDictStr] = []
+        splits: list[RecursiveDictStr] = []
         pending_split: dict[str, Any] | None = None
 
         for line in lines:
@@ -533,7 +533,7 @@ class QifFileParserEmitter(GenericParserEmitter[IQuickenFile]):
                 )
                 raise ValueError(
                     f"Error constructing ISplit from data {splits}\nException: {e}"
-                )
+                ) from e
         if is_security_transaction and security_data:
             try:
                 rec["_security"] = from_dict(QTag, security_data)
@@ -543,7 +543,7 @@ class QifFileParserEmitter(GenericParserEmitter[IQuickenFile]):
                 )
                 raise ValueError(
                     f"Error constructing ISecurity from data {security_data}\nException: {e}"
-                )
+                ) from e
 
         if "cleared" not in rec:
             rec["cleared"] = EnumClearedStatus.NOT_CLEARED

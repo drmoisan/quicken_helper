@@ -11,7 +11,6 @@ Policy adherence:
 """
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple
 
 from quicken_helper.utilities.core_util import from_dict
 
@@ -32,10 +31,10 @@ class Parent:
 
     name: str
     child: Child
-    tags: List[str]
-    coords: Tuple[int, int]
-    meta: Dict[str, int]
-    maybe: Optional[int] = None
+    tags: list[str]
+    coords: tuple[int, int]
+    meta: dict[str, int]
+    maybe: int | None = None
 
 
 @dataclass
@@ -43,7 +42,7 @@ class WithListOfChildren:
     """Dataclass with a list of nested dataclasses."""
 
     title: str
-    children: List[Child] = field(default_factory=list)
+    children: list[Child] = field(default_factory=list)
 
 
 # --------------------------------- Tests -----------------------------------

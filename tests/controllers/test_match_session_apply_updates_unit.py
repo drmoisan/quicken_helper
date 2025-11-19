@@ -3,7 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
-from typing import List, Optional
 
 import pytest
 
@@ -22,7 +21,7 @@ class StubTxn:
     payee: str = ""
     memo: str = ""
     category: str = ""
-    splits: Optional[List[dict]] = None
+    splits: list[dict] | None = None
 
 
 # ---------- Fixtures ----------------------------------------------------------
