@@ -6,6 +6,16 @@ from datetime import date, datetime, time, timedelta
 from decimal import Decimal, InvalidOperation
 from typing import Any, Dict, Final, Optional, overload
 
+__all__ = [
+    "to_datetime",
+    "to_decimal",
+    "clean_number_like_string",
+    "to_date",
+    "_to_date",
+    "SCALAR_CONVERTERS",
+    "default_date",
+]
+
 
 def _bad(value: Any, target: str) -> ValueError:
     return ValueError(f"Cannot convert {type(value).__name__} to {target}")
@@ -290,7 +300,7 @@ def to_date(s: object, should_raise: bool = True, /) -> date:
         return _DEFAULT_DATE
 
     # Normalize curly/back quotes used in some exports
-    txt = txt.replace("’", "'").replace("`", "'")
+    txt = txt.replace("\u2019", "'").replace("`", "'")
 
     # If it's a full ISO datetime, try Python's ISO parser (ignore time/offset).
     if "T" in txt:
@@ -381,14 +391,8 @@ def to_date(s: object, should_raise: bool = True, /) -> date:
     return _DEFAULT_DATE
 
 
-def _to_date(value: object) -> date:
-    """
-    Backwards-compatible alias retained for legacy imports/tests.
-
-    New code should call ``to_date`` directly.
-    """
-
-    return to_date(value)
+# Backwards-compatible alias retained for legacy imports/tests.
+_to_date = to_date
 
 
 _DATE_RE_01: Final[re.Pattern[str]] = re.compile(
