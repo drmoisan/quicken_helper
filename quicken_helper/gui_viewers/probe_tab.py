@@ -9,9 +9,9 @@ import sys
 import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, ttk
-from typing import Optional
 
 from quicken_helper.gui_viewers.helpers import decode_best_effort
+from quicken_helper.gui_viewers.message_box_api import MessageBoxAPI
 from quicken_helper.legacy import qdx_probe
 from quicken_helper.utilities import LOGGING
 
@@ -22,19 +22,24 @@ log = logging.getLogger(__name__)
 class ProbeTab(ttk.Frame):
     """Primary function: Run QDX probe and preview artifacts."""
 
-    def __init__(self, master, mb):
+    def __init__(self, master: tk.Misc, mb: MessageBoxAPI):
+        """Initialize the ProbeTab UI.
+
+        Args:
+            master: The parent Tkinter widget.
+            mb: MessageBox API for showing dialogs.
+        """
         super().__init__(master)
         self.mb = mb
         self._build()
 
     def _build(self):
-        pad = {"padx": 8, "pady": 6}
         self.p_qdx = tk.StringVar()
         self.p_qif = tk.StringVar()
         self.p_out = tk.StringVar()
 
         files = ttk.LabelFrame(self, text="Files")
-        files.pack(fill="x", **pad)
+        files.pack(fill="x", padx=8, pady=6)
         ttk.Label(files, text="QDX file:").grid(row=0, column=0, sticky="w")
         ttk.Entry(files, textvariable=self.p_qdx, width=90).grid(
             row=0, column=1, sticky="we", padx=5
@@ -59,13 +64,13 @@ class ProbeTab(ttk.Frame):
         files.columnconfigure(1, weight=1)
 
         actions = ttk.Frame(self)
-        actions.pack(fill="x", **pad)
+        actions.pack(fill="x", padx=8, pady=6)
         ttk.Button(actions, text="Run Probe", command=self._p_run_probe).pack(
             side="left"
         )
 
         res = ttk.Frame(self)
-        res.pack(fill="both", expand=True, **pad)
+        res.pack(fill="both", expand=True, padx=8, pady=6)
         left = ttk.LabelFrame(res, text="Report")
         left.pack(side="left", fill="both", expand=True, padx=4, pady=4)
         self.p_report = tk.Text(left, wrap="word")
@@ -141,12 +146,21 @@ class ProbeTab(ttk.Frame):
             log.exception("ProbeTab._p_run_probe failed")
             self.mb.showerror("Error", str(e))
 
-    def _p_selected_artifact(self) -> Optional[Path]:
-        sel = self.p_artifacts.curselection()
+    def _p_selected_artifact(self) -> Path | None:
+        """Get the currently selected artifact path from the listbox.
+
+        Returns:
+            The selected artifact Path, or None if no selection.
+        """
+        sel: tuple[int, ...] = self.p_artifacts.curselection()  # type: ignore[assignment]
         if not sel:
             return None
         try:
-            return Path(self.p_artifacts.get(sel[0]))
+            item: str | tuple[str, ...] = self.p_artifacts.get(sel[0])  # type: ignore[assignment]
+            # get() returns str | tuple[str, ...] depending on arguments
+            if isinstance(item, tuple):
+                item = item[0] if item else ""
+            return Path(str(item))
         except Exception:
             return None
 
