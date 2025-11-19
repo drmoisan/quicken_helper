@@ -556,7 +556,9 @@ class MergeTab(ttk.Frame):
         # ----- Matched pairs -----
         try:
             # Stable sort by (bank date, excel date, bank amount) for deterministic UI/tests
-            def _pair_key(t):
+            def _pair_key(
+                t: tuple[ITransaction, ITransaction],
+            ) -> tuple[str, str, str]:
                 b, e = t
                 b_d = getattr(b, "date", None)
                 e_d = getattr(e, "date", None)
@@ -597,7 +599,7 @@ class MergeTab(ttk.Frame):
         # ----- Unmatched QIF (bank side) -----
         try:
 
-            def _bank_key(t):
+            def _bank_key(t: ITransaction) -> tuple[str, str, str]:
                 d = getattr(t, "date", None)
                 ds = d.isoformat() if d else ""
                 return (ds, str(getattr(t, "amount", "")), getattr(t, "payee", ""))
@@ -621,7 +623,7 @@ class MergeTab(ttk.Frame):
         # ----- Unmatched Excel (excel side) -----
         try:
 
-            def _excel_key(t):
+            def _excel_key(t: ITransaction) -> tuple[str, str, str]:
                 """Deterministic sort key for Excel-side ITransaction objects."""
                 d = getattr(t, "date", None)
                 ds = d.isoformat() if d else ""
