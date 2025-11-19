@@ -25,9 +25,6 @@ from pathlib import Path
 # --- Loading Excel (rows, then grouped by TxnID) ----------------------------
 from typing import IO, Any, Callable, Dict, List, Sequence, Tuple, cast
 
-import pandas as pd
-from pandas import DataFrame
-
 # We re-use your parser and writer
 # from . import qif_to_csv as base
 from quicken_helper.controllers import match_helpers as legacy_match_helpers
@@ -37,6 +34,7 @@ from quicken_helper.data_model.excel.excel_row import ExcelRow
 from quicken_helper.data_model.excel.excel_txn_group import ExcelTxnGroup
 from quicken_helper.data_model.interfaces import ISplit, ITransaction
 from quicken_helper.legacy.qif_item_key import QIFItemKey
+from quicken_helper.utilities.excel_io import read_excel_df
 
 # from match_session import MatchSession
 from quicken_helper.utilities import to_date, to_decimal
@@ -90,18 +88,6 @@ def build_session_from_paths(
     rows = load_excel_rows(excel_path)  # existing loader
     groups = group_excel_rows(rows)  # existing grouper
     return make_session(bank_txns, groups, min_score_default=min_score_default)
-
-
-def read_excel_df(io: Any, *, sheet_name: int | str = 0, **kw: Any) -> DataFrame:
-    """Helper method to read from an excel file in a typesafe manner"""
-    pd_any: Any = pd
-    try:
-        return pd_any.read_excel(io, sheet_name=sheet_name, **kw)
-    except TypeError as exc:
-        # Allow simple lambdas/fixtures that only accept the path argument.
-        if "sheet_name" in str(exc) and not kw:
-            return pd_any.read_excel(io)
-        raise
 
 
 def load_excel_rows(path: Path) -> List[ExcelRow]:

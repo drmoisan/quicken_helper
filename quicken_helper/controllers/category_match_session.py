@@ -7,6 +7,7 @@ from typing import Dict, List, Optional, Tuple
 import pandas as pd
 
 from .match_excel import fuzzy_autopairs
+from quicken_helper.utilities.excel_io import read_excel_df
 
 
 class CategoryMatchSession:
@@ -59,7 +60,7 @@ class CategoryMatchSession:
         Writes a new Excel with the Canonical MECE Category values replaced by
         mapped QIF names where a mapping exists. Unmapped rows remain unchanged.
         """
-        df = pd.read_excel(xlsx_in)
+        df = read_excel_df(xlsx_in)
         if col_name not in df.columns:
             raise ValueError(f"Excel missing '{col_name}' column.")
 
