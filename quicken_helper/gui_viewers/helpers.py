@@ -3,7 +3,17 @@ from __future__ import annotations
 
 import re
 from datetime import date, datetime
-from typing import Any, Dict, List, Mapping, Optional, Sequence, cast
+from typing import (
+    Any,
+    Dict,
+    List,
+    Mapping,
+    Optional,
+    Protocol,
+    Sequence,
+    cast,
+    runtime_checkable,
+)
 
 # Project module is optional here; we use hasattr-guard in apply_multi_payee_filters
 from quicken_helper.legacy import qif_writer as mod
@@ -11,15 +21,39 @@ from quicken_helper.legacy import qif_writer as mod
 TxnDict = Dict[str, Any]
 _DATE_FORMATS = ["%m/%d'%y", "%m/%d/%Y", "%Y-%m-%d"]
 
+
+# ============================================================================
+# Widget Protocols for Helper Functions
+# ============================================================================
+
+
+@runtime_checkable
+class TextWidgetProtocol(Protocol):
+    """Protocol for Text widget operations used by helper functions."""
+
+    def configure(self, **kwargs: Any) -> Any:
+        """Configure widget options."""
+        ...
+
+    def delete(self, index1: str, index2: str | None = None) -> None:
+        """Delete text from the widget."""
+        ...
+
+    def insert(self, index: str, chars: str, *args: Any) -> None:
+        """Insert text into the widget."""
+        ...
+
+
 __all__ = [
     "parse_date_maybe",
     "filter_date_range",
     "local_filter_by_payee",
     "apply_multi_payee_filters",
-    "_set_text",
-    "_fmt_txn",
-    "_fmt_excel_row",
+    "set_text",  # Public name
+    "fmt_txn",  # Public name
+    "fmt_excel_row",  # Public name
     "decode_best_effort",
+    "TextWidgetProtocol",
 ]
 
 
@@ -153,7 +187,13 @@ def apply_multi_payee_filters(
         return cur
 
 
-def _set_text(widget: Any, text: str) -> None:
+def set_text(widget: TextWidgetProtocol, text: str) -> None:
+    """Set text in a Text widget, temporarily enabling it if disabled.
+
+    Args:
+        widget: A Text widget supporting configure, delete, and insert operations.
+        text: The text content to set in the widget.
+    """
     try:
         widget.configure(state="normal")
         widget.delete("1.0", "end")
@@ -163,7 +203,19 @@ def _set_text(widget: Any, text: str) -> None:
         pass
 
 
-def _fmt_txn(t: Any) -> str:
+# Backward compatibility alias
+_set_text = set_text
+
+
+def fmt_txn(t: Any) -> str:
+    """Format a transaction for display in a Text widget.
+
+    Args:
+        t: A transaction object (dict or ITransaction-like) with date, amount, payee, etc.
+
+    Returns:
+        A formatted string representation of the transaction.
+    """
     if not isinstance(t, Mapping):
         return str(t)
     mapping = cast(Mapping[str, Any], t)
@@ -200,7 +252,19 @@ def _fmt_txn(t: Any) -> str:
     return "\n".join(lines)
 
 
-def _fmt_excel_row(row: Any) -> str:
+# Backward compatibility alias
+_fmt_txn = fmt_txn
+
+
+def fmt_excel_row(row: Any) -> str:
+    """Format an Excel row for display in a Text widget.
+
+    Args:
+        row: An Excel row object (dict or ExcelRow-like) with transaction data.
+
+    Returns:
+        A formatted string representation of the Excel row.
+    """
     candidate = row.to_dict() if hasattr(row, "to_dict") else row
     if not isinstance(candidate, Mapping):
         return str(candidate)
@@ -217,6 +281,10 @@ def _fmt_excel_row(row: Any) -> str:
         "Categorization Rationale",
     ]
     return "\n".join(f"{c}: {g(c)}" for c in cols)
+
+
+# Backward compatibility alias
+_fmt_excel_row = fmt_excel_row
 
 
 # ---------- probe helpers ----------

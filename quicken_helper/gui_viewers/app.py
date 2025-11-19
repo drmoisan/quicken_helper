@@ -6,7 +6,7 @@ import logging.config
 import tkinter as tk
 from tkinter import font as tkfont, messagebox, ttk
 from types import SimpleNamespace
-from typing import Any, Optional, cast
+from typing import Any, cast
 
 from quicken_helper.controllers.data_session import DataSession
 from quicken_helper.gui_viewers.convert_tab import ConvertTab
@@ -29,7 +29,13 @@ class App(tk.Tk):
     For test-compatibility, we expose a few legacy attributes and methods.
     """
 
-    def __init__(self, messagebox_api: Optional[MessageBoxAPI] = None):
+    def __init__(self, messagebox_api: MessageBoxAPI | None = None):
+        """Initialize the main application window.
+
+        Args:
+            messagebox_api: Optional MessageBox API for dependency injection.
+                           If None, uses standard tkinter messagebox functions.
+        """
         super().__init__()
         # NEW: auto font scaling
         try:

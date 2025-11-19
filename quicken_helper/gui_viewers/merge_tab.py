@@ -23,7 +23,8 @@ from quicken_helper.data_model.excel import (
 from quicken_helper.gui_viewers.category_popout import (
     open_normalize_modal as open_category_popout,
 )
-from quicken_helper.gui_viewers.helpers import _fmt_excel_row, _fmt_txn, _set_text
+from quicken_helper.gui_viewers.helpers import fmt_excel_row, fmt_txn, set_text
+from quicken_helper.gui_viewers.message_box_api import MessageBoxAPI
 
 # import qif_item_key
 from quicken_helper.utilities import LOGGING
@@ -42,11 +43,18 @@ class _ListColumn:
 class MergeTab(ttk.Frame):
     """Primary function: Excel ↔ QIF merge + manual matching + previews."""
 
-    def __init__(self, master, mb, session: DataSession | None = None):
+    def __init__(
+        self, master: tk.Misc, mb: MessageBoxAPI, session: DataSession | None = None
+    ):
         """Initialize UI state, bind actions, and prepare empty `MatchSession`.
 
         Does not perform any I/O. File selection or drag-drop handlers call
         the loader methods to populate the session.
+
+        Args:
+            master: The parent Tkinter widget.
+            mb: MessageBox API for showing dialogs.
+            session: Optional DataSession for shared data access.
         """
         super().__init__(master)
         self.mb = mb
@@ -106,9 +114,8 @@ class MergeTab(ttk.Frame):
         self.m_preview_var = tk.BooleanVar(value=False)
 
     def _build_files_section(self) -> None:
-        pad = {"padx": 8, "pady": 6}
         files = ttk.LabelFrame(self, text="Files")
-        files.pack(fill="x", **pad)
+        files.pack(fill="x", padx=8, pady=6)
 
         ttk.Label(files, text="Input QIF:").grid(row=0, column=0, sticky="w")
         ttk.Entry(files, textvariable=self.m_qif_in, width=90).grid(
@@ -150,9 +157,8 @@ class MergeTab(ttk.Frame):
         ).pack(side="left", padx=(12, 0))
 
     def _build_actions_section(self) -> None:
-        pad = {"padx": 8, "pady": 6}
         actions = ttk.Frame(self)
-        actions.pack(fill="x", **pad)
+        actions.pack(fill="x", padx=8, pady=6)
         ttk.Button(actions, text="Load", command=self._m_load).pack(side="left")
         ttk.Button(actions, text="Auto-Match", command=self._m_auto_match).pack(
             side="left", padx=6
@@ -167,9 +173,8 @@ class MergeTab(ttk.Frame):
         ).pack(side="right")
 
     def _build_lists_section(self) -> None:
-        pad = {"padx": 8, "pady": 6}
         lists = ttk.Frame(self)
-        lists.pack(fill="both", expand=True, **pad)
+        lists.pack(fill="both", expand=True, padx=8, pady=6)
 
         # Build columns via reusable helper and attach to self
         left = self._build_list_column(lists, "Unmatched QIF items", "unmatched_qif")
@@ -184,9 +189,8 @@ class MergeTab(ttk.Frame):
         self.lbx_unx, self.prev_unx = right.listbox, right.preview
 
     def _build_footer_section(self) -> None:
-        pad = {"padx": 8, "pady": 6}
         foot = ttk.Frame(self)
-        foot.pack(fill="x", **pad)
+        foot.pack(fill="x", padx=8, pady=6)
         ttk.Button(foot, text="Match Selected →", command=self._m_manual_match).pack(
             side="left"
         )
@@ -198,9 +202,8 @@ class MergeTab(ttk.Frame):
         )
 
     def _build_info_section(self) -> None:
-        pad = {"padx": 8, "pady": 6}
         infof = ttk.LabelFrame(self, text="Info")
-        infof.pack(fill="x", **pad)
+        infof.pack(fill="x", padx=8, pady=6)
         self.txt_info = tk.Text(infof, height=6, wrap="word")
         self.txt_info.pack(fill="x", padx=8, pady=6)
 
@@ -220,7 +223,7 @@ class MergeTab(ttk.Frame):
         return f"{d.month:02d}/{d.day:02d}/{d.year:04d}"
 
     @staticmethod
-    def _cleared_to_char(val) -> str:
+    def _cleared_to_char(val: Any) -> str:
         """
         Map a cleared-like value to a single display char without assuming the value is hashable.
         Accepts:
@@ -235,10 +238,12 @@ class MergeTab(ttk.Frame):
             name = val
         else:
             # Enum-like or other object: prefer .name; fallback to str()
-            name = getattr(val, "name", None)
-            if name is None:
+            name_attr: str | None = getattr(val, "name", None)
+            if name_attr is None:
                 # Some stubs stringify to something useful, e.g. "EnumClearedStatus.NO"
                 name = str(val)
+            else:
+                name = name_attr
         name = (name or "").strip().upper()
 
         # Common “uncleared/unknown” cases
@@ -652,9 +657,9 @@ class MergeTab(ttk.Frame):
                 # Unmatched QIF preview
                 if self._unqif_sorted:
                     _bi, b = self._unqif_sorted[0]
-                    _set_text(
+                    set_text(
                         self.prev_unqif,
-                        _fmt_txn(
+                        fmt_txn(
                             {
                                 "date": (
                                     getattr(b, "date", None).isoformat()
@@ -672,9 +677,9 @@ class MergeTab(ttk.Frame):
                 if self._unx_sorted:
                     _ei, e = self._unx_sorted[0]
                     first = (getattr(e, "splits", None) or [None])[0]
-                    _set_text(
+                    set_text(
                         self.prev_unx,
-                        _fmt_excel_row(
+                        fmt_excel_row(
                             {
                                 "TxnID": getattr(e, "id", "") or "",
                                 "Date": (
@@ -735,12 +740,12 @@ class MergeTab(ttk.Frame):
                         "category": getattr(b, "category", "") or "",
                         "memo": getattr(b, "memo", "") or "",
                     }
-                    _set_text(
+                    set_text(
                         self.prev_pairs,
                         "[Excel]\n"
-                        + _fmt_excel_row(excel_view)
+                        + fmt_excel_row(excel_view)
                         + "\n\n[QIF]\n"
-                        + _fmt_txn(qif_view),
+                        + fmt_txn(qif_view),
                     )
             except Exception:
                 # Preview is non-critical; ignore errors to keep UI stable
@@ -798,12 +803,12 @@ class MergeTab(ttk.Frame):
             if which == "unqif":
                 idxs = self.lbx_unqif.curselection()
                 if not idxs:
-                    _set_text(self.prev_unqif, "")
+                    set_text(self.prev_unqif, "")
                     return
                 _bi, b = self._unqif_sorted[idxs[0]]
-                _set_text(
+                set_text(
                     self.prev_unqif,
-                    _fmt_txn(
+                    fmt_txn(
                         {
                             "date": b.date.isoformat(),
                             "amount": str(getattr(b, "amount", "")),
@@ -817,13 +822,13 @@ class MergeTab(ttk.Frame):
             elif which == "unx":
                 idxs = self.lbx_unx.curselection()
                 if not idxs:
-                    _set_text(self.prev_unx, "")
+                    set_text(self.prev_unx, "")
                     return
                 _ei, e = self._unx_sorted[idxs[0]]
                 first = (e.splits or [None])[0]
-                _set_text(
+                set_text(
                     self.prev_unx,
-                    _fmt_excel_row(
+                    fmt_excel_row(
                         {
                             "TxnID": getattr(e, "id", ""),
                             "Date": e.date.isoformat(),
@@ -841,7 +846,7 @@ class MergeTab(ttk.Frame):
             elif which == "pairs":
                 idxs = self.lbx_pairs.curselection()
                 if not idxs:
-                    _set_text(self.prev_pairs, "")
+                    set_text(self.prev_pairs, "")
                     return
                 _bi, _ei, b, e = self._pairs_sorted[idxs[0]]
                 excel_row = {
@@ -866,12 +871,12 @@ class MergeTab(ttk.Frame):
                     "category": getattr(b, "category", ""),
                     "memo": getattr(b, "memo", ""),
                 }
-                _set_text(
+                set_text(
                     self.prev_pairs,
                     "[Excel]\n"
-                    + _fmt_excel_row(excel_row)
+                    + fmt_excel_row(excel_row)
                     + "\n\n[QIF]\n"
-                    + _fmt_txn(qif_tx),
+                    + fmt_txn(qif_tx),
                 )
         except Exception as e:
             try:
