@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date
 from decimal import Decimal
 
@@ -8,6 +8,15 @@ import pytest
 
 # System under test (new, protocol-only API)
 from quicken_helper.controllers.match_session import MatchSession
+
+# Import interfaces for type annotations
+from quicken_helper.data_model import (
+    EnumClearedStatus,
+    IAccount,
+    IHeader,
+    QAccount,
+    QifHeader,
+)
 
 # ---------- Minimal protocol-shaped stub --------------------------------------
 
@@ -22,6 +31,17 @@ class StubTxn:
     memo: str = ""
     category: str = ""
     splits: list[dict] | None = None
+    # Required by ITransaction protocol
+    account: IAccount = field(
+        default_factory=lambda: QAccount(name="", type="", description="")
+    )
+    type: IHeader = field(
+        default_factory=lambda: QifHeader(code="", description="", type="")
+    )
+    action_chk: str = ""
+    cleared: EnumClearedStatus = field(
+        default_factory=lambda: EnumClearedStatus.NOT_CLEARED
+    )
 
 
 # ---------- Fixtures ----------------------------------------------------------

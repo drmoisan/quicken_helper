@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date
 from decimal import Decimal
 
@@ -9,16 +9,36 @@ import pytest
 # System under test
 import quicken_helper.controllers.match_session as ms
 
+# Import interfaces for type annotations
+from quicken_helper.data_model import (
+    EnumClearedStatus,
+    IAccount,
+    IHeader,
+    QAccount,
+    QifHeader,
+)
+
 # ---- Lightweight protocol-shaped stub ---------------------------------------
 
 
 @dataclass(frozen=True)
 class StubTxn:
-    """Minimal ITransaction-shaped stub for tests (date, amount, payee only)."""
+    """Minimal ITransaction-shaped stub for tests (satisfies required protocol attributes)."""
 
     date: date
     amount: Decimal
     payee: str = ""
+    # Required by ITransaction protocol but not used in matching tests
+    account: IAccount = field(
+        default_factory=lambda: QAccount(name="", type="", description="")
+    )
+    type: IHeader = field(
+        default_factory=lambda: QifHeader(code="", description="", type="")
+    )
+    action_chk: str = ""
+    cleared: EnumClearedStatus = field(
+        default_factory=lambda: EnumClearedStatus.NOT_CLEARED
+    )
 
 
 # ---- Helpers -----------------------------------------------------------------

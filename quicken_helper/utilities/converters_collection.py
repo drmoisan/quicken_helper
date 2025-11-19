@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from collections import deque
 from collections.abc import Callable
+from types import EllipsisType
 from typing import Any, cast
 
 
@@ -101,18 +102,19 @@ def _to_frozenset(
 
 
 def _to_tuple(
-    args: tuple[type, ...],
+    args: tuple[type | EllipsisType, ...],
     value: Any,
     cv: Callable[[Any, Any], Any],
 ) -> tuple[Any, ...]:
-    """Convert *value* to a ``tuple[T]`` using the element converter ``cv``.
+    """Convert *value* to a ``tuple[T, ...]`` or ``tuple[T1, T2, ...]`` using the element converter ``cv``.
 
-    - ``args``: a 1-tuple holding the target element type ``T``; if empty,
-      defaults to ``object``.
+    Supports both variadic (``tuple[int, ...]``) and fixed-length heterogeneous (``tuple[int, str]``) tuples.
+
+    - ``args``: type arguments from the tuple annotation. If the last arg is ``...``,
+      it's variadic. Otherwise, it's fixed-length heterogeneous.
     - ``value``: an iterable of elements; ``str``/``bytes``/``bytearray`` are treated as atomic.
-    - ``cv``: callable that converts a single element to type ``T``.
+    - ``cv``: callable that converts a single element to the target type.
     """
-    T = args[0] if args else object
     if isinstance(value, str | bytes | bytearray):
         seq = [value]
     else:
@@ -122,7 +124,20 @@ def _to_tuple(
             raise TypeError(
                 f"Expected an iterable for tuple conversion; got {type(value).__name__}"
             ) from e
-    return tuple(cv(T, v) for v in seq)
+
+    # Check if variadic (tuple[int, ...]) or fixed-length (tuple[int, str])
+    # Note: Use equality check for Ellipsis to avoid type comparison warning
+    if args and len(args) >= 2 and args[-1] == ...:
+        # Variadic: tuple[T, ...] - apply single type to all elements
+        T = args[0] if len(args) > 1 else object
+        return tuple(cv(T, v) for v in seq)
+    elif args:
+        # Fixed-length heterogeneous: tuple[T1, T2, T3]
+        # Convert each position with its corresponding type
+        return tuple(cv(args[i], v) if i < len(args) else v for i, v in enumerate(seq))
+    else:
+        # No args: default to object
+        return tuple(cv(object, v) for v in seq)
 
 
 def _to_dict(

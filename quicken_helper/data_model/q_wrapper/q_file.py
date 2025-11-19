@@ -158,7 +158,8 @@ class QuickenFile:
                 txt = item.emit_qif(with_account=True, with_type=True)
             else:
                 txt = item.emit_qif(with_account=False, with_type=False)
-            texts.append(txt)
+            # Coerce None to empty string for robustness
+            texts.append(txt or "")
         return "\n".join(texts)
 
     def emit_qif(self) -> str:

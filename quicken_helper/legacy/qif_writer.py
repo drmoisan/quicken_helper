@@ -33,6 +33,7 @@ from typing import (
 )
 
 from quicken_helper.utilities import to_date
+from quicken_helper.utilities.converters_scalar import default_date
 
 # ------------------------ Filtering helpers ------------------------
 
@@ -105,14 +106,19 @@ def filter_by_payees(
 def filter_by_date_range(
     txns: list[dict[str, Any]], date_from: str | None, date_to: str | None
 ) -> list[dict[str, Any]]:
-    """Filter by date range. Dates inclusive. Accepts mm/dd'yy, mm/dd/yyyy, or yyyy-mm-dd strings."""
+    """Filter by date range. Dates inclusive. Accepts mm/dd'yy, mm/dd/yyyy, or yyyy-mm-dd strings.
+
+    Unparseable dates are skipped (not included in output).
+    """
     df = to_date(date_from, False) if date_from else None
     dt = to_date(date_to, False) if date_to else None
+    sentinel = default_date()
     out: list[dict[str, Any]] = []
     for t in txns:
         ds = t.get("date", "")
         d = to_date(ds, False)
-        if not d:
+        # Skip unparseable dates (which return sentinel value)
+        if d == sentinel:
             continue
         if df and d < df:
             continue

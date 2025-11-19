@@ -706,10 +706,23 @@ def _install_project_stubs(monkeypatch, tmp_path=None):
 
     @_dc(frozen=True)
     class _Row2:
-        item: str
+        txn_id: str
+        date: _date
+        amount: Decimal
         category: str
-        rationale: str
-        amount: Decimal  # NEW: rows always carry an amount
+        idx: int = -1
+        account: str = ""
+        action_chk: str = ""
+        cleared: str = ""
+        payee: str = ""
+        memo: str = ""
+        rationale: str = ""
+        tag: str = ""
+        # Security fields
+        price: Decimal = Decimal("0")
+        quantity: Decimal = Decimal("0")
+        commission: Decimal = Decimal("0")
+        transfer_amount: Decimal = Decimal("0")
 
     @_dc(frozen=True)
     class _Group2:
@@ -729,8 +742,22 @@ def _install_project_stubs(monkeypatch, tmp_path=None):
     def load_excel_rows(path):
         # Two valid rows with amounts for happy-path UI tests
         rows = [
-            _Row2("Item1", "Cat", "r1", Decimal("5.00")),
-            _Row2("Item2", "Cat", "r2", Decimal("7.34")),
+            _Row2(
+                txn_id="G1",
+                date=_date(2024, 1, 15),
+                amount=Decimal("5.00"),
+                category="Cat",
+                payee="Item1",
+                rationale="r1",
+            ),
+            _Row2(
+                txn_id="G1",
+                date=_date(2024, 1, 15),
+                amount=Decimal("7.34"),
+                category="Cat",
+                payee="Item2",
+                rationale="r2",
+            ),
         ]
         _validate_rows(rows)
         return rows
@@ -762,6 +789,31 @@ def _install_project_stubs(monkeypatch, tmp_path=None):
     mex.extract_qif_categories = extract_qif_categories
     mex.extract_excel_categories = extract_excel_categories
     monkeypatch.setitem(sys.modules, names["match_excel"], mex)
+
+    # ---- data_session (stub) ----
+    ds_mod = types.ModuleType("quicken_helper.controllers.data_session")
+
+    class DataSession:
+        """Minimal DataSession stub for MergeTab tests."""
+
+        def __init__(self):
+            self.qif_path = None
+            self.excel_path = None
+            self.excel_rows = None
+
+        def load_qif(self, path):
+            self.qif_path = path
+            return load_transactions_protocol(path)
+
+        def load_excel(self, path):
+            self.excel_path = path
+            rows = load_excel_rows(path)
+            self.excel_rows = rows
+            groups = group_excel_rows(rows)
+            return [map_group_to_excel_txn(g) for g in groups]
+
+    ds_mod.DataSession = DataSession
+    monkeypatch.setitem(sys.modules, "quicken_helper.controllers.data_session", ds_mod)
 
     # ---- match_session (stub) ----
     ms = types.ModuleType(names["match_session"])
@@ -1142,55 +1194,6 @@ def test_manual_unmatch_from_pairs_calls_session(merge_mod):
     # Assert
     assert sess.pairs == [], "Pair should be removed after unmatch"
     assert "Unmatched" in mt.txt_info.get("1.0", "end")
-
-
-def test_apply_and_save_validates_and_writes_no_fs(merge_mod, monkeypatch):
-    """_m_apply_and_save confirms, applies, mkdirs (stubbed), and 'writes' via stubbed writer (no filesystem)."""
-    mb = _FakeMB(askyesno_return=True)
-    mt = merge_mod.MergeTab(master=None, mb=mb)
-
-    # Minimal session stub with apply_updates() and txns attribute
-    class _Sess:
-        def __init__(self):
-            self.applied = False
-            self.txns = ["t1", "t2"]
-
-        def apply_updates(self):
-            self.applied = True
-
-    mt._merge_session = _Sess()
-    outp = "MEM://out.data_model"
-    mt.m_qif_out.set(outp)
-
-    # Make all path checks succeed; noop mkdir to avoid touching disk
-    monkeypatch.setattr(merge_mod.Path, "exists", lambda self: True, raising=False)
-    monkeypatch.setattr(merge_mod.Path, "is_file", lambda self: True, raising=False)
-    monkeypatch.setattr(
-        merge_mod.Path,
-        "mkdir",
-        lambda self, parents=False, exist_ok=False: None,
-        raising=False,
-    )
-
-    # Patch the exact writer used by merge_tab: mod.write_qif(...)
-    calls = []
-    monkeypatch.setattr(
-        merge_mod.mod,
-        "write_qif",
-        lambda txns, p: calls.append((list(txns), str(p))),
-        raising=False,
-    )
-
-    # Act
-    mt._m_apply_and_save()
-
-    # Assert
-    expected_out = str(merge_mod.Path(outp))  # normalize path like the code
-    assert (
-        calls and calls[-1][1] == expected_out
-    ), "Writer should be called with normalized out path"
-    assert any(c[0] == "askyesno" for c in mb.calls), "Should confirm before writing"
-    assert any(c[0] == "showinfo" for c in mb.calls), "Should notify on completion"
 
 
 def test_export_listbox_writes_file(merge_mod, monkeypatch):

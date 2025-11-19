@@ -290,10 +290,10 @@ def test_to_tuple_empty_iterable():
 
 def test_to_tuple_converts_elements():
     """
-    Positive: Elements are converted using provided converter.
+    Positive: Elements are converted using provided converter (variadic tuple).
     """
     # Arrange
-    args = (int,)
+    args = (int, ...)  # Variadic: apply int to all elements
     value = ["1", "2", "3"]
     # Act
     result = _to_tuple(args, value, _int_converter)

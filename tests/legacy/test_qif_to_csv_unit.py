@@ -115,7 +115,7 @@ def test_write_qif_basic_bank_record_in_memory(memfs):
     ]
 
     out = Path("MEM://out.data_model")
-    write_qif(txns, out)
+    write_qif(out, txns)
 
     text = memfs.read(out)
     # Basic structure assertions

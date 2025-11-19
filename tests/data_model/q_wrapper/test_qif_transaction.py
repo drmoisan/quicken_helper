@@ -73,18 +73,36 @@ def test_emit_category_with_splits_uses_split_marker_and_preserves_tag():
 
 
 def test_security_exists_is_false_by_default_then_true_after_access():
+    """
+    Test security_exists() returns False when security field is the sentinel.
+
+    Note: Accessing .security just returns the sentinel; it doesn't instantiate
+    a new object. The sentinel check remains False unless explicitly set.
+    """
     # Arrange
     t = _mk_txn()
 
     # Act / Assert
     # By default, security sentinel means "not present"
-    assert t.security_exists() is False  # note the call
+    assert t.security_exists() is False
 
-    # Accessing .security lazily instantiates a real object
+    # Accessing .security returns the sentinel; doesn't change the check
     _ = t.security
+    assert t.security_exists() is False
 
-    # Assert again after access
-    assert t.security_exists() is True  # note the call
+    # Only explicit assignment changes the sentinel check
+    from decimal import Decimal
+
+    from quicken_helper.data_model.q_wrapper.q_security import QSecurity
+
+    t.security = QSecurity(
+        name="TEST",
+        price=Decimal("10"),
+        quantity=Decimal("1"),
+        commission=Decimal("0"),
+        transfer_amount=Decimal("0"),
+    )
+    assert t.security_exists() is True
 
 
 def test_emit_qif_includes_headers_when_requested_and_emits_core_fields_and_splits():

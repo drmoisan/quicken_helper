@@ -9,7 +9,9 @@ import quicken_helper.legacy.qif_writer as qw
 # ----------------------------- QIF writer tests ------------------------------
 
 
-def test_write_qif_emits_account_and_type_headers_and_resets_on_account_change():
+def test_write_qif_emits_account_and_type_headers_and_resets_on_account_change(
+    tmp_path,
+):
     """write_qif: emits an !Account block on account changes (with N and T lines)
     and emits !Type:<Type> whenever the transaction type changes. After switching
     accounts, the writer re-emits the !Type header before the next transaction.
@@ -48,9 +50,9 @@ def test_write_qif_emits_account_and_type_headers_and_resets_on_account_change()
         },
     ]
 
-    buf = io.StringIO()
-    qw.write_qif(txns, out=buf)
-    out = buf.getvalue()
+    out_path = tmp_path / "out.qif"
+    qw.write_qif(out_path, txns)
+    out = out_path.read_text(encoding="utf-8")
 
     # First account header
     assert "!Account\nNChecking\nTBank\n^\n" in out
@@ -68,7 +70,7 @@ def test_write_qif_emits_account_and_type_headers_and_resets_on_account_change()
     assert pos_acct2 < pos_type2
 
 
-def test_write_qif_writes_core_fields_memo_address_splits_and_terminator():
+def test_write_qif_writes_core_fields_memo_address_splits_and_terminator(tmp_path):
     """write_qif: writes D/T/P/M/L core fields; emits one M line *per* memo line
     (not a single M with embedded newline); splits 'address' into multiple A lines;
     writes split entries (S/E/$) in order; and terminates the record with '^'.
@@ -92,9 +94,9 @@ def test_write_qif_writes_core_fields_memo_address_splits_and_terminator():
         }
     ]
 
-    buf = io.StringIO()
-    qw.write_qif(txns, out=buf)
-    out = buf.getvalue()
+    out_path = tmp_path / "out.qif"
+    qw.write_qif(out_path, txns)
+    out = out_path.read_text(encoding="utf-8")
 
     # Core lines
     assert "D01/02/2025\n" in out
@@ -129,7 +131,7 @@ def test_write_qif_writes_core_fields_memo_address_splits_and_terminator():
     assert out.strip().endswith("^")
 
 
-def test_write_qif_investment_fields_and_checknum_lines():
+def test_write_qif_investment_fields_and_checknum_lines(tmp_path):
     """write_qif: in investment transactions, writes investment fields:
     N<Action> (action), Y<security>, Q<quantity>, I<price>, O<commission>.
     The writer also writes check number with 'N<checknum>' (so two 'N' lines can appear).
@@ -150,9 +152,9 @@ def test_write_qif_investment_fields_and_checknum_lines():
         }
     ]
 
-    buf = io.StringIO()
-    qw.write_qif(txns, out=buf)
-    out = buf.getvalue()
+    out_path = tmp_path / "out.qif"
+    qw.write_qif(out_path, txns)
+    out = out_path.read_text(encoding="utf-8")
 
     # Two different N-lines: one for checknum, one for action
     assert "N99\n" in out
@@ -170,7 +172,7 @@ def test_write_qif_writes_to_path_with_utf8_encoding(tmp_path: Path):
     txns = [{"date": "01/06/2025", "amount": "1.23", "payee": "Café"}]
 
     out_path = tmp_path / "out.data_model"
-    qw.write_qif(txns, out=out_path)  # default encoding 'utf-8'
+    qw.write_qif(out_path, txns)  # default encoding 'utf-8'
 
     text = out_path.read_text(encoding="utf-8")
     assert "PCafé\n" in text

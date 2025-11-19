@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 from tkinter import filedialog, ttk
-from typing import Any
+from typing import Any, cast
 
 from quicken_helper.controllers import match_excel as mex
 from quicken_helper.controllers.data_session import DataSession
@@ -21,9 +21,15 @@ from quicken_helper.data_model.excel import (
     map_group_to_excel_txn,
 )
 from quicken_helper.gui_viewers.category_popout import (
+    _MB,  # type: ignore[reportPrivateUsage]
     open_normalize_modal as open_category_popout,
 )
-from quicken_helper.gui_viewers.helpers import fmt_excel_row, fmt_txn, set_text
+from quicken_helper.gui_viewers.helpers import (
+    TextWidgetProtocol,
+    fmt_excel_row,
+    fmt_txn,
+    set_text,
+)
 from quicken_helper.gui_viewers.message_box_api import MessageBoxAPI
 
 # import qif_item_key
@@ -62,9 +68,9 @@ class MergeTab(ttk.Frame):
         self._merge_session: MatchSession | None = None
 
         # Ensure test-visible lists always exist (even if load/refresh bails early)
-        self.m_pairs: list = []
-        self.m_unmatched_qif: list = []
-        self.m_unmatched_excel: list = []
+        self.m_pairs: list[tuple[ITransaction, ITransaction]] = []
+        self.m_unmatched_qif: list[ITransaction] = []
+        self.m_unmatched_excel: list[ITransaction] = []
 
         self._build()
 
@@ -278,11 +284,11 @@ class MergeTab(ttk.Frame):
             ),
             "splits": [
                 {
-                    "amount": str(getattr(s, "amount", "")),
-                    "category": getattr(s, "category", "") or "",
-                    "memo": getattr(s, "memo", "") or "",
+                    "amount": str(getattr(s, "amount", "")),  # type: ignore[arg-type]
+                    "category": getattr(s, "category", "") or "",  # type: ignore[arg-type]
+                    "memo": getattr(s, "memo", "") or "",  # type: ignore[arg-type]
                 }
-                for s in (getattr(t, "splits", None) or [])
+                for s in (getattr(t, "splits", None) or [])  # type: ignore[var-annotated]
             ],
         }
 
@@ -400,14 +406,14 @@ class MergeTab(ttk.Frame):
             return
 
         # If a pair is selected, unmatch by its bank index
-        sel = self.lbx_pairs.curselection()
+        sel = self.lbx_pairs.curselection()  # type: ignore[var-annotated]
         if sel:
             try:
-                bi, ei, _b, _e = self._pairs_sorted[sel[0]]
+                bi, ei, _b, _e = self._pairs_sorted[sel[0]]  # type: ignore[misc]
             except Exception:
-                b, e = s.pairs[sel[0]]
-                bi = s.bank_txns.index(b)
-            s.manual_unmatch(bank_index=bi)
+                b, e = s.pairs[sel[0]]  # type: ignore[misc]
+                bi = s.bank_txns.index(b)  # type: ignore[arg-type]
+            s.manual_unmatch(bank_index=bi)  # type: ignore[arg-type]
             self._m_info("Unmatched selected pair.")
             self._m_refresh_lists()
             return
@@ -457,7 +463,8 @@ class MergeTab(ttk.Frame):
             # Emit QIF via the ITransaction emitter
             qif_out.parent.mkdir(parents=True, exist_ok=True)
             with open(qif_out, "w", encoding="utf-8") as fp:
-                mex.emit_qif_transactions(txns_to_write, fp)
+                # Cast needed because build_matched_only_txns returns MatchedTxn (ITransaction | LegacyTxn)
+                mex.emit_qif_transactions(cast("list[ITransaction]", txns_to_write), fp)
 
             self._m_info(f"Updates applied. Wrote updated QIF:\n{qif_out}")
             self.mb.showinfo("Done", f"Updated QIF written:\n{qif_out}")
@@ -476,7 +483,7 @@ class MergeTab(ttk.Frame):
 
     def _export_listbox(self, lb: tk.Listbox, default_tag: str):
         """Export the current strings shown in a Listbox to a file (txt or csv)."""
-        items = lb.get(0, "end")
+        items = lb.get(0, "end")  # type: ignore[var-annotated]
         if not items:
             self.mb.showinfo("Export", f"No items to export from '{default_tag}'.")
             return
@@ -496,9 +503,9 @@ class MergeTab(ttk.Frame):
 
         try:
             with open(path, "w", encoding="utf-8", newline="") as f:
-                for row in items:
-                    f.write(str(row) + "\n")
-            self.mb.showinfo("Export", f"Exported {len(items)} items to:\n{path}")
+                for row in items:  # type: ignore[var-annotated]
+                    f.write(str(row) + "\n")  # type: ignore[arg-type]
+            self.mb.showinfo("Export", f"Exported {len(items)} items to:\n{path}")  # type: ignore[arg-type]
         except Exception as e:
             self.mb.showerror("Export Error", str(e))
 
@@ -510,23 +517,33 @@ class MergeTab(ttk.Frame):
             if not getattr(self, "_merge_session", None):
                 self.mb.showerror("Error", "Load data first.")
                 return
+            # Narrow type for Pyright - the above check ensures _merge_session is not None
+            assert self._merge_session is not None
             xlsx_path = Path(self.m_xlsx.get().strip())
             open_category_popout(
-                self, self._merge_session, xlsx_path, mb=self.mb, show_ui=False
+                self,
+                self._merge_session,
+                xlsx_path,
+                mb=cast("_MB", self.mb),
+                show_ui=False,
             )
         except Exception as e:
             # Keep UI resilient
             self.mb.showerror("Error", f"{e}")
 
-    def _m_normalize_categories(self):
-        """Toolbar/Actions handler: Normalize Categories."""
+    def _m_normalize_payees(self):
+        """Toolbar/Actions handler: Normalize Payees."""
         try:
-            if not getattr(self, "_merge_session", None):
+            if not self._merge_session:
                 self.mb.showerror("Error", "Load data first.")
                 return
             xlsx_path = Path(self.m_xlsx.get().strip())
-            open_category_popout(
-                self, self._merge_session, xlsx_path, mb=self.mb, show_ui=False
+            open_category_popout(  # type: ignore[arg-type]
+                self,
+                self._merge_session,
+                xlsx_path,
+                mb=cast("_MB", self.mb),
+                show_ui=False,
             )
         except Exception as e:
             self.mb.showerror("Error", f"{e}")
@@ -543,12 +560,12 @@ class MergeTab(ttk.Frame):
 
         s = getattr(self, "_merge_session", None)
         # Initialize caches and test-visible mirrors
-        self._pairs_sorted = []
-        self._unqif_sorted = []
-        self._unx_sorted = []
-        self.m_pairs = []
-        self.m_unmatched_qif = []
-        self.m_unmatched_excel = []
+        self._pairs_sorted: list[tuple[int, int, ITransaction, ITransaction]] = []
+        self._unqif_sorted: list[tuple[int, ITransaction]] = []
+        self._unx_sorted: list[tuple[int, ITransaction]] = []
+        self.m_pairs: list[tuple[ITransaction, ITransaction]] = []
+        self.m_unmatched_qif: list[ITransaction] = []
+        self.m_unmatched_excel: list[ITransaction] = []
 
         if not s:
             return
@@ -583,10 +600,10 @@ class MergeTab(ttk.Frame):
                 self.m_pairs.append((b, e))
 
                 label = (
-                    f"{getattr(b, 'date', None).isoformat() if getattr(b, 'date', None) else ''} "
+                    f"{getattr(b, 'date', None).isoformat() if getattr(b, 'date', None) else ''} "  # type: ignore[union-attr]
                     f"{getattr(b, 'amount', '')} — {getattr(b, 'payee', '')}  "
                     f"↔  Excel[{getattr(e, 'id', '')}] "
-                    f"{getattr(e, 'date', None).isoformat() if getattr(e, 'date', None) else ''} "
+                    f"{getattr(e, 'date', None).isoformat() if getattr(e, 'date', None) else ''} "  # type: ignore[union-attr]
                     f"{getattr(e, 'amount', '')} | "
                     f"{len(getattr(e, 'splits', []) or [])} split(s)"
                 )
@@ -613,7 +630,7 @@ class MergeTab(ttk.Frame):
                 self.m_unmatched_qif.append(b)
                 self.lbx_unqif.insert(
                     "end",
-                    f"{getattr(b, 'date', None).isoformat() if getattr(b, 'date', None) else ''} "
+                    f"{getattr(b, 'date', None).isoformat() if getattr(b, 'date', None) else ''} "  # type: ignore[union-attr]
                     f"{getattr(b, 'amount', '')} — {getattr(b, 'payee', '')}",
                 )
         except Exception as e:
@@ -645,7 +662,7 @@ class MergeTab(ttk.Frame):
                 self.lbx_unx.insert(
                     "end",
                     f"Excel[{getattr(e, 'id', '')}] "
-                    f"{getattr(e, 'date', None).isoformat() if getattr(e, 'date', None) else ''} "
+                    f"{getattr(e, 'date', None).isoformat() if getattr(e, 'date', None) else ''} "  # type: ignore[union-attr]
                     f"{getattr(e, 'amount', '')} | "
                     f"{len(getattr(e, 'splits', []) or [])} split(s)",
                 )
@@ -660,11 +677,11 @@ class MergeTab(ttk.Frame):
                 if self._unqif_sorted:
                     _bi, b = self._unqif_sorted[0]
                     set_text(
-                        self.prev_unqif,
+                        cast("TextWidgetProtocol", self.prev_unqif),
                         fmt_txn(
                             {
                                 "date": (
-                                    getattr(b, "date", None).isoformat()
+                                    getattr(b, "date", None).isoformat()  # type: ignore[union-attr]
                                     if getattr(b, "date", None)
                                     else ""
                                 ),
@@ -680,12 +697,12 @@ class MergeTab(ttk.Frame):
                     _ei, e = self._unx_sorted[0]
                     first = (getattr(e, "splits", None) or [None])[0]
                     set_text(
-                        self.prev_unx,
+                        cast("TextWidgetProtocol", self.prev_unx),
                         fmt_excel_row(
                             {
                                 "TxnID": getattr(e, "id", "") or "",
                                 "Date": (
-                                    getattr(e, "date", None).isoformat()
+                                    getattr(e, "date", None).isoformat()  # type: ignore[union-attr]
                                     if getattr(e, "date", None)
                                     else ""
                                 ),
@@ -707,7 +724,7 @@ class MergeTab(ttk.Frame):
                     excel_view = {
                         "TxnID": getattr(e, "id", "") or "",
                         "Date": (
-                            getattr(e, "date", None).isoformat()
+                            getattr(e, "date", None).isoformat()  # type: ignore[union-attr]
                             if getattr(e, "date", None)
                             else ""
                         ),
@@ -733,7 +750,7 @@ class MergeTab(ttk.Frame):
                     }
                     qif_view = {
                         "date": (
-                            getattr(b, "date", None).isoformat()
+                            getattr(b, "date", None).isoformat()  # type: ignore[union-attr]
                             if getattr(b, "date", None)
                             else ""
                         ),
@@ -743,7 +760,7 @@ class MergeTab(ttk.Frame):
                         "memo": getattr(b, "memo", "") or "",
                     }
                     set_text(
-                        self.prev_pairs,
+                        cast("TextWidgetProtocol", self.prev_pairs),
                         "[Excel]\n"
                         + fmt_excel_row(excel_view)
                         + "\n\n[QIF]\n"
@@ -756,22 +773,22 @@ class MergeTab(ttk.Frame):
     def _m_selected_unqif_index(self) -> int | None:
         if not getattr(self, "_unqif_sorted", None):
             return None
-        sel = self.lbx_unqif.curselection()
+        sel = self.lbx_unqif.curselection()  # type: ignore[var-annotated]
         if not sel:
             return None
         # stored as (bank_index, txn)
-        bi, _ = self._unqif_sorted[sel[0]]
-        return bi
+        bi, _ = self._unqif_sorted[sel[0]]  # type: ignore[misc]
+        return bi  # type: ignore[return-value]
 
     def _m_selected_unx_index(self) -> int | None:
         if not getattr(self, "_unx_sorted", None):
             return None
-        sel = self.lbx_unx.curselection()
+        sel = self.lbx_unx.curselection()  # type: ignore[var-annotated]
         if not sel:
             return None
         # stored as (excel_index, txn)
-        ei, _ = self._unx_sorted[sel[0]]
-        return ei
+        ei, _ = self._unx_sorted[sel[0]]  # type: ignore[misc]
+        return ei  # type: ignore[return-value]
 
     def _m_why_not(self):
         s = self._merge_session
@@ -803,78 +820,78 @@ class MergeTab(ttk.Frame):
             return
         try:
             if which == "unqif":
-                idxs = self.lbx_unqif.curselection()
+                idxs = self.lbx_unqif.curselection()  # type: ignore[var-annotated]
                 if not idxs:
-                    set_text(self.prev_unqif, "")
+                    set_text(cast("TextWidgetProtocol", self.prev_unqif), "")
                     return
-                _bi, b = self._unqif_sorted[idxs[0]]
+                _bi, b = self._unqif_sorted[idxs[0]]  # type: ignore[misc]
                 set_text(
-                    self.prev_unqif,
+                    cast("TextWidgetProtocol", self.prev_unqif),
                     fmt_txn(
                         {
-                            "date": b.date.isoformat(),
-                            "amount": str(getattr(b, "amount", "")),
-                            "payee": getattr(b, "payee", ""),
-                            "category": getattr(b, "category", ""),
-                            "memo": getattr(b, "memo", ""),
+                            "date": b.date.isoformat(),  # type: ignore[union-attr]
+                            "amount": str(getattr(b, "amount", "")),  # type: ignore[arg-type]
+                            "payee": getattr(b, "payee", ""),  # type: ignore[arg-type]
+                            "category": getattr(b, "category", ""),  # type: ignore[arg-type]
+                            "memo": getattr(b, "memo", ""),  # type: ignore[arg-type]
                         }
                     ),
                 )
 
             elif which == "unx":
-                idxs = self.lbx_unx.curselection()
+                idxs = self.lbx_unx.curselection()  # type: ignore[var-annotated]
                 if not idxs:
-                    set_text(self.prev_unx, "")
+                    set_text(cast("TextWidgetProtocol", self.prev_unx), "")
                     return
-                _ei, e = self._unx_sorted[idxs[0]]
-                first = (e.splits or [None])[0]
+                _ei, e = self._unx_sorted[idxs[0]]  # type: ignore[misc]
+                first = (e.splits or [None])[0]  # type: ignore[union-attr]
                 set_text(
-                    self.prev_unx,
+                    cast("TextWidgetProtocol", self.prev_unx),
                     fmt_excel_row(
                         {
-                            "TxnID": getattr(e, "id", ""),
-                            "Date": e.date.isoformat(),
-                            "Total Amount": getattr(e, "amount", ""),
-                            "Split Count": len(e.splits or []),
-                            "First Item": getattr(first, "memo", "") if first else "",
+                            "TxnID": getattr(e, "id", ""),  # type: ignore[arg-type]
+                            "Date": e.date.isoformat(),  # type: ignore[union-attr]
+                            "Total Amount": getattr(e, "amount", ""),  # type: ignore[arg-type]
+                            "Split Count": len(e.splits or []),  # type: ignore[arg-type]
+                            "First Item": getattr(first, "memo", "") if first else "",  # type: ignore[arg-type]
                             "First Category": (
-                                getattr(first, "category", "") if first else ""
+                                getattr(first, "category", "") if first else ""  # type: ignore[arg-type]
                             ),
-                            "First Rationale": getattr(e, "memo", ""),
+                            "First Rationale": getattr(e, "memo", ""),  # type: ignore[arg-type]
                         }
                     ),
                 )
 
             elif which == "pairs":
-                idxs = self.lbx_pairs.curselection()
+                idxs = self.lbx_pairs.curselection()  # type: ignore[var-annotated]
                 if not idxs:
-                    set_text(self.prev_pairs, "")
+                    set_text(cast("TextWidgetProtocol", self.prev_pairs), "")
                     return
-                _bi, _ei, b, e = self._pairs_sorted[idxs[0]]
-                excel_row = {
-                    "TxnID": getattr(e, "id", ""),
-                    "Date": e.date.isoformat(),
-                    "Total Amount": getattr(e, "amount", ""),
-                    "Split Count": len(e.splits or []),
+                _bi, _ei, b, e = self._pairs_sorted[idxs[0]]  # type: ignore[misc]
+                excel_row = {  # type: ignore[var-annotated]
+                    "TxnID": getattr(e, "id", ""),  # type: ignore[arg-type]
+                    "Date": e.date.isoformat(),  # type: ignore[union-attr]
+                    "Total Amount": getattr(e, "amount", ""),  # type: ignore[arg-type]
+                    "Split Count": len(e.splits or []),  # type: ignore[arg-type]
                     "First Item": (
-                        getattr((e.splits or [None])[0], "memo", "") if e.splits else ""
+                        getattr((e.splits or [None])[0], "memo", "") if e.splits else ""  # type: ignore[arg-type,union-attr]
                     ),
                     "First Category": (
-                        getattr((e.splits or [None])[0], "category", "")
-                        if e.splits
+                        getattr((e.splits or [None])[0], "category", "")  # type: ignore[arg-type,union-attr]
+                        if e.splits  # type: ignore[union-attr]
                         else ""
                     ),
-                    "First Rationale": getattr(e, "memo", ""),
+                    "First Rationale": getattr(e, "memo", ""),  # type: ignore[arg-type]
                 }
-                qif_tx = {
-                    "date": b.date.isoformat(),
-                    "amount": str(getattr(b, "amount", "")),
-                    "payee": getattr(b, "payee", ""),
-                    "category": getattr(b, "category", ""),
-                    "memo": getattr(b, "memo", ""),
+                qif_tx = {  # type: ignore[var-annotated]
+                    "date": b.date.isoformat(),  # type: ignore[union-attr]
+                    "amount": str(getattr(b, "amount", "")),  # type: ignore[arg-type]
+                    "payee": getattr(b, "payee", ""),  # type: ignore[arg-type]
+                    "category": getattr(b, "category", ""),  # type: ignore[arg-type]
+                    "memo": getattr(b, "memo", ""),  # type: ignore[arg-type]
                 }
                 set_text(
-                    self.prev_pairs,
+                    cast("TextWidgetProtocol", self.prev_pairs),
                     "[Excel]\n"
                     + fmt_excel_row(excel_row)
                     + "\n\n[QIF]\n"

@@ -62,14 +62,14 @@ def _capture_csv_text(monkeypatch, call_fn, txns):
 # ----------------------------- QIF extra coverage -----------------------------
 
 
-def test_write_qif_empty_input_produces_empty_output():
+def test_write_qif_empty_input_produces_empty_output(tmp_path):
     """write_qif: when given an empty list of transactions, writes nothing."""
-    buf = io.StringIO()
-    qw.write_qif([], out=buf)
-    assert buf.getvalue() == ""
+    out_path = tmp_path / "out.qif"
+    qw.write_qif(out_path, [])
+    assert out_path.read_text(encoding="utf-8") == ""
 
 
-def test_write_qif_skips_optional_fields_when_missing():
+def test_write_qif_skips_optional_fields_when_missing(tmp_path):
     """write_qif: when memo/category/checknum/cleared/address/splits are absent,
     omits the corresponding lines (M/L/N/C/A/S/E/$). Only core D/T/P are present.
 
@@ -86,9 +86,9 @@ def test_write_qif_skips_optional_fields_when_missing():
             # no memo/category/checknum/cleared/address/splits
         }
     ]
-    buf = io.StringIO()
-    qw.write_qif(txns, out=buf)
-    out = buf.getvalue()
+    out_path = tmp_path / "out.qif"
+    qw.write_qif(out_path, txns)
+    out = out_path.read_text(encoding="utf-8")
 
     # Present: date, amount, payee
     assert "D02/01/2025\n" in out
@@ -111,7 +111,9 @@ def test_write_qif_skips_optional_fields_when_missing():
     )  # no splits
 
 
-def test_write_qif_investment_minimal_action_only_skips_missing_security_fields():
+def test_write_qif_investment_minimal_action_only_skips_missing_security_fields(
+    tmp_path,
+):
     """write_qif (Invst): if only 'action' is supplied, emit N<Action> but omit
     Y/Q/I/O when security/quantity/price/commission are missing."""
     txns = [
@@ -125,9 +127,9 @@ def test_write_qif_investment_minimal_action_only_skips_missing_security_fields(
             # security/quantity/price/commission intentionally omitted
         }
     ]
-    buf = io.StringIO()
-    qw.write_qif(txns, out=buf)
-    out = buf.getvalue()
+    out_path = tmp_path / "out.qif"
+    qw.write_qif(out_path, txns)
+    out = out_path.read_text(encoding="utf-8")
 
     assert "NBuy\n" in out  # action present
     assert "Y" not in out  # no security line

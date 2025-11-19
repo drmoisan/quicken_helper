@@ -156,11 +156,9 @@ class ProbeTab(ttk.Frame):
         if not sel:
             return None
         try:
-            item: str | tuple[str, ...] = self.p_artifacts.get(sel[0])  # type: ignore[assignment]
-            # get() returns str | tuple[str, ...] depending on arguments
-            if isinstance(item, tuple):
-                item = item[0] if item else ""
-            return Path(str(item))
+            # Listbox.get() returns str when given a single index
+            item: str = str(self.p_artifacts.get(sel[0]))  # type: ignore[arg-type]
+            return Path(item)
         except Exception:
             return None
 
