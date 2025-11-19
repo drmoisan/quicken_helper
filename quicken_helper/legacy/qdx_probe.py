@@ -25,14 +25,14 @@ import os
 import sys
 import zlib
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import Final, Iterator, List, Optional, Tuple
 
 try:
     import zipfile
 except Exception:
     zipfile = None
 
-MIN_STR = 6
+MIN_STR: Final[int] = 6
 
 
 def read_bytes(p: Path) -> bytes:
@@ -62,13 +62,13 @@ def entropy(data: bytes) -> float:
     return ent
 
 
-def hex_head(data: bytes, length=128) -> str:
+def hex_head(data: bytes, length: int = 128) -> str:
     b = data[:length]
     return binascii.hexlify(b).decode()
 
 
-def iter_ascii_strings(data: bytes, minlen=MIN_STR):
-    buf = []
+def iter_ascii_strings(data: bytes, minlen: int = MIN_STR) -> Iterator[str]:
+    buf: list[str] = []
     for b in data:
         if 32 <= b <= 126:
             buf.append(chr(b))
@@ -80,32 +80,32 @@ def iter_ascii_strings(data: bytes, minlen=MIN_STR):
         yield "".join(buf)
 
 
-def iter_utf16le_strings(data: bytes, minlen=MIN_STR):
+def iter_utf16le_strings(data: bytes, minlen: int = MIN_STR) -> Iterator[str]:
     """
     Yield printable ASCII-range strings discovered by decoding as UTF-16LE.
     Tries both byte alignments (offset 0 and 1) because embedded UTF-16LE
     substrings may not be 2-byte aligned within the larger binary.
     """
-    seen = set()
+    seen: set[str] = set()
 
-    def _emit(decoded: str):
-        buf = []
+    def _emit(decoded: str) -> Iterator[str]:
+        buf: list[str] = []
         for ch in decoded:
             o = ord(ch)
             if 32 <= o <= 126:
                 buf.append(ch)
-            else:
-                if len(buf) >= minlen:
-                    s = "".join(buf)
-                    if s not in seen:
-                        seen.add(s)
-                        yield s
-                buf = []
+                continue
+            if len(buf) >= minlen:
+                candidate = "".join(buf)
+                if candidate not in seen:
+                    seen.add(candidate)
+                    yield candidate
+            buf = []
         if len(buf) >= minlen:
-            s = "".join(buf)
-            if s not in seen:
-                seen.add(s)
-                yield s
+            candidate = "".join(buf)
+            if candidate not in seen:
+                seen.add(candidate)
+                yield candidate
 
     # Try offset 0 and 1
     for start in (0, 1):
@@ -113,20 +113,19 @@ def iter_utf16le_strings(data: bytes, minlen=MIN_STR):
             decoded = data[start:].decode("utf-16le", errors="ignore")
         except Exception:
             continue
-        for s in _emit(decoded):
-            yield s
+        yield from _emit(decoded)
 
 
-def find_zlib_streams(data: bytes):
+def find_zlib_streams(data: bytes) -> list[int]:
     # naive scan for zlib headers 0x78 0x9C / 0x78 0xDA etc.
-    offsets = []
+    offsets: list[int] = []
     for i in range(max(0, len(data) - 2)):
         if data[i] == 0x78 and data[i + 1] in (0x01, 0x5E, 0x9C, 0xDA):
             offsets.append(i)
     return offsets
 
 
-def try_decompress_at(data: bytes, off: int):
+def try_decompress_at(data: bytes, off: int) -> bytes | None:
     # Try zlib decompress starting from off; stop when failure
     try:
         decomp = zlib.decompress(data[off:])
@@ -140,7 +139,7 @@ def try_decompress_at(data: bytes, off: int):
             return None
 
 
-def preview_text(blob: bytes, maxlen=600) -> str:
+def preview_text(blob: bytes, maxlen: int = 600) -> str:
     # Prefer UTF-8; fall back to latin-1
     try:
         s = blob.decode("utf-8", errors="ignore")
@@ -296,7 +295,7 @@ def main():
         print(f"QDX not found: {args.qdx}", file=sys.stderr)
         sys.exit(2)
 
-    report_text, artifacts = run_probe(args.qdx, args.qif, args.out)
+    report_text, artifacts = run_probe(args.qdx, args.data_model, args.out)
 
     if args.out is None:
         print(report_text)

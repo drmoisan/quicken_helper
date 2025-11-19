@@ -26,6 +26,13 @@
       "problemMatcher": []
     },
     {
+      "label": "Pyright: log output",
+      "type": "shell",
+      "command": "poetry run pyright *> pyright.log",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
       "label": "Pytest: run tests",
       "type": "shell",
       "command": "poetry run pytest",

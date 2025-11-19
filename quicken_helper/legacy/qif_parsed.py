@@ -4,15 +4,25 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List
 
 
+def _dict_list() -> List[Dict[str, Any]]:
+    return []
+
+
+def _sections_dict() -> Dict[str, List[Dict[str, Any]]]:
+    return {}
+
+
 @dataclass
 class ParsedQIF:
-    transactions: List[Dict[str, Any]] = field(default_factory=list)
-    accounts: List[Dict[str, Any]] = field(default_factory=list)
-    categories: List[Dict[str, Any]] = field(default_factory=list)
-    memorized_payees: List[Dict[str, Any]] = field(default_factory=list)
-    securities: List[Dict[str, Any]] = field(default_factory=list)
+    transactions: List[Dict[str, Any]] = field(default_factory=_dict_list)
+    accounts: List[Dict[str, Any]] = field(default_factory=_dict_list)
+    categories: List[Dict[str, Any]] = field(default_factory=_dict_list)
+    memorized_payees: List[Dict[str, Any]] = field(default_factory=_dict_list)
+    securities: List[Dict[str, Any]] = field(default_factory=_dict_list)
     business_list: List[Dict[str, Any]] = field(
-        default_factory=list
+        default_factory=_dict_list
     )  # classes/business
-    payees: List[Dict[str, Any]] = field(default_factory=list)
-    other_sections: Dict[str, List[Dict[str, Any]]] = field(default_factory=dict)
+    payees: List[Dict[str, Any]] = field(default_factory=_dict_list)
+    other_sections: Dict[str, List[Dict[str, Any]]] = field(
+        default_factory=_sections_dict
+    )

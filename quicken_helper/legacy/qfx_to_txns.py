@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Sequence, cast
 
 
 def _to_date(s: str) -> str:
@@ -52,21 +52,39 @@ def parse_qfx(path: Path | str) -> List[Dict[str, Any]]:
     try:
         import ofxparse  # type: ignore
 
+        parser_cls = cast(Any, getattr(ofxparse, "OfxParser", None))
+        if parser_cls is None:
+            raise ImportError("ofxparse.OfxParser is unavailable")
         with p.open("rb") as f:
-            ofx = ofxparse.OfxParser.parse(f)
+            ofx_root: Any = parser_cls.parse(f)
         out: List[Dict[str, Any]] = []
-        for acct in ofx.accounts or []:
-            for tr in acct.statement.transactions or []:
-                amt = float(tr.amount or 0.0)
-                payee = (tr.payee or tr.memo or "").strip()
-                memo = (tr.memo or "").strip()
-                date = _to_date(
-                    getattr(tr, "date", None).strftime("%Y%m%d")
-                    if getattr(tr, "date", None)
-                    else ""
+        accounts = cast(Optional[Sequence[Any]], getattr(ofx_root, "accounts", None))
+        if accounts:
+            for acct in accounts:
+                statement = getattr(acct, "statement", None)
+                transactions = (
+                    getattr(statement, "transactions", None)
+                    if statement is not None
+                    else None
                 )
-                checknum = getattr(tr, "checknum", "") or ""
-                out.append(_tx(amt, payee, memo, date, checknum))
+                if not transactions:
+                    continue
+                for tr in transactions:
+                    amount_val = getattr(tr, "amount", 0.0) or 0.0
+                    amt = float(amount_val)
+                    payee_raw = getattr(tr, "payee", "") or ""
+                    memo_raw = getattr(tr, "memo", "") or ""
+                    payee = (payee_raw or memo_raw).strip()
+                    memo = memo_raw.strip()
+                    date_obj = getattr(tr, "date", None)
+                    formatted_date = (
+                        _to_date(date_obj.strftime("%Y%m%d"))
+                        if date_obj is not None
+                        else ""
+                    )
+                    checknum_val = getattr(tr, "checknum", "") or ""
+                    checknum = str(checknum_val)
+                    out.append(_tx(amt, payee, memo, formatted_date, checknum))
         return out
     except Exception:
         pass  # fall through to minimal fallback
@@ -86,7 +104,7 @@ def parse_qfx(path: Path | str) -> List[Dict[str, Any]]:
             break
         block = raw[i:j]
 
-        def tagval(tag):
+        def tagval(tag: str) -> str:
             # <TAG>value on same line OR <TAG>value</TAG>
             # do a simple search ignoring case
             t = tag.lower()
