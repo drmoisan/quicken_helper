@@ -1,10 +1,10 @@
 # quicken_helper/controllers/category_match_session.py
 from __future__ import annotations
 
+from decimal import Decimal
+from math import isnan
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
-
-import pandas as pd
+from typing import Any, Dict, List, Optional, Tuple
 
 from .match_excel import fuzzy_autopairs
 from quicken_helper.utilities.excel_io import read_excel_df
@@ -64,11 +64,22 @@ class CategoryMatchSession:
         if col_name not in df.columns:
             raise ValueError(f"Excel missing '{col_name}' column.")
 
-        def _map_cell(v):
-            s = str(v).strip() if pd.notna(v) else ""
-            return self.mapping.get(s, s)
+        def _is_nan(value: object) -> bool:
+            if isinstance(value, float):
+                return isnan(value)
+            if isinstance(value, Decimal):
+                return value.is_nan()
+            return False
+
+        def _map_cell(value: object) -> str:
+            if value is None or _is_nan(value):
+                key = ""
+            else:
+                key = str(value).strip()
+            return self.mapping.get(key, key)
 
         df[col_name] = df[col_name].map(_map_cell)
         out = xlsx_out or xlsx_in.with_name(xlsx_in.stem + "_normalized.xlsx")
-        df.to_excel(out, index=False)
+        df_any: Any = df
+        df_any.to_excel(out, index=False)
         return out

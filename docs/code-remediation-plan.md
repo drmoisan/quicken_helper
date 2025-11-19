@@ -47,17 +47,17 @@
 - Regression suites (`tests/controllers/test_match_excel.py`, `tests/controllers/test_category_match_session.py`) cover the new helper paths.
 - GUI layers rely on those controllers for Excel ingestion, so no direct pandas usage remains.
 
-### Phase 2 - strengthen automation 
+### Phase 2 - strengthen automation ✅
 
-- Wire `black`, `ruff`, `pyright`, and `pytest` into a .vscode/tasks.json file
-- Consider adding `coverage.xml` generation plus upload to Codecov (or similar) to enforce minimum coverage thresholds.
+- VS Code tasks (`.vscode/tasks.json`) now run Black, Ruff, Pyright, Pytest, coverage reports, and Codecov uploads in one click.
+- Next step: wire these tasks into CI once typing is green.
 
 ### Phase 3 - finish protocol/data-model typing _(in progress)_
 
-#### Phase 3a - dataclasses
+#### Phase 3a - dataclasses ✅
 
-- ✅ Dataclass sentinels fixed in `q_transaction.py`; defaults now use `field(default_factory=...)`.
-- ✅ `QuickenFile.sections` now initializes to `QuickenSections.NONE` and `emit_transactions` no longer uses dataclasses `Field`.
+- `q_transaction.py` now uses `ClassVar` sentinels plus `field(default_factory=...)` for every mutable slot.
+- `QuickenFile.sections` initializes to `QuickenSections.NONE` and `emit_transactions` no longer references dataclasses `Field`.
 
 #### Phase 3b - data-model packages and protocols typing
 
@@ -68,7 +68,6 @@
 #### Phase 3c - unit-testing conversion helpers
 
 - Add unit tests (with policy-compliant docstrings) that cover conversion helpers (`core_util.convert_value`, `utilities.converters_*`).
-
 
 #### Phase 3d - Ruff rule expansion and compliance
 

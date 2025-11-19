@@ -11,6 +11,13 @@ from quicken_helper.utilities.converters_scalar import to_date, to_decimal
 
 _DATE_FORMATS = ["%m/%d'%y", "%m/%d/%Y", "%Y-%m-%d"]
 
+__all__ = [
+    "_flatten_qif_txns",
+    "flatten_qif_txns",
+    "_candidate_cost",
+    "candidate_cost",
+]
+
 
 def _flatten_qif_txns(txns: List[Dict[str, Any]]) -> List[QIFTxnView]:
     """Convert loosely typed QIF dicts into deterministic ``QIFTxnView`` rows."""
@@ -68,3 +75,9 @@ def _candidate_cost(qif_date: date, excel_date: date) -> Optional[int]:
 
     delta = abs((qif_date - excel_date).days)
     return delta if delta <= 3 else None
+
+
+# Public aliases keep the legacy underscore exports available for tests while
+# satisfying pyright's unused-function checks.
+flatten_qif_txns = _flatten_qif_txns
+candidate_cost = _candidate_cost

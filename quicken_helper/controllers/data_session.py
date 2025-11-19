@@ -5,11 +5,12 @@ import logging
 import logging.config
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 
 from quicken_helper.controllers import match_excel as mex
 from quicken_helper.controllers.qif_loader import load_transactions_protocol
 from quicken_helper.data_model.excel import (
+    ExcelRow,
     ExcelTransaction,
     ExcelTxnGroup,
     map_group_to_excel_txn,
@@ -19,6 +20,22 @@ from quicken_helper.utilities import LOGGING
 
 logging.config.dictConfig(LOGGING)
 log = logging.getLogger(__name__)
+
+
+def _empty_txn_list() -> list[ITransaction]:
+    return []
+
+
+def _empty_excel_row_list() -> list[ExcelRow]:
+    return []
+
+
+def _empty_excel_group_list() -> list[ExcelTxnGroup]:
+    return []
+
+
+def _empty_excel_txn_list() -> list[ExcelTransaction]:
+    return []
 
 
 @dataclass
@@ -33,14 +50,14 @@ class DataSession:
     """
 
     qif_path: Optional[Path] = None
-    qif_txns: List[ITransaction] = field(default_factory=list)
+    qif_txns: list[ITransaction] = field(default_factory=_empty_txn_list)
 
     excel_path: Optional[Path] = None
-    excel_rows: Optional[List] = None
-    excel_groups: Optional[List[ExcelTxnGroup]] = None
-    excel_txns: List[ExcelTransaction] = field(default_factory=list)
+    excel_rows: list[ExcelRow] = field(default_factory=_empty_excel_row_list)
+    excel_groups: list[ExcelTxnGroup] = field(default_factory=_empty_excel_group_list)
+    excel_txns: list[ExcelTransaction] = field(default_factory=_empty_excel_txn_list)
 
-    def load_qif(self, path: Path, *, encoding: str = "utf-8") -> List[ITransaction]:
+    def load_qif(self, path: Path, *, encoding: str = "utf-8") -> list[ITransaction]:
         path = Path(path)
         if self.qif_path != path or not self.qif_txns:
             log.info("Loading QIF: %s", path)
@@ -55,7 +72,7 @@ class DataSession:
             )
         return self.qif_txns
 
-    def load_excel(self, path: Path) -> List[ExcelTransaction]:
+    def load_excel(self, path: Path) -> list[ExcelTransaction]:
         path = Path(path)
         if self.excel_path != path or not self.excel_txns:
             log.info("Loading Excel: %s", path)
