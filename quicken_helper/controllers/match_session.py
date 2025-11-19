@@ -47,6 +47,9 @@ from typing import (
 from quicken_helper.data_model.interfaces import ITransaction
 
 from .transaction_compare import MatchScore, compare_txn
+from quicken_helper.utilities.core_util import (
+    convert_value as _core_convert_value,
+)
 
 # ---------- helpers ----------
 
@@ -70,15 +73,25 @@ def _is_transaction(obj: Any) -> TypeGuard["ITransaction"]:
 
 
 def _coerce_txns(txns: Iterable[object]) -> list["ITransaction"]:
-    """Ensure all items conform to ITransaction (structural)."""
+    """Ensure all items conform to ITransaction, converting when possible."""
+
     out: list["ITransaction"] = []
     for item in txns:
+        try:
+            converted = convert_value(ITransaction, item)
+            out.append(converted)
+            continue
+        except Exception:
+            pass
+
         if _is_transaction(item):
-            out.append(item)  # narrowed to ITransaction by the TypeGuard
-        else:
-            raise TypeError(
-                f"Expected ITransaction; got {type(item).__name__} lacking required attributes."
-            )
+            out.append(cast(ITransaction, item))
+            continue
+
+        raise TypeError(
+            f"Expected ITransaction; got {type(item).__name__} lacking required attributes."
+        )
+
     return out
 
 
@@ -113,6 +126,10 @@ def _sort_key_for_match(ms: MatchScore) -> tuple[float, float, float]:
         payee_component = -0.0
 
     return (score_component, date_component, payee_component)
+
+
+# Legacy alias retained for tests/monkeypatching.
+convert_value = _core_convert_value
 
 
 # ---------- core class ----------

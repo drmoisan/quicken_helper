@@ -17,14 +17,14 @@ c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\con
   ┬á┬áType of "qif_txns" is "list[Unknown]" (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\controllers\data_session.py:41:5 - error: Type of "excel_txns" is partially unknown
   ┬á┬áType of "excel_txns" is "list[Unknown]" (reportUnknownVariableType)
+c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\controllers\match_helpers.py
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\controllers\match_helpers.py:15:5 - error: Function "_flatten_qif_txns" is not accessed (reportUnusedFunction)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\controllers\match_helpers.py:66:5 - error: Function "_candidate_cost" is not accessed (reportUnusedFunction)
 c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\q_wrapper\q_transaction.py
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\q_wrapper\q_transaction.py:29:20 - error: "ClassVar" is not allowed in this context (reportInvalidTypeForm)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\q_wrapper\q_transaction.py:32:16 - error: "ClassVar" is not allowed in this context (reportInvalidTypeForm)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\q_wrapper\q_transaction.py:33:18 - error: "ClassVar" is not allowed in this context (reportInvalidTypeForm)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\q_wrapper\q_transaction.py:36:19 - error: "ClassVar" is not allowed in this context (reportInvalidTypeForm)
-c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\qif_parsers_emitters\qif_file_parser_emitter.py
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\qif_parsers_emitters\qif_file_parser_emitter.py:10:6 - error: Import "pyparsing" could not be resolved (reportMissingImports)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\data_model\qif_parsers_emitters\qif_file_parser_emitter.py:10:23 - error: Type of "Empty" is unknown (reportUnknownVariableType)
 c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\__init__.py
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\__init__.py:11:5 - error: Type of "local_filter_by_payee" is partially unknown
   ┬á┬áType of "local_filter_by_payee" is "(txns: Unknown, query: Unknown, mode: str = "contains", case_sensitive: bool = False) -> list[Unknown]" (reportUnknownVariableType)
@@ -1153,6 +1153,12 @@ c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\leg
   ┬á┬áType of "payees" is "list[Unknown]" (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\legacy\qif_parsed.py:18:5 - error: Type of "other_sections" is partially unknown
   ┬á┬áType of "other_sections" is "dict[Unknown, Unknown]" (reportUnknownVariableType)
+c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\utilities\converters_scalar.py
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\utilities\converters_scalar.py:384:5 - error: Function "_to_date" is not accessed (reportUnusedFunction)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\utilities\converters_scalar.py:391:12 - error: No overloads for "to_date" match the provided arguments (reportCallIssue)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\utilities\converters_scalar.py:391:12 - error: Return type is unknown (reportUnknownVariableType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\utilities\converters_scalar.py:391:20 - error: Argument of type "object" cannot be assigned to parameter "s" of type "str" in function "to_date"
+  ┬á┬á"object" is not assignable to "str" (reportArgumentType)
 c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_category_match_session.py
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_category_match_session.py:14:61 - error: Type of parameter "monkeypatch" is unknown (reportUnknownParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_category_match_session.py:14:61 - error: Type annotation is missing for parameter "monkeypatch" (reportMissingParameterType)
@@ -1405,61 +1411,26 @@ c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:319:27 - error: Type of "s" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:320:12 - error: "__getitem__" method not defined on type "ITransaction" (reportIndexIssue)
 c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:9:54 - error: "_candidate_cost" is unknown import symbol (reportAttributeAccessIssue)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:9:54 - error: Type of "_candidate_cost" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:9:71 - error: "_flatten_qif_txns" is unknown import symbol (reportAttributeAccessIssue)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:9:71 - error: Type of "_flatten_qif_txns" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:12:56 - error: "_to_date" is unknown import symbol (reportAttributeAccessIssue)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:12:56 - error: Type of "_to_date" is unknown (reportUnknownVariableType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:9:54 - error: "_candidate_cost" is private and used outside of the module in which it is declared (reportPrivateUsage)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:9:71 - error: "_flatten_qif_txns" is private and used outside of the module in which it is declared (reportPrivateUsage)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:12:56 - error: "_to_date" is private and used outside of the module in which it is declared (reportPrivateUsage)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:57:39 - error: Type of parameter "raw" is unknown (reportUnknownParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:57:39 - error: Type annotation is missing for parameter "raw" (reportMissingParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:57:44 - error: Type of parameter "expected" is unknown (reportUnknownParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:57:44 - error: Type annotation is missing for parameter "expected" (reportMissingParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:58:21 - error: Argument type is unknown
+  ┬á┬áArgument corresponds to parameter "value" in function "_to_date" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:83:33 - error: Type annotation is missing for parameter "payee" (reportMissingParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:83:44 - error: Type annotation is missing for parameter "memo" (reportMissingParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:83:53 - error: Type annotation is missing for parameter "category" (reportMissingParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:83:66 - error: Type of parameter "splits" is partially unknown
   ┬á┬áParameter type is "Unknown | None" (reportUnknownParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:83:66 - error: Type annotation is missing for parameter "splits" (reportMissingParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:114:5 - error: Type of "views" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:118:46 - error: Type of "v" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:120:16 - error: Argument type is partially unknown
-  ┬á┬áArgument corresponds to parameter "obj" in function "len"
-  ┬á┬áArgument type is "list[Unknown]" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:123:5 - error: Type of "v0" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:124:12 - error: Type of "key" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:125:12 - error: Type of "payee" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:126:12 - error: Type of "memo" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:127:12 - error: Type of "category" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:129:12 - error: Type of "amount" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:130:12 - error: Type of "date" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:130:12 - error: Type of "year" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:130:37 - error: Type of "date" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:130:37 - error: Type of "month" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:130:60 - error: Type of "date" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:130:60 - error: Type of "day" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:133:5 - error: Type of "v1" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:133:9 - error: Type of "v2" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:134:12 - error: Type of "key" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:135:12 - error: Type of "key" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:138:12 - error: Type of "payee" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:139:12 - error: Type of "memo" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:140:12 - error: Type of "category" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:141:12 - error: Type of "amount" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:143:12 - error: Type of "payee" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:144:12 - error: Type of "memo" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:145:12 - error: Type of "category" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:146:12 - error: Type of "amount" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:151:5 - error: Type of "txns" is partially unknown
   ┬á┬áType of "txns" is "list[dict[str, str] | dict[str, str | list[Unknown]]]" (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:161:5 - error: Type of "views" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:164:13 - error: Type of "key" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:164:23 - error: Type of "v" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:169:12 - error: Type of "payee" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:170:12 - error: Type of "memo" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:171:12 - error: Type of "category" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:173:12 - error: Type of "amount" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:174:12 - error: Type of "amount" is unknown (reportUnknownMemberType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:161:31 - error: Argument type is partially unknown
+  ┬á┬áArgument corresponds to parameter "txns" in function "_flatten_qif_txns"
+  ┬á┬áArgument type is "list[dict[str, str] | dict[str, str | list[Unknown]]]" (reportUnknownArgumentType)
 c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session.py
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session.py:50:5 - error: Function "_isolate_convert_value" is not accessed (reportUnusedFunction)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session.py:50:28 - error: Type of parameter "monkeypatch" is unknown (reportUnknownParameterType)
@@ -4133,4 +4104,4 @@ c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\te
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_from_dict.py:90:29 - error: Argument type is partially unknown
   ┬á┬áArgument corresponds to parameter "src" in function "from_dict"
   ┬á┬áArgument type is "dict[str, str | dict[str, int] | tuple[int, int] | list[Unknown]]" (reportUnknownArgumentType)
-2680 errors, 0 warnings, 0 informations
+2648 errors, 0 warnings, 0 informations

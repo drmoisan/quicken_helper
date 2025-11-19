@@ -111,9 +111,7 @@ class QuickenFile:
     """
 
     def __init__(self):
-        self.sections: QuickenSections = field(
-            default_factory=lambda: QuickenSections(0)
-        )
+        self.sections: QuickenSections = QuickenSections.NONE
         self.tags: list[ITag] = []
         self.categories: list[ICategory] = []
         self.accounts: list[IAccount] = []
@@ -136,11 +134,11 @@ class QuickenFile:
         """
         if not self.transactions:
             return ""
-        current_account: IAccount = field(default_factory=QAccount)
 
+        current_account: IAccount | None = None
         texts: list[str] = []
         for item in self.transactions:
-            if item.account != current_account:
+            if current_account is None or item.account != current_account:
                 current_account = item.account
                 txt = item.emit_qif(with_account=True, with_type=True)
             else:

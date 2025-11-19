@@ -38,13 +38,19 @@
 - `quicken_helper/data_model/qif_parsers_emitters/qif_file_parser_emitter.py` imports `pyparsing`, but the dependency is absent from `pyproject.toml`.
 - Add `pyparsing` to `[tool.poetry.dependencies]`, run `poetry lock` / `poetry install`, and rerun `pytest tests/controllers/test_qif_loader_protocol.py`.
 
-### Phase 1 — tame pandas/Excel entry points
+### Phase 0e - reintroduce `convert_value` shim
+- `tests/controllers/test_match_session*.py` expect `convert_value` to live on `quicken_helper.controllers.match_session`.
+- Provide a module-level alias that forwards to the canonical helper (`from quicken_helper.utilities.core_util import convert_value as _convert_value` etc.) so the tests can monkeypatch it.
+- After adding the alias, rerun the `tests/controllers/test_match_session*.py` suite to confirm setup fixtures pass.
+
+### Phase 1 - tame pandas/Excel entry points
 - Modules: `controllers/category_match_session.py`, `controllers/match_excel.py`, `controllers/qif_loader.py`, `gui_viewers/merge_tab.py`.
 - Actions:
   1. Introduce a shared helper (e.g., `utilities/excel_io.py`) with typed wrappers returning `DataFrame`.
   2. Annotate nested helpers (`_map_cell`, `_build_list_column`, `pairs` comprehensions) and avoid implicit tuple destructuring that hides types.
   3. Replace `pd.read_excel` calls with `cast(DataFrame, ...)` after verifying `sheet_name` arguments.
   4. Add regression tests covering edge cases (missing columns, preview toggles) with docstrings and AAA structure.
+- Ensure new wrappers remain easy to monkeypatch in tests (e.g., pass `sheet_name` via `kw.setdefault` so a simple lambda can accept the call). Currently `tests/controllers/test_match_excel.py` fails because the stubbed `pd.read_excel` does not accept keyword arguments.
 - Validate with `pyright` after each file to prevent regressions.
 
 ### Phase 2 — update tests to satisfy strict typing + policy
@@ -59,6 +65,7 @@
 - Ensure every protocol and helper exports concrete `TypedDict`/`Protocol` definitions so controllers no longer return `Any`.
 - Add unit tests (with policy-compliant docstrings) that cover conversion helpers (`core_util.convert_value`, `utilities.converters_*`) to guard future refactors.
 - Fix dataclass sentinels that currently break imports: `quicken_helper/data_model/q_wrapper/q_transaction.py` uses module-level `_MISSING_*` helpers as direct defaults. Convert them to `ClassVar`s and switch fields to `field(default_factory=...)` (e.g., `cleared` uses a lambda returning `EnumClearedStatus.UNKNOWN`, `splits` uses `list`). Re-run `poetry run pytest` afterwards to confirm collection succeeds.
+- Audit other dataclasses such as `quicken_helper/data_model/q_wrapper/q_file.QuickenFile`; `sections` still holds a `dataclasses.Field` instance instead of `QuickenSections.NONE`. Update defaults to real values and add targeted tests.
 
 ### Phase 4 — strengthen automation
 - Expand Ruff rules once pyright is green (add `["B", "UP", "S", "TID", "TCH"]` etc. in `pyproject.toml`).

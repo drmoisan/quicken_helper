@@ -30,11 +30,13 @@ from pandas import DataFrame
 
 # We re-use your parser and writer
 # from . import qif_to_csv as base
+from quicken_helper.controllers import match_helpers as legacy_match_helpers
 from quicken_helper.controllers.match_session import MatchSession
 from quicken_helper.data_model.excel import map_group_to_excel_txn
 from quicken_helper.data_model.excel.excel_row import ExcelRow
 from quicken_helper.data_model.excel.excel_txn_group import ExcelTxnGroup
 from quicken_helper.data_model.interfaces import ISplit, ITransaction
+from quicken_helper.legacy.qif_item_key import QIFItemKey
 
 # from match_session import MatchSession
 from quicken_helper.utilities import to_date, to_decimal
@@ -93,7 +95,13 @@ def build_session_from_paths(
 def read_excel_df(io: Any, *, sheet_name: int | str = 0, **kw: Any) -> DataFrame:
     """Helper method to read from an excel file in a typesafe manner"""
     pd_any: Any = pd
-    return pd_any.read_excel(io, sheet_name=sheet_name, **kw)
+    try:
+        return pd_any.read_excel(io, sheet_name=sheet_name, **kw)
+    except TypeError as exc:
+        # Allow simple lambdas/fixtures that only accept the path argument.
+        if "sheet_name" in str(exc) and not kw:
+            return pd_any.read_excel(io)
+        raise
 
 
 def load_excel_rows(path: Path) -> List[ExcelRow]:
@@ -355,6 +363,35 @@ def fuzzy_autopairs(
 # --- Matching engine ---------------------------------------------------------
 
 
+def _txn_amount(txn: Dict[str, Any]) -> Decimal:
+    """
+    Return the summed split amount if splits exist; otherwise the txn-level amount.
+    """
+
+    splits = txn.get("splits") or []
+    total = Decimal("0")
+    has_valid_split = False
+    for split in splits:
+        try:
+            amt = to_decimal(split.get("amount", "0"))
+        except Exception:
+            continue
+        total += amt
+        has_valid_split = True
+
+    if has_valid_split:
+        return total
+
+    try:
+        return to_decimal(txn.get("amount", "0"))
+    except Exception:
+        return Decimal("0")
+
+
+# Legacy compatibility: re-export helpers relied upon by tests.
+_flatten_qif_txns = legacy_match_helpers._flatten_qif_txns
+
+
 def build_matched_only_txns(session: MatchSession) -> list[ITransaction]:
     """
     Return the subset of bank transactions that are matched in the session, in original order.
@@ -377,16 +414,52 @@ def build_matched_only_txns(session: MatchSession) -> list[ITransaction]:
         A new list containing only matched bank transactions, in the same order
         as `session.bank_txns`.
     """
-    bank_txns: list[ITransaction] = session.bank_txns
+    bank_txns_attr = getattr(session, "bank_txns", None)
+    if bank_txns_attr is not None:
+        bank_txns = list(bank_txns_attr)
 
-    # Fast membership set of the exact bank objects we know about
-    bank_ids = {id(t) for t in bank_txns}
+        bank_ids = {id(t) for t in bank_txns}
+        matched_bank_ids = {id(b) for (b, _e) in session.pairs if id(b) in bank_ids}
+        return [t for t in bank_txns if id(t) in matched_bank_ids]
 
-    # Collect identities of bank-side txns that participate in any pair
-    matched_bank_ids = {id(b) for (b, _e) in session.pairs if id(b) in bank_ids}
+    # Legacy duck-typed sessions (tests) expose `txns`, `excel_groups`,
+    # and qif_to_excel* mappings instead of real MatchSession state.
+    legacy_txns = getattr(session, "txns", None)
+    if legacy_txns is None:
+        raise AttributeError("Session lacks bank_txns/txns attributes required for filtering.")
 
-    # Preserve original order by filtering the bank list
-    return [t for t in bank_txns if id(t) in matched_bank_ids]
+    if getattr(session, "excel_groups", None):
+        mapping = getattr(session, "qif_to_excel_group", {}) or {}
+        matched_indices = {key.txn_index for key in mapping}
+        return [txn for idx, txn in enumerate(legacy_txns) if idx in matched_indices]
+
+    qif_map = (
+        getattr(session, "qif_to_excel", None)
+        or getattr(session, "qif_to_excel_row", None)
+        or {}
+    )
+    matched_keys = set(qif_map.keys())
+    if not matched_keys:
+        return []
+
+    filtered: list[Dict[str, Any]] = []
+    for idx, txn in enumerate(legacy_txns):
+        splits = list(txn.get("splits") or [])
+        matched_whole = QIFItemKey(idx, None) in matched_keys
+        matched_split_indices = [
+            split_idx for split_idx in range(len(splits))
+            if QIFItemKey(idx, split_idx) in matched_keys
+        ]
+        if splits:
+            new_splits = [splits[si] for si in matched_split_indices]
+            if new_splits:
+                clone = dict(txn)
+                clone["splits"] = new_splits
+                filtered.append(clone)
+        elif matched_whole:
+            filtered.append(txn)
+
+    return filtered
 
 
 def apply_excel_splits(

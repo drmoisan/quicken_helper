@@ -3,8 +3,8 @@
 ## Repository health snapshot
 - `poetry run black --check .` ➜ **pass** (`118` files unchanged).
 - `poetry run ruff check` ➜ **pass**, but config only enables `E`, `F`, `I` so style coverage is intentionally narrow (`pyproject.toml:24-38`).
-- `poetry run pyright` ➜ **fail** with **2680 errors / 0 warnings** (see `pyright.log`). Runtime modules and tests still spew `Unknown` types from pandas pipelines and untyped fixtures.
-- `poetry run pytest` ➜ **fail** during collection with 2 errors because `quicken_helper.controllers.match_helpers` no longer exports `_candidate_cost` and `pyparsing` is missing for the QIF loader tests.
+- `poetry run pyright` ➜ **fail** with **2648 errors / 0 warnings** (see `pyright.log`). Runtime modules and tests still spew `Unknown` types from pandas pipelines and untyped fixtures.
+- `poetry run pytest` ? **fail** late in execution (see latest run): `tests/controllers/test_match_excel.py` now raises `TypeError` because the new `read_excel_df` helper always passes `sheet_name`, several `q_wrapper` dataclasses start life in invalid states (e.g., `QuickenFile.sections` remains a dataclasses `Field`), and legacy/utilities suites assert behaviours that no longer hold.
 
 ## Findings and recommendations
 
@@ -39,15 +39,26 @@
 - Previous behavior: `quicken_helper/data_model/q_wrapper/q_transaction.py:28-61` bound module-level sentinels directly to dataclass fields, so Python 3.13 raised `ValueError: mutable default ... use default_factory` during import.
 - **Current status**: sentinels are now annotated as `ClassVar`s and feeders use `field(default_factory=...)`, so imports succeed. Keep the identity-based checks (`is not _MISSING_*`) intact when touching this file.
 
-### 7. `match_helpers` no longer exports tested helpers
-- `tests/controllers/test_match_helpers.py` imports `_candidate_cost` and `_flatten_qif_txns`, but `quicken_helper/controllers/match_helpers.py` now comments out these functions entirely.
-- `pytest` therefore fails during collection with `ImportError: cannot import name '_candidate_cost'`.
-- **Remediation**: either restore the helper implementations (preferred so the controller surface remains backward compatible) or update the tests and call sites to the new API. Until resolved, the test suite cannot run.
+### 7. `match_helpers` no longer exports tested helpers (resolved)
+- Original issue: `tests/controllers/test_match_helpers.py` imported `_candidate_cost` and `_flatten_qif_txns`, but `quicken_helper/controllers/match_helpers.py` had those helpers commented out.
+- **Current status**: helpers restored with the original semantics, so the controller tests run again.
 
-### 8. Missing `pyparsing` dependency for QIF parsers
-- `tests/controllers/test_qif_loader_protocol.py` imports `quicken_helper.controllers.qif_loader`, which in turn imports `quicken_helper.data_model.qif_parsers_emitters.qif_file_parser_emitter`. That module depends on `pyparsing` (`import Empty`), but the project does not list it in `pyproject.toml`.
-- Result: every test touching the parser fails with `ModuleNotFoundError: No module named 'pyparsing'`.
-- **Remediation**: add `pyparsing` (or the modern equivalent) to `[tool.poetry.dependencies]`, lock/install, and ensure the package is available in CI. If the parser was intentionally removed, excise or guard the imports instead.
+### 8. Missing `pyparsing` dependency for QIF parsers (resolved)
+- `quicken_helper/data_model/qif_parsers_emitters/qif_file_parser_emitter.py` depends on `pyparsing`. The dependency now exists in `pyproject.toml`, so `tests/controllers/test_qif_loader_protocol.py` imports without `ModuleNotFoundError`.
+
+### 9. `match_excel.load_excel_rows` no longer mock-friendly
+- `tests/controllers/test_match_excel.py` monkeypatches `pd.read_excel` with a simple `lambda path: df`. The new `read_excel_df` helper always passes `sheet_name=...`, so the lambda now raises `TypeError: unexpected keyword argument 'sheet_name'`.
+- **Remediation**: either update the tests to accept `*_, **__` or adjust `read_excel_df` to default `sheet_name` via `kw.setdefault`. Without this, all `match_excel` tests fail.
+
+### 10. `QuickenFile.sections` initialized to a dataclasses `Field`
+- `quicken_helper/data_model/q_wrapper/q_file.QuickenFile` still has `sections: QuickenSections = dataclasses.field(...)` defined at runtime, so an instance exposes the `Field` object rather than a `QuickenSections` value.
+- `tests/data_model/q_wrapper/test_qif_file.py::test_constructor_initializes_empty_lists_and_none_section` therefore fails (`Field(...) == Enum`).
+- **Remediation**: declare `sections: QuickenSections = field(default=QuickenSections.NONE)` (or `default_factory=lambda: QuickenSections.NONE`) and ensure all dataclass defaults are real runtime values instead of the descriptor objects.
+
+### 9. `MatchSession` no longer exposes `convert_value`
+- `tests/controllers/test_match_session*.py` rely on monkeypatching `match_session.convert_value`, but the module no longer defines nor re-exports the helper.
+- Result: every `MatchSession` test errors during setup with `AttributeError: module ... has no attribute 'convert_value'`, preventing meaningful coverage of the matching logic.
+- **Remediation**: either reintroduce a module-level `convert_value` alias (forwarding to `quicken_helper.utilities.core_util.convert_value`) or update the tests + implementation to inject the dependency differently.
 
 ## Remediation plan (initial pass)
 1. **Unblock the test/typing pipeline**

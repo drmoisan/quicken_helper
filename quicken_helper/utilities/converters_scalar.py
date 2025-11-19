@@ -381,6 +381,16 @@ def to_date(s: object, should_raise: bool = True, /) -> date:
     return _DEFAULT_DATE
 
 
+def _to_date(value: object) -> date:
+    """
+    Backwards-compatible alias retained for legacy imports/tests.
+
+    New code should call ``to_date`` directly.
+    """
+
+    return to_date(value)
+
+
 _DATE_RE_01: Final[re.Pattern[str]] = re.compile(
     r"^\s*(\d{1,2})[/\-.](\d{1,2})[/\-.](\d{2,4})\s*$"
 )
