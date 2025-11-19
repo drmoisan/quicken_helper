@@ -1,581 +1,413 @@
-c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\__init__.py
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\__init__.py:11:5 - error: Type of "local_filter_by_payee" is partially unknown
-    Type of "local_filter_by_payee" is "(txns: Unknown, query: Unknown, mode: str = "contains", case_sensitive: bool = False) -> list[Unknown]" (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\__init__.py:27:17 - error: Type of parameter "name" is unknown (reportUnknownParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\__init__.py:27:17 - error: Type annotation is missing for parameter "name" (reportMissingParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\__init__.py:32:26 - error: Argument type is unknown
-    Argument corresponds to parameter "args" in function "__init__" (reportUnknownArgumentType)
 c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\category_popout.py
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\category_popout.py:23:27 - error: Type of parameter "session" is unknown (reportUnknownParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\category_popout.py:23:27 - error: Type annotation is missing for parameter "session" (reportMissingParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\category_popout.py:36:48 - error: Argument type is unknown
-    Argument corresponds to parameter "session" in function "build_matched_only_txns" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\category_popout.py:37:57 - error: Argument of type "list[MatchedTxn]" cannot be assigned to parameter "txns" of type "List[Dict[str, Any]]" in function "extract_qif_categories"
-    "list[MatchedTxn]" is not assignable to "List[Dict[str, Any]]"
-      Type parameter "_T@list" is invariant, but "MatchedTxn" is not the same as "Dict[str, Any]"
-      Consider switching from "list" to "Sequence" which is covariant (reportArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\category_popout.py:38:61 - error: Argument of type "Path | str" cannot be assigned to parameter "xlsx_path" of type "Path" in function "extract_excel_categories"
-    Type "Path | str" is not assignable to type "Path"
-      "str" is not assignable to "Path" (reportArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\category_popout.py:43:5 - error: Type of parameter "master" is unknown (reportUnknownParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\category_popout.py:43:5 - error: Type annotation is missing for parameter "master" (reportMissingParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\category_popout.py:44:5 - error: Type of parameter "session" is unknown (reportUnknownParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\category_popout.py:44:5 - error: Type annotation is missing for parameter "session" (reportMissingParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\category_popout.py:62:50 - error: Argument type is unknown
-    Argument corresponds to parameter "session" in function "compute_category_sets" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\category_popout.py:65:9 - error: Type of "showinfo" is partially unknown
-    Type of "showinfo" is "(...) -> Unknown" (reportUnknownMemberType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\category_popout.py:27:21 - error: Argument type is partially unknown
+  ┬á┬áArgument corresponds to parameter "map" in function "__init__"
+  ┬á┬áArgument type is "dict[Unknown, Unknown]" (reportUnknownArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\category_popout.py:32:25 - error: Argument type is partially unknown
+  ┬á┬áArgument corresponds to parameter "map" in function "__init__"
+  ┬á┬áArgument type is "dict[Unknown, Unknown]" (reportUnknownArgumentType)
 c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:30:24 - error: Type of parameter "master" is unknown (reportUnknownParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:30:24 - error: Type annotation is missing for parameter "master" (reportMissingParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:30:32 - error: Type of parameter "mb" is unknown (reportUnknownParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:30:32 - error: Type annotation is missing for parameter "mb" (reportMissingParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:30:36 - error: Type of parameter "session" is partially unknown
-    Parameter type is "Unknown | None" (reportUnknownParameterType)
+  ┬á┬áParameter type is "Unknown | None" (reportUnknownParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:30:36 - error: Type annotation is missing for parameter "session" (reportMissingParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:31:26 - error: Argument type is unknown
-    Argument corresponds to parameter "master" in function "__init__" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "master" in function "__init__" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:33:9 - error: Type of "session" is partially unknown
-    Type of "session" is "Unknown | None" (reportUnknownMemberType)
+  ┬á┬áType of "session" is "Unknown | None" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:52:35 - error: Argument of type "int" cannot be assigned to parameter "cnf" of type "Mapping[str, Any] | None" in function "pack_configure"
-    Type "int" is not assignable to type "Mapping[str, Any] | None"
-      "int" is not assignable to "Mapping[str, Any]"
-      "int" is not assignable to "None" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Mapping[str, Any] | None"
+  ┬á┬á┬á┬á"int" is not assignable to "Mapping[str, Any]"
+  ┬á┬á┬á┬á"int" is not assignable to "None" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:52:35 - error: Argument of type "int" cannot be assigned to parameter "after" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:52:35 - error: Argument of type "int" cannot be assigned to parameter "anchor" of type "_Anchor" in function "pack_configure"
-    Type "int" is not assignable to type "_Anchor"
-      "int" is not assignable to "Literal['nw']"
-      "int" is not assignable to "Literal['n']"
-      "int" is not assignable to "Literal['ne']"
-      "int" is not assignable to "Literal['w']"
-      "int" is not assignable to "Literal['center']"
-      "int" is not assignable to "Literal['e']"
-      "int" is not assignable to "Literal['sw']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "_Anchor"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['nw']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['n']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['ne']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['w']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['center']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['e']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['sw']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:52:35 - error: Argument of type "int" cannot be assigned to parameter "before" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:52:35 - error: Argument of type "int" cannot be assigned to parameter "expand" of type "bool | Literal[0, 1]" in function "pack_configure"
-    Type "int" is not assignable to type "bool | Literal[0, 1]"
-      "int" is not assignable to "bool"
-      "int" is not assignable to type "Literal[0]"
-      "int" is not assignable to type "Literal[1]" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "bool | Literal[0, 1]"
+  ┬á┬á┬á┬á"int" is not assignable to "bool"
+  ┬á┬á┬á┬á"int" is not assignable to type "Literal[0]"
+  ┬á┬á┬á┬á"int" is not assignable to type "Literal[1]" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:52:35 - error: Argument of type "int" cannot be assigned to parameter "side" of type "Literal['left', 'right', 'top', 'bottom']" in function "pack_configure"
-    Type "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
-      "int" is not assignable to "Literal['left']"
-      "int" is not assignable to "Literal['right']"
-      "int" is not assignable to "Literal['top']"
-      "int" is not assignable to "Literal['bottom']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['left']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['right']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['top']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['bottom']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:52:35 - error: Argument of type "int" cannot be assigned to parameter "in_" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:72:30 - error: Argument of type "int" cannot be assigned to parameter "cnf" of type "Mapping[str, Any] | None" in function "pack_configure"
-    Type "int" is not assignable to type "Mapping[str, Any] | None"
-      "int" is not assignable to "Mapping[str, Any]"
-      "int" is not assignable to "None" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Mapping[str, Any] | None"
+  ┬á┬á┬á┬á"int" is not assignable to "Mapping[str, Any]"
+  ┬á┬á┬á┬á"int" is not assignable to "None" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:72:30 - error: Argument of type "int" cannot be assigned to parameter "after" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:72:30 - error: Argument of type "int" cannot be assigned to parameter "anchor" of type "_Anchor" in function "pack_configure"
-    Type "int" is not assignable to type "_Anchor"
-      "int" is not assignable to "Literal['nw']"
-      "int" is not assignable to "Literal['n']"
-      "int" is not assignable to "Literal['ne']"
-      "int" is not assignable to "Literal['w']"
-      "int" is not assignable to "Literal['center']"
-      "int" is not assignable to "Literal['e']"
-      "int" is not assignable to "Literal['sw']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "_Anchor"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['nw']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['n']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['ne']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['w']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['center']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['e']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['sw']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:72:30 - error: Argument of type "int" cannot be assigned to parameter "before" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:72:30 - error: Argument of type "int" cannot be assigned to parameter "expand" of type "bool | Literal[0, 1]" in function "pack_configure"
-    Type "int" is not assignable to type "bool | Literal[0, 1]"
-      "int" is not assignable to "bool"
-      "int" is not assignable to type "Literal[0]"
-      "int" is not assignable to type "Literal[1]" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "bool | Literal[0, 1]"
+  ┬á┬á┬á┬á"int" is not assignable to "bool"
+  ┬á┬á┬á┬á"int" is not assignable to type "Literal[0]"
+  ┬á┬á┬á┬á"int" is not assignable to type "Literal[1]" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:72:30 - error: Argument of type "int" cannot be assigned to parameter "side" of type "Literal['left', 'right', 'top', 'bottom']" in function "pack_configure"
-    Type "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
-      "int" is not assignable to "Literal['left']"
-      "int" is not assignable to "Literal['right']"
-      "int" is not assignable to "Literal['top']"
-      "int" is not assignable to "Literal['bottom']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['left']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['right']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['top']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['bottom']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:72:30 - error: Argument of type "int" cannot be assigned to parameter "in_" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:93:30 - error: Argument of type "int" cannot be assigned to parameter "cnf" of type "Mapping[str, Any] | None" in function "pack_configure"
-    Type "int" is not assignable to type "Mapping[str, Any] | None"
-      "int" is not assignable to "Mapping[str, Any]"
-      "int" is not assignable to "None" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Mapping[str, Any] | None"
+  ┬á┬á┬á┬á"int" is not assignable to "Mapping[str, Any]"
+  ┬á┬á┬á┬á"int" is not assignable to "None" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:93:30 - error: Argument of type "int" cannot be assigned to parameter "after" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:93:30 - error: Argument of type "int" cannot be assigned to parameter "anchor" of type "_Anchor" in function "pack_configure"
-    Type "int" is not assignable to type "_Anchor"
-      "int" is not assignable to "Literal['nw']"
-      "int" is not assignable to "Literal['n']"
-      "int" is not assignable to "Literal['ne']"
-      "int" is not assignable to "Literal['w']"
-      "int" is not assignable to "Literal['center']"
-      "int" is not assignable to "Literal['e']"
-      "int" is not assignable to "Literal['sw']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "_Anchor"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['nw']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['n']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['ne']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['w']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['center']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['e']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['sw']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:93:30 - error: Argument of type "int" cannot be assigned to parameter "before" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:93:30 - error: Argument of type "int" cannot be assigned to parameter "expand" of type "bool | Literal[0, 1]" in function "pack_configure"
-    Type "int" is not assignable to type "bool | Literal[0, 1]"
-      "int" is not assignable to "bool"
-      "int" is not assignable to type "Literal[0]"
-      "int" is not assignable to type "Literal[1]" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "bool | Literal[0, 1]"
+  ┬á┬á┬á┬á"int" is not assignable to "bool"
+  ┬á┬á┬á┬á"int" is not assignable to type "Literal[0]"
+  ┬á┬á┬á┬á"int" is not assignable to type "Literal[1]" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:93:30 - error: Argument of type "int" cannot be assigned to parameter "side" of type "Literal['left', 'right', 'top', 'bottom']" in function "pack_configure"
-    Type "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
-      "int" is not assignable to "Literal['left']"
-      "int" is not assignable to "Literal['right']"
-      "int" is not assignable to "Literal['top']"
-      "int" is not assignable to "Literal['bottom']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['left']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['right']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['top']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['bottom']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:93:30 - error: Argument of type "int" cannot be assigned to parameter "in_" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:137:31 - error: Argument of type "int" cannot be assigned to parameter "cnf" of type "Mapping[str, Any] | None" in function "pack_configure"
-    Type "int" is not assignable to type "Mapping[str, Any] | None"
-      "int" is not assignable to "Mapping[str, Any]"
-      "int" is not assignable to "None" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Mapping[str, Any] | None"
+  ┬á┬á┬á┬á"int" is not assignable to "Mapping[str, Any]"
+  ┬á┬á┬á┬á"int" is not assignable to "None" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:137:31 - error: Argument of type "int" cannot be assigned to parameter "after" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:137:31 - error: Argument of type "int" cannot be assigned to parameter "anchor" of type "_Anchor" in function "pack_configure"
-    Type "int" is not assignable to type "_Anchor"
-      "int" is not assignable to "Literal['nw']"
-      "int" is not assignable to "Literal['n']"
-      "int" is not assignable to "Literal['ne']"
-      "int" is not assignable to "Literal['w']"
-      "int" is not assignable to "Literal['center']"
-      "int" is not assignable to "Literal['e']"
-      "int" is not assignable to "Literal['sw']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "_Anchor"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['nw']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['n']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['ne']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['w']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['center']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['e']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['sw']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:137:31 - error: Argument of type "int" cannot be assigned to parameter "before" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:137:31 - error: Argument of type "int" cannot be assigned to parameter "expand" of type "bool | Literal[0, 1]" in function "pack_configure"
-    Type "int" is not assignable to type "bool | Literal[0, 1]"
-      "int" is not assignable to "bool"
-      "int" is not assignable to type "Literal[0]"
-      "int" is not assignable to type "Literal[1]" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "bool | Literal[0, 1]"
+  ┬á┬á┬á┬á"int" is not assignable to "bool"
+  ┬á┬á┬á┬á"int" is not assignable to type "Literal[0]"
+  ┬á┬á┬á┬á"int" is not assignable to type "Literal[1]" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:137:31 - error: Argument of type "int" cannot be assigned to parameter "side" of type "Literal['left', 'right', 'top', 'bottom']" in function "pack_configure"
-    Type "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
-      "int" is not assignable to "Literal['left']"
-      "int" is not assignable to "Literal['right']"
-      "int" is not assignable to "Literal['top']"
-      "int" is not assignable to "Literal['bottom']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['left']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['right']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['top']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['bottom']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:137:31 - error: Argument of type "int" cannot be assigned to parameter "in_" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:144:47 - error: Argument of type "int" cannot be assigned to parameter "cnf" of type "Mapping[str, Any] | None" in function "pack_configure"
-    Type "int" is not assignable to type "Mapping[str, Any] | None"
-      "int" is not assignable to "Mapping[str, Any]"
-      "int" is not assignable to "None" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Mapping[str, Any] | None"
+  ┬á┬á┬á┬á"int" is not assignable to "Mapping[str, Any]"
+  ┬á┬á┬á┬á"int" is not assignable to "None" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:144:47 - error: Argument of type "int" cannot be assigned to parameter "after" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:144:47 - error: Argument of type "int" cannot be assigned to parameter "anchor" of type "_Anchor" in function "pack_configure"
-    Type "int" is not assignable to type "_Anchor"
-      "int" is not assignable to "Literal['nw']"
-      "int" is not assignable to "Literal['n']"
-      "int" is not assignable to "Literal['ne']"
-      "int" is not assignable to "Literal['w']"
-      "int" is not assignable to "Literal['center']"
-      "int" is not assignable to "Literal['e']"
-      "int" is not assignable to "Literal['sw']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "_Anchor"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['nw']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['n']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['ne']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['w']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['center']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['e']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['sw']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:144:47 - error: Argument of type "int" cannot be assigned to parameter "before" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:144:47 - error: Argument of type "int" cannot be assigned to parameter "side" of type "Literal['left', 'right', 'top', 'bottom']" in function "pack_configure"
-    Type "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
-      "int" is not assignable to "Literal['left']"
-      "int" is not assignable to "Literal['right']"
-      "int" is not assignable to "Literal['top']"
-      "int" is not assignable to "Literal['bottom']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['left']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['right']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['top']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['bottom']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:144:47 - error: Argument of type "int" cannot be assigned to parameter "in_" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:151:42 - error: Argument type is partially unknown
-    Argument corresponds to parameter "callback" in function "trace_add"
-    Argument type is "(*_: Unknown) -> None" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "callback" in function "trace_add"
+  ┬á┬áArgument type is "(*_: Unknown) -> None" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:194:17 - error: Type of "append" is partially unknown
-    Type of "append" is "(object: Unknown, /) -> None" (reportUnknownMemberType)
+  ┬á┬áType of "append" is "(object: Unknown, /) -> None" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:195:16 - error: Return type, "list[Unknown]", is partially unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:223:17 - error: Type of "showerror" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:226:17 - error: Type of "showerror" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:229:24 - error: Type of "askyesno" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:249:29 - error: Type of "session" is partially unknown
-    Type of "session" is "Unknown | None" (reportUnknownMemberType)
+  ┬á┬áType of "session" is "Unknown | None" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:249:29 - error: Argument type is partially unknown
-    Argument corresponds to parameter "o" in function "getattr"
-    Argument type is "Unknown | None" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr"
+  ┬á┬áArgument type is "Unknown | None" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:253:25 - error: Type of "session" is partially unknown
-    Type of "session" is "Unknown | None" (reportUnknownMemberType)
+  ┬á┬áType of "session" is "Unknown | None" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:253:25 - error: Type of "qif_txns" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:253:25 - error: Argument type is unknown
-    Argument corresponds to parameter "obj" in function "len" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "obj" in function "len" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:253:38 - error: "qif_txns" is not a known attribute of "None" (reportOptionalMemberAccess)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:255:17 - error: Type of "txns" is partially unknown
-    Type of "txns" is "list[dict[Unknown, Unknown]]" (reportUnknownVariableType)
+  ┬á┬áType of "txns" is "list[dict[Unknown, Unknown]]" (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:256:21 - error: Type of "to_dict" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:256:44 - error: Argument type is unknown
-    Argument corresponds to parameter "obj" in function "hasattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "obj" in function "hasattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:256:68 - error: Argument type is unknown
-    Argument corresponds to parameter "map" in function "__init__" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "map" in function "__init__" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:257:25 - error: Type of "t" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:257:30 - error: Type of "session" is partially unknown
-    Type of "session" is "Unknown | None" (reportUnknownMemberType)
+  ┬á┬áType of "session" is "Unknown | None" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:257:30 - error: Type of "qif_txns" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:257:43 - error: "qif_txns" is not a known attribute of "None" (reportOptionalMemberAccess)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:272:21 - error: Type of "txns" is partially unknown
-    Type of "txns" is "list[dict[Unknown, Unknown]]" (reportUnknownVariableType)
+  ┬á┬áType of "txns" is "list[dict[Unknown, Unknown]]" (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:275:25 - error: Type of "session" is partially unknown
-    Type of "session" is "Unknown | None" (reportUnknownMemberType)
+  ┬á┬áType of "session" is "Unknown | None" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:275:25 - error: Type of "load_qif" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:275:38 - error: "load_qif" is not a known attribute of "None" (reportOptionalMemberAccess)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:286:42 - error: Argument type is partially unknown
-    Argument corresponds to parameter "txns" in function "filter_date_range"
-    Argument type is "List[dict[Unknown, Unknown]]" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "txns" in function "filter_date_range"
+  ┬á┬áArgument type is "List[dict[Unknown, Unknown]]" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:294:21 - error: Argument type is partially unknown
-    Argument corresponds to parameter "txns" in function "apply_multi_payee_filters"
-    Argument type is "List[dict[Unknown, Unknown]]" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "txns" in function "apply_multi_payee_filters"
+  ┬á┬áArgument type is "List[dict[Unknown, Unknown]]" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:301:59 - error: Argument type is partially unknown
-    Argument corresponds to parameter "obj" in function "len"
-    Argument type is "List[dict[Unknown, Unknown]]" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "obj" in function "len"
+  ┬á┬áArgument type is "List[dict[Unknown, Unknown]]" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:304:31 - error: Argument of type "List[dict[Unknown, Unknown]]" cannot be assigned to parameter "path" of type "str | Path" in function "write_qif"
-    Type "List[dict[Unknown, Unknown]]" is not assignable to type "str | Path"
-      "List[dict[Unknown, Unknown]]" is not assignable to "str"
-      "List[dict[Unknown, Unknown]]" is not assignable to "Path" (reportArgumentType)
+  ┬á┬áType "List[dict[Unknown, Unknown]]" is not assignable to type "str | Path"
+  ┬á┬á┬á┬á"List[dict[Unknown, Unknown]]" is not assignable to "str"
+  ┬á┬á┬á┬á"List[dict[Unknown, Unknown]]" is not assignable to "Path" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:304:37 - error: Argument of type "Path" cannot be assigned to parameter "txns" of type "Iterable[Any]" in function "write_qif"
-    "Path" is incompatible with protocol "Iterable[Any]"
-      "__iter__" is not present (reportArgumentType)
+  ┬á┬á"Path" is incompatible with protocol "Iterable[Any]"
+  ┬á┬á┬á┬á"__iter__" is not present (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:305:17 - error: Type of "showinfo" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:310:43 - error: Argument type is partially unknown
-    Argument corresponds to parameter "txns" in function "write_csv_quicken_windows"
-    Argument type is "List[dict[Unknown, Unknown]]" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "txns" in function "write_csv_quicken_windows"
+  ┬á┬áArgument type is "List[dict[Unknown, Unknown]]" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:313:39 - error: Argument type is partially unknown
-    Argument corresponds to parameter "txns" in function "write_csv_quicken_mac"
-    Argument type is "List[dict[Unknown, Unknown]]" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "txns" in function "write_csv_quicken_mac"
+  ┬á┬áArgument type is "List[dict[Unknown, Unknown]]" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:317:44 - error: Argument type is partially unknown
-    Argument corresponds to parameter "txns" in function "write_csv_exploded"
-    Argument type is "List[dict[Unknown, Unknown]]" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "txns" in function "write_csv_exploded"
+  ┬á┬áArgument type is "List[dict[Unknown, Unknown]]" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:320:40 - error: Argument type is partially unknown
-    Argument corresponds to parameter "txns" in function "write_csv_flat"
-    Argument type is "List[dict[Unknown, Unknown]]" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "txns" in function "write_csv_flat"
+  ┬á┬áArgument type is "List[dict[Unknown, Unknown]]" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:322:13 - error: Type of "showinfo" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\convert_tab.py:325:13 - error: Type of "showerror" is unknown (reportUnknownMemberType)
 c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:36:12 - error: Type of parameter "s" is unknown (reportUnknownParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:36:12 - error: Type annotation is missing for parameter "s" (reportMissingParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:37:30 - error: Argument type is unknown
-    Argument corresponds to parameter "s" in function "parse_date_maybe" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:53:9 - error: Type of "append" is partially unknown
-    Type of "append" is "(object: Unknown, /) -> None" (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:54:12 - error: Return type, "list[Unknown]", is partially unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:57:5 - error: Return type, "list[Unknown]", is partially unknown (reportUnknownParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:57:27 - error: Type of parameter "txns" is unknown (reportUnknownParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:57:27 - error: Type annotation is missing for parameter "txns" (reportMissingParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:57:33 - error: Type of parameter "query" is unknown (reportUnknownParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:57:33 - error: Type annotation is missing for parameter "query" (reportMissingParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:57:40 - error: Type annotation is missing for parameter "mode" (reportMissingParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:57:57 - error: Type annotation is missing for parameter "case_sensitive" (reportMissingParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:59:25 - error: Argument type is unknown
-    Argument corresponds to parameter "object" in function "__new__" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:61:25 - error: Argument type is unknown
-    Argument corresponds to parameter "object" in function "__new__" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:63:9 - error: Type of "t" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:64:9 - error: Type of "payee" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:64:17 - error: Type of "get" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:65:9 - error: Type of "payee_cmp" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:66:73 - error: Type of "lower" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:72:13 - error: Type of "match" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:74:13 - error: Type of "match" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:74:21 - error: Type of "startswith" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:76:13 - error: Type of "match" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:76:21 - error: Type of "endswith" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:78:13 - error: Type of "pattern" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:79:23 - error: Type of "replace" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:79:23 - error: Type of "replace" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:79:33 - error: Argument type is unknown
-    Argument corresponds to parameter "pattern" in function "escape" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:82:17 - error: Type of "isalpha" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:82:17 - error: Argument type is partially unknown
-    Argument corresponds to parameter "iterable" in function "any"
-    Argument type is "Generator[Unknown, None, None]" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:82:34 - error: Type of "isupper" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:82:51 - error: Type of "ch" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:85:31 - error: Argument type is unknown
-    Argument corresponds to parameter "pattern" in function "search" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:85:40 - error: Argument type is unknown
-    Argument corresponds to parameter "string" in function "search" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:88:31 - error: Argument type is unknown
-    Argument corresponds to parameter "pattern" in function "search" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:88:38 - error: Argument type is unknown
-    Argument corresponds to parameter "string" in function "search" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:90:13 - error: Type of "append" is partially unknown
-    Type of "append" is "(object: Unknown, /) -> None" (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:90:24 - error: Argument type is unknown
-    Argument corresponds to parameter "object" in function "append" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:91:12 - error: Return type, "list[Unknown]", is partially unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:105:9 - error: Return type, "list[Unknown]", is partially unknown (reportUnknownParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:105:20 - error: Type of parameter "tlist" is unknown (reportUnknownParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:105:20 - error: Type annotation is missing for parameter "tlist" (reportMissingParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:105:27 - error: Type of parameter "q" is unknown (reportUnknownParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:105:27 - error: Type annotation is missing for parameter "q" (reportMissingParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:107:20 - error: Return type, "list[Unknown]", is partially unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:109:21 - error: Type of "t" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:112:21 - error: Argument type is unknown
-    Argument corresponds to parameter "txns" in function "filter_by_payee" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:112:28 - error: Argument type is unknown
-    Argument corresponds to parameter "query" in function "filter_by_payee" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:115:16 - error: Return type, "list[Unknown]", is partially unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:115:38 - error: Argument type is unknown
-    Argument corresponds to parameter "txns" in function "local_filter_by_payee" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:115:45 - error: Argument type is unknown
-    Argument corresponds to parameter "query" in function "local_filter_by_payee" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:118:9 - error: Type of "seen" is partially unknown
-    Type of "seen" is "set[Unknown]" (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:120:13 - error: Type of "subset" is partially unknown
-    Type of "subset" is "list[Dict[str, Any]] | list[Unknown]" (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:121:17 - error: Type of "t" is partially unknown
-    Type of "t" is "Dict[str, Any] | Unknown" (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:122:26 - error: Argument type is partially unknown
-    Argument corresponds to parameter "obj" in function "id"
-    Argument type is "Dict[str, Any] | Unknown" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:124:21 - error: Type of "add" is partially unknown
-    Type of "add" is "(element: Unknown, /) -> None" (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:125:21 - error: Type of "append" is partially unknown
-    Type of "append" is "(object: Unknown, /) -> None" (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:126:16 - error: Return type, "list[Unknown]", is partially unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:130:13 - error: Type of "cur" is partially unknown
-    Type of "cur" is "list[Dict[str, Any] | Unknown] | list[Unknown]" (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:131:16 - error: Return type, "list[Dict[str, Any]] | list[Dict[str, Any] | Unknown] | list[Unknown]", is partially unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:134:5 - error: Function "_set_text" is not accessed (reportUnusedFunction)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:134:15 - error: Type of parameter "widget" is unknown (reportUnknownParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:134:15 - error: Type annotation is missing for parameter "widget" (reportMissingParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:136:9 - error: Type of "configure" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:137:9 - error: Type of "delete" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:138:9 - error: Type of "insert" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:139:9 - error: Type of "configure" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:144:5 - error: Function "_fmt_txn" is not accessed (reportUnusedFunction)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:144:14 - error: Type of parameter "t" is partially unknown
-    Parameter type is "dict[Unknown, Unknown]" (reportUnknownParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:145:12 - error: Unnecessary isinstance call; "dict[Unknown, Unknown]" is always an instance of "dict[Unknown, Unknown]" (reportUnnecessaryIsInstance)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:148:11 - error: Type of parameter "k" is unknown (reportUnknownParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:148:11 - error: Type annotation is missing for parameter "k" (reportMissingParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:148:14 - error: Type annotation is missing for parameter "d" (reportMissingParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:149:20 - error: Type of "get" is partially unknown
-    Type of "get" is "Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]" (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:149:20 - error: Argument type is partially unknown
-    Argument corresponds to parameter "object" in function "__new__"
-    Argument type is "Unknown | Literal['']" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:149:26 - error: Argument type is unknown
-    Argument corresponds to parameter "key" in function "get" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:159:5 - error: Type of "splits" is partially unknown
-    Type of "splits" is "Unknown | list[Unknown]" (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:159:14 - error: Type of "get" is partially unknown
-    Type of "get" is "Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]" (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:162:16 - error: Type of "s" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:162:31 - error: Argument type is partially unknown
-    Argument corresponds to parameter "iterable" in function "__new__"
-    Argument type is "Unknown | list[Unknown]" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:164:31 - error: Type of "get" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:164:31 - error: Argument type is unknown
-    Argument corresponds to parameter "object" in function "__new__" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:164:62 - error: Type of "get" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:164:62 - error: Argument type is unknown
-    Argument corresponds to parameter "object" in function "__new__" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:164:89 - error: Type of "get" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:164:89 - error: Argument type is unknown
-    Argument corresponds to parameter "object" in function "__new__" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:169:5 - error: Function "_fmt_excel_row" is not accessed (reportUnusedFunction)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:169:20 - error: Type of parameter "row" is unknown (reportUnknownParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:169:20 - error: Type annotation is missing for parameter "row" (reportMissingParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:170:16 - error: Argument type is unknown
-    Argument corresponds to parameter "obj" in function "hasattr" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:171:9 - error: Type of "row" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:171:15 - error: Type of "to_dict" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:173:20 - error: Argument type is unknown
-    Argument corresponds to parameter "object" in function "__new__" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:175:11 - error: Type of parameter "c" is unknown (reportUnknownParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:175:11 - error: Type annotation is missing for parameter "c" (reportMissingParameterType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:176:20 - error: Type of "get" is partially unknown
-    Type of "get" is "Overload[(key: Unknown, default: None = None, /) -> (Unknown | None), (key: Unknown, default: Unknown, /) -> Unknown, (key: Unknown, default: _T@get, /) -> (Unknown | _T@get)]" (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:176:20 - error: Argument type is partially unknown
-    Argument corresponds to parameter "object" in function "__new__"
-    Argument type is "Unknown | Literal['']" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:176:28 - error: Argument type is unknown
-    Argument corresponds to parameter "key" in function "get" (reportUnknownArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\helpers.py:181:13 - error: Type of "entry" is unknown (reportUnknownVariableType)
 c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:24:29 - error: Type of "open_category_popout" is partially unknown
-    Type of "open_category_popout" is "(master: Unknown, session: Unknown, xlsx_path: Path | str, mb: _MB | None = None, *, show_ui: bool = True) -> tuple[Set[str], Set[str]]" (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:26:48 - error: "_fmt_excel_row" is private and used outside of the module in which it is declared (reportPrivateUsage)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:26:48 - error: Type of "_fmt_excel_row" is partially unknown
-    Type of "_fmt_excel_row" is "(row: Unknown) -> str" (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:26:64 - error: "_fmt_txn" is private and used outside of the module in which it is declared (reportPrivateUsage)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:26:64 - error: Type of "_fmt_txn" is partially unknown
-    Type of "_fmt_txn" is "(t: dict[Unknown, Unknown]) -> str" (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:26:74 - error: "_set_text" is private and used outside of the module in which it is declared (reportPrivateUsage)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:26:74 - error: Type of "_set_text" is partially unknown
-    Type of "_set_text" is "(widget: Unknown, text: str) -> None" (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:45:24 - error: Type of parameter "master" is unknown (reportUnknownParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:45:24 - error: Type annotation is missing for parameter "master" (reportMissingParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:45:32 - error: Type of parameter "mb" is unknown (reportUnknownParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:45:32 - error: Type annotation is missing for parameter "mb" (reportMissingParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:51:26 - error: Argument type is unknown
-    Argument corresponds to parameter "master" in function "__init__" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "master" in function "__init__" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:52:9 - error: Type of "mb" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:111:32 - error: Argument of type "int" cannot be assigned to parameter "cnf" of type "Mapping[str, Any] | None" in function "pack_configure"
-    Type "int" is not assignable to type "Mapping[str, Any] | None"
-      "int" is not assignable to "Mapping[str, Any]"
-      "int" is not assignable to "None" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Mapping[str, Any] | None"
+  ┬á┬á┬á┬á"int" is not assignable to "Mapping[str, Any]"
+  ┬á┬á┬á┬á"int" is not assignable to "None" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:111:32 - error: Argument of type "int" cannot be assigned to parameter "after" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:111:32 - error: Argument of type "int" cannot be assigned to parameter "anchor" of type "_Anchor" in function "pack_configure"
-    Type "int" is not assignable to type "_Anchor"
-      "int" is not assignable to "Literal['nw']"
-      "int" is not assignable to "Literal['n']"
-      "int" is not assignable to "Literal['ne']"
-      "int" is not assignable to "Literal['w']"
-      "int" is not assignable to "Literal['center']"
-      "int" is not assignable to "Literal['e']"
-      "int" is not assignable to "Literal['sw']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "_Anchor"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['nw']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['n']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['ne']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['w']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['center']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['e']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['sw']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:111:32 - error: Argument of type "int" cannot be assigned to parameter "before" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:111:32 - error: Argument of type "int" cannot be assigned to parameter "expand" of type "bool | Literal[0, 1]" in function "pack_configure"
-    Type "int" is not assignable to type "bool | Literal[0, 1]"
-      "int" is not assignable to "bool"
-      "int" is not assignable to type "Literal[0]"
-      "int" is not assignable to type "Literal[1]" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "bool | Literal[0, 1]"
+  ┬á┬á┬á┬á"int" is not assignable to "bool"
+  ┬á┬á┬á┬á"int" is not assignable to type "Literal[0]"
+  ┬á┬á┬á┬á"int" is not assignable to type "Literal[1]" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:111:32 - error: Argument of type "int" cannot be assigned to parameter "side" of type "Literal['left', 'right', 'top', 'bottom']" in function "pack_configure"
-    Type "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
-      "int" is not assignable to "Literal['left']"
-      "int" is not assignable to "Literal['right']"
-      "int" is not assignable to "Literal['top']"
-      "int" is not assignable to "Literal['bottom']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['left']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['right']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['top']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['bottom']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:111:32 - error: Argument of type "int" cannot be assigned to parameter "in_" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:155:34 - error: Argument of type "int" cannot be assigned to parameter "cnf" of type "Mapping[str, Any] | None" in function "pack_configure"
-    Type "int" is not assignable to type "Mapping[str, Any] | None"
-      "int" is not assignable to "Mapping[str, Any]"
-      "int" is not assignable to "None" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Mapping[str, Any] | None"
+  ┬á┬á┬á┬á"int" is not assignable to "Mapping[str, Any]"
+  ┬á┬á┬á┬á"int" is not assignable to "None" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:155:34 - error: Argument of type "int" cannot be assigned to parameter "after" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:155:34 - error: Argument of type "int" cannot be assigned to parameter "anchor" of type "_Anchor" in function "pack_configure"
-    Type "int" is not assignable to type "_Anchor"
-      "int" is not assignable to "Literal['nw']"
-      "int" is not assignable to "Literal['n']"
-      "int" is not assignable to "Literal['ne']"
-      "int" is not assignable to "Literal['w']"
-      "int" is not assignable to "Literal['center']"
-      "int" is not assignable to "Literal['e']"
-      "int" is not assignable to "Literal['sw']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "_Anchor"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['nw']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['n']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['ne']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['w']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['center']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['e']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['sw']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:155:34 - error: Argument of type "int" cannot be assigned to parameter "before" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:155:34 - error: Argument of type "int" cannot be assigned to parameter "expand" of type "bool | Literal[0, 1]" in function "pack_configure"
-    Type "int" is not assignable to type "bool | Literal[0, 1]"
-      "int" is not assignable to "bool"
-      "int" is not assignable to type "Literal[0]"
-      "int" is not assignable to type "Literal[1]" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "bool | Literal[0, 1]"
+  ┬á┬á┬á┬á"int" is not assignable to "bool"
+  ┬á┬á┬á┬á"int" is not assignable to type "Literal[0]"
+  ┬á┬á┬á┬á"int" is not assignable to type "Literal[1]" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:155:34 - error: Argument of type "int" cannot be assigned to parameter "side" of type "Literal['left', 'right', 'top', 'bottom']" in function "pack_configure"
-    Type "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
-      "int" is not assignable to "Literal['left']"
-      "int" is not assignable to "Literal['right']"
-      "int" is not assignable to "Literal['top']"
-      "int" is not assignable to "Literal['bottom']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['left']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['right']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['top']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['bottom']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:155:34 - error: Argument of type "int" cannot be assigned to parameter "in_" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:172:48 - error: Argument of type "int" cannot be assigned to parameter "cnf" of type "Mapping[str, Any] | None" in function "pack_configure"
-    Type "int" is not assignable to type "Mapping[str, Any] | None"
-      "int" is not assignable to "Mapping[str, Any]"
-      "int" is not assignable to "None" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Mapping[str, Any] | None"
+  ┬á┬á┬á┬á"int" is not assignable to "Mapping[str, Any]"
+  ┬á┬á┬á┬á"int" is not assignable to "None" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:172:48 - error: Argument of type "int" cannot be assigned to parameter "after" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:172:48 - error: Argument of type "int" cannot be assigned to parameter "anchor" of type "_Anchor" in function "pack_configure"
-    Type "int" is not assignable to type "_Anchor"
-      "int" is not assignable to "Literal['nw']"
-      "int" is not assignable to "Literal['n']"
-      "int" is not assignable to "Literal['ne']"
-      "int" is not assignable to "Literal['w']"
-      "int" is not assignable to "Literal['center']"
-      "int" is not assignable to "Literal['e']"
-      "int" is not assignable to "Literal['sw']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "_Anchor"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['nw']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['n']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['ne']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['w']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['center']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['e']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['sw']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:172:48 - error: Argument of type "int" cannot be assigned to parameter "before" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:172:48 - error: Argument of type "int" cannot be assigned to parameter "side" of type "Literal['left', 'right', 'top', 'bottom']" in function "pack_configure"
-    Type "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
-      "int" is not assignable to "Literal['left']"
-      "int" is not assignable to "Literal['right']"
-      "int" is not assignable to "Literal['top']"
-      "int" is not assignable to "Literal['bottom']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['left']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['right']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['top']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['bottom']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:172:48 - error: Argument of type "int" cannot be assigned to parameter "in_" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:189:31 - error: Argument of type "int" cannot be assigned to parameter "cnf" of type "Mapping[str, Any] | None" in function "pack_configure"
-    Type "int" is not assignable to type "Mapping[str, Any] | None"
-      "int" is not assignable to "Mapping[str, Any]"
-      "int" is not assignable to "None" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Mapping[str, Any] | None"
+  ┬á┬á┬á┬á"int" is not assignable to "Mapping[str, Any]"
+  ┬á┬á┬á┬á"int" is not assignable to "None" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:189:31 - error: Argument of type "int" cannot be assigned to parameter "after" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:189:31 - error: Argument of type "int" cannot be assigned to parameter "anchor" of type "_Anchor" in function "pack_configure"
-    Type "int" is not assignable to type "_Anchor"
-      "int" is not assignable to "Literal['nw']"
-      "int" is not assignable to "Literal['n']"
-      "int" is not assignable to "Literal['ne']"
-      "int" is not assignable to "Literal['w']"
-      "int" is not assignable to "Literal['center']"
-      "int" is not assignable to "Literal['e']"
-      "int" is not assignable to "Literal['sw']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "_Anchor"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['nw']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['n']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['ne']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['w']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['center']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['e']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['sw']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:189:31 - error: Argument of type "int" cannot be assigned to parameter "before" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:189:31 - error: Argument of type "int" cannot be assigned to parameter "expand" of type "bool | Literal[0, 1]" in function "pack_configure"
-    Type "int" is not assignable to type "bool | Literal[0, 1]"
-      "int" is not assignable to "bool"
-      "int" is not assignable to type "Literal[0]"
-      "int" is not assignable to type "Literal[1]" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "bool | Literal[0, 1]"
+  ┬á┬á┬á┬á"int" is not assignable to "bool"
+  ┬á┬á┬á┬á"int" is not assignable to type "Literal[0]"
+  ┬á┬á┬á┬á"int" is not assignable to type "Literal[1]" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:189:31 - error: Argument of type "int" cannot be assigned to parameter "side" of type "Literal['left', 'right', 'top', 'bottom']" in function "pack_configure"
-    Type "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
-      "int" is not assignable to "Literal['left']"
-      "int" is not assignable to "Literal['right']"
-      "int" is not assignable to "Literal['top']"
-      "int" is not assignable to "Literal['bottom']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['left']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['right']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['top']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['bottom']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:189:31 - error: Argument of type "int" cannot be assigned to parameter "in_" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:203:32 - error: Argument of type "int" cannot be assigned to parameter "cnf" of type "Mapping[str, Any] | None" in function "pack_configure"
-    Type "int" is not assignable to type "Mapping[str, Any] | None"
-      "int" is not assignable to "Mapping[str, Any]"
-      "int" is not assignable to "None" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Mapping[str, Any] | None"
+  ┬á┬á┬á┬á"int" is not assignable to "Mapping[str, Any]"
+  ┬á┬á┬á┬á"int" is not assignable to "None" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:203:32 - error: Argument of type "int" cannot be assigned to parameter "after" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:203:32 - error: Argument of type "int" cannot be assigned to parameter "anchor" of type "_Anchor" in function "pack_configure"
-    Type "int" is not assignable to type "_Anchor"
-      "int" is not assignable to "Literal['nw']"
-      "int" is not assignable to "Literal['n']"
-      "int" is not assignable to "Literal['ne']"
-      "int" is not assignable to "Literal['w']"
-      "int" is not assignable to "Literal['center']"
-      "int" is not assignable to "Literal['e']"
-      "int" is not assignable to "Literal['sw']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "_Anchor"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['nw']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['n']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['ne']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['w']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['center']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['e']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['sw']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:203:32 - error: Argument of type "int" cannot be assigned to parameter "before" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:203:32 - error: Argument of type "int" cannot be assigned to parameter "expand" of type "bool | Literal[0, 1]" in function "pack_configure"
-    Type "int" is not assignable to type "bool | Literal[0, 1]"
-      "int" is not assignable to "bool"
-      "int" is not assignable to type "Literal[0]"
-      "int" is not assignable to type "Literal[1]" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "bool | Literal[0, 1]"
+  ┬á┬á┬á┬á"int" is not assignable to "bool"
+  ┬á┬á┬á┬á"int" is not assignable to type "Literal[0]"
+  ┬á┬á┬á┬á"int" is not assignable to type "Literal[1]" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:203:32 - error: Argument of type "int" cannot be assigned to parameter "side" of type "Literal['left', 'right', 'top', 'bottom']" in function "pack_configure"
-    Type "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
-      "int" is not assignable to "Literal['left']"
-      "int" is not assignable to "Literal['right']"
-      "int" is not assignable to "Literal['top']"
-      "int" is not assignable to "Literal['bottom']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['left']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['right']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['top']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['bottom']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:203:32 - error: Argument of type "int" cannot be assigned to parameter "in_" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:223:26 - error: Type of parameter "val" is unknown (reportUnknownParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:223:26 - error: Type annotation is missing for parameter "val" (reportMissingParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:238:28 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:241:28 - error: Argument type is unknown
-    Argument corresponds to parameter "object" in function "__new__" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "object" in function "__new__" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:271:24 - error: Type of "_cleared_to_char" is partially unknown
-    Type of "_cleared_to_char" is "(val: Unknown) -> str" (reportUnknownMemberType)
+  ┬á┬áType of "_cleared_to_char" is "(val: Unknown) -> str" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:276:43 - error: Argument type is partially unknown
-    Argument corresponds to parameter "o" in function "getattr"
-    Argument type is "Any | Unknown" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr"
+  ┬á┬áArgument type is "Any | Unknown" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:277:41 - error: Argument type is partially unknown
-    Argument corresponds to parameter "o" in function "getattr"
-    Argument type is "Any | Unknown" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr"
+  ┬á┬áArgument type is "Any | Unknown" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:278:37 - error: Argument type is partially unknown
-    Argument corresponds to parameter "o" in function "getattr"
-    Argument type is "Any | Unknown" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr"
+  ┬á┬áArgument type is "Any | Unknown" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:280:21 - error: Type of "s" is partially unknown
-    Type of "s" is "Any | Unknown" (reportUnknownVariableType)
+  ┬á┬áType of "s" is "Any | Unknown" (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:322:17 - error: Type of "mb" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:322:17 - error: Type of "showerror" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:325:17 - error: Type of "mb" is unknown (reportUnknownMemberType)
@@ -592,21 +424,21 @@ c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:384:13 - error: Type of "showerror" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:398:9 - error: Type of "sel" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:398:15 - error: Type of "curselection" is partially unknown
-    Type of "curselection" is "() -> Unknown" (reportUnknownMemberType)
+  ┬á┬áType of "curselection" is "() -> Unknown" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:401:17 - error: Type of "bi" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:401:21 - error: Type of "ei" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:401:25 - error: Type of "_b" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:401:29 - error: Type of "_e" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:401:34 - error: Type of "_pairs_sorted" is partially unknown
-    Type of "_pairs_sorted" is "list[Unknown]" (reportUnknownMemberType)
+  ┬á┬áType of "_pairs_sorted" is "list[Unknown]" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:403:17 - error: Type of "b" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:403:20 - error: Type of "e" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:403:20 - error: Variable "e" is not accessed (reportUnusedVariable)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:404:40 - error: Argument type is unknown
-    Argument corresponds to parameter "value" in function "index" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "value" in function "index" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:405:41 - error: Argument type is partially unknown
-    Argument corresponds to parameter "bank_index" in function "manual_unmatch"
-    Argument type is "Unknown | int" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "bank_index" in function "manual_unmatch"
+  ┬á┬áArgument type is "Unknown | int" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:425:9 - error: Type of "mb" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:425:9 - error: Type of "showinfo" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:431:17 - error: Type of "mb" is unknown (reportUnknownMemberType)
@@ -616,11 +448,11 @@ c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:438:24 - error: Type of "mb" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:438:24 - error: Type of "askyesno" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:455:43 - error: Argument of type "list[MatchedTxn] | List[ITransaction]" cannot be assigned to parameter "txns" of type "Sequence[ITransaction]" in function "emit_qif_transactions"
-    Type "list[MatchedTxn] | List[ITransaction]" is not assignable to type "Sequence[ITransaction]"
-      "list[MatchedTxn]" is not assignable to "Sequence[ITransaction]"
-        Type parameter "_T_co@Sequence" is covariant, but "MatchedTxn" is not a subtype of "ITransaction"
-          Type "MatchedTxn" is not assignable to type "ITransaction"
-            "Dict[str, Any]" is incompatible with protocol "ITransaction" (reportArgumentType)
+  ┬á┬áType "list[MatchedTxn] | List[ITransaction]" is not assignable to type "Sequence[ITransaction]"
+  ┬á┬á┬á┬á"list[MatchedTxn]" is not assignable to "Sequence[ITransaction]"
+  ┬á┬á┬á┬á┬á┬áType parameter "_T_co@Sequence" is covariant, but "MatchedTxn" is not a subtype of "ITransaction"
+  ┬á┬á┬á┬á┬á┬á┬á┬áType "MatchedTxn" is not assignable to type "ITransaction"
+  ┬á┬á┬á┬á┬á┬á┬á┬á┬á┬á"Dict[str, Any]" is incompatible with protocol "ITransaction" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:458:13 - error: Type of "mb" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:458:13 - error: Type of "showinfo" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:460:13 - error: Type of "mb" is unknown (reportUnknownMemberType)
@@ -629,30 +461,36 @@ c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:468:17 - error: Type of "showinfo" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:474:9 - error: Type of "items" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:474:17 - error: Type of "get" is partially unknown
-    Type of "get" is "(first: str | int, last: str | int | None = None) -> Unknown" (reportUnknownMemberType)
+  ┬á┬áType of "get" is "(first: str | int, last: str | int | None = None) -> Unknown" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:476:13 - error: Type of "mb" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:476:13 - error: Type of "showinfo" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:494:21 - error: Type of "row" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:495:33 - error: Argument type is unknown
-    Argument corresponds to parameter "object" in function "__new__" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "object" in function "__new__" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:496:13 - error: Type of "mb" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:496:13 - error: Type of "showinfo" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:496:56 - error: Argument type is unknown
-    Argument corresponds to parameter "obj" in function "len" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "obj" in function "len" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:498:13 - error: Type of "mb" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:498:13 - error: Type of "showerror" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:506:17 - error: Type of "mb" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:506:17 - error: Type of "showerror" is unknown (reportUnknownMemberType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:510:23 - error: Argument of type "MatchSession | None" cannot be assigned to parameter "session" of type "MatchSession" in function "open_normalize_modal"
+  ┬á┬áType "MatchSession | None" is not assignable to type "MatchSession"
+  ┬á┬á┬á┬á"None" is not assignable to "MatchSession" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:510:58 - error: Type of "mb" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:510:58 - error: Argument type is unknown
-    Argument corresponds to parameter "mb" in function "open_normalize_modal" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "mb" in function "open_normalize_modal" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:514:13 - error: Type of "mb" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:514:13 - error: Type of "showerror" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:520:17 - error: Type of "mb" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:520:17 - error: Type of "showerror" is unknown (reportUnknownMemberType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:524:23 - error: Argument of type "MatchSession | None" cannot be assigned to parameter "session" of type "MatchSession" in function "open_normalize_modal"
+  ┬á┬áType "MatchSession | None" is not assignable to type "MatchSession"
+  ┬á┬á┬á┬á"None" is not assignable to "MatchSession" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:524:58 - error: Type of "mb" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:524:58 - error: Argument type is unknown
-    Argument corresponds to parameter "mb" in function "open_normalize_modal" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "mb" in function "open_normalize_modal" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:527:13 - error: Type of "mb" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:527:13 - error: Type of "showerror" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:554:27 - error: Type of parameter "t" is unknown (reportUnknownParameterType)
@@ -660,358 +498,358 @@ c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:555:17 - error: Type of "b" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:555:20 - error: Type of "e" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:556:31 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:557:31 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:560:49 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:562:48 - error: Argument type is partially unknown
-    Argument corresponds to parameter "key" in function "sorted"
-    Argument type is "(t: Unknown) -> tuple[Any | Literal[''], Any | Literal[''], str]" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "key" in function "sorted"
+  ┬á┬áArgument type is "(t: Unknown) -> tuple[Any | Literal[''], Any | Literal[''], str]" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:575:17 - error: Type of "_pairs_sorted" is partially unknown
-    Type of "_pairs_sorted" is "list[Unknown]" (reportUnknownMemberType)
+  ┬á┬áType of "_pairs_sorted" is "list[Unknown]" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:575:17 - error: Type of "append" is partially unknown
-    Type of "append" is "(object: Unknown, /) -> None" (reportUnknownMemberType)
+  ┬á┬áType of "append" is "(object: Unknown, /) -> None" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:576:17 - error: Type of "m_pairs" is partially unknown
-    Type of "m_pairs" is "list[Unknown]" (reportUnknownMemberType)
+  ┬á┬áType of "m_pairs" is "list[Unknown]" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:576:17 - error: Type of "append" is partially unknown
-    Type of "append" is "(object: Unknown, /) -> None" (reportUnknownMemberType)
+  ┬á┬áType of "append" is "(object: Unknown, /) -> None" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:579:49 - error: "isoformat" is not a known attribute of "None" (reportOptionalMemberAccess)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:582:49 - error: "isoformat" is not a known attribute of "None" (reportOptionalMemberAccess)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:595:27 - error: Type of parameter "t" is unknown (reportUnknownParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:595:27 - error: Type annotation is missing for parameter "t" (reportMissingParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:596:29 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:598:41 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:598:68 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:600:51 - error: Argument type is partially unknown
-    Argument corresponds to parameter "key" in function "sorted"
-    Argument type is "(t: Unknown) -> tuple[Any | Literal[''], str, Any | str]" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "key" in function "sorted"
+  ┬á┬áArgument type is "(t: Unknown) -> tuple[Any | Literal[''], str, Any | str]" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:605:17 - error: Type of "_unqif_sorted" is partially unknown
-    Type of "_unqif_sorted" is "list[Unknown]" (reportUnknownMemberType)
+  ┬á┬áType of "_unqif_sorted" is "list[Unknown]" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:605:17 - error: Type of "append" is partially unknown
-    Type of "append" is "(object: Unknown, /) -> None" (reportUnknownMemberType)
+  ┬á┬áType of "append" is "(object: Unknown, /) -> None" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:606:17 - error: Type of "m_unmatched_qif" is partially unknown
-    Type of "m_unmatched_qif" is "list[Unknown]" (reportUnknownMemberType)
+  ┬á┬áType of "m_unmatched_qif" is "list[Unknown]" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:606:17 - error: Type of "append" is partially unknown
-    Type of "append" is "(object: Unknown, /) -> None" (reportUnknownMemberType)
+  ┬á┬áType of "append" is "(object: Unknown, /) -> None" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:609:49 - error: "isoformat" is not a known attribute of "None" (reportOptionalMemberAccess)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:619:28 - error: Type of parameter "t" is unknown (reportUnknownParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:619:28 - error: Type annotation is missing for parameter "t" (reportMissingParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:621:29 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:625:39 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:628:33 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:631:52 - error: Argument type is partially unknown
-    Argument corresponds to parameter "key" in function "sorted"
-    Argument type is "(t: Unknown) -> tuple[Any | Literal[''], str, Any | str]" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "key" in function "sorted"
+  ┬á┬áArgument type is "(t: Unknown) -> tuple[Any | Literal[''], str, Any | str]" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:636:17 - error: Type of "_unx_sorted" is partially unknown
-    Type of "_unx_sorted" is "list[Unknown]" (reportUnknownMemberType)
+  ┬á┬áType of "_unx_sorted" is "list[Unknown]" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:636:17 - error: Type of "append" is partially unknown
-    Type of "append" is "(object: Unknown, /) -> None" (reportUnknownMemberType)
+  ┬á┬áType of "append" is "(object: Unknown, /) -> None" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:637:17 - error: Type of "m_unmatched_excel" is partially unknown
-    Type of "m_unmatched_excel" is "list[Unknown]" (reportUnknownMemberType)
+  ┬á┬áType of "m_unmatched_excel" is "list[Unknown]" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:637:17 - error: Type of "append" is partially unknown
-    Type of "append" is "(object: Unknown, /) -> None" (reportUnknownMemberType)
+  ┬á┬áType of "append" is "(object: Unknown, /) -> None" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:641:49 - error: "isoformat" is not a known attribute of "None" (reportOptionalMemberAccess)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:653:20 - error: Type of "_unqif_sorted" is partially unknown
-    Type of "_unqif_sorted" is "list[Unknown]" (reportUnknownMemberType)
+  ┬á┬áType of "_unqif_sorted" is "list[Unknown]" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:654:21 - error: Type of "_bi" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:654:26 - error: Type of "b" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:654:30 - error: Type of "_unqif_sorted" is partially unknown
-    Type of "_unqif_sorted" is "list[Unknown]" (reportUnknownMemberType)
+  ┬á┬áType of "_unqif_sorted" is "list[Unknown]" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:660:45 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:660:62 - error: "isoformat" is not a known attribute of "None" (reportOptionalMemberAccess)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:661:48 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:664:55 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:665:50 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:666:53 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:667:49 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:672:20 - error: Type of "_unx_sorted" is partially unknown
-    Type of "_unx_sorted" is "list[Unknown]" (reportUnknownMemberType)
+  ┬á┬áType of "_unx_sorted" is "list[Unknown]" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:673:21 - error: Type of "_ei" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:673:26 - error: Type of "e" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:673:30 - error: Type of "_unx_sorted" is partially unknown
-    Type of "_unx_sorted" is "list[Unknown]" (reportUnknownMemberType)
+  ┬á┬áType of "_unx_sorted" is "list[Unknown]" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:674:38 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:679:50 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:681:45 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:681:62 - error: "isoformat" is not a known attribute of "None" (reportOptionalMemberAccess)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:682:48 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:685:61 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:686:60 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:693:60 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:698:20 - error: Type of "_pairs_sorted" is partially unknown
-    Type of "_pairs_sorted" is "list[Unknown]" (reportUnknownMemberType)
+  ┬á┬áType of "_pairs_sorted" is "list[Unknown]" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:699:21 - error: Type of "_bi" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:699:26 - error: Type of "_ei" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:699:31 - error: Type of "b" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:699:34 - error: Type of "e" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:699:38 - error: Type of "_pairs_sorted" is partially unknown
-    Type of "_pairs_sorted" is "list[Unknown]" (reportUnknownMemberType)
+  ┬á┬áType of "_pairs_sorted" is "list[Unknown]" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:701:42 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:703:37 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:703:54 - error: "isoformat" is not a known attribute of "None" (reportOptionalMemberAccess)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:704:40 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:707:53 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:708:52 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:711:42 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:713:40 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:718:42 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:722:40 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:725:52 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:729:37 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:729:54 - error: "isoformat" is not a known attribute of "None" (reportOptionalMemberAccess)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:730:40 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:733:47 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:734:42 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:735:45 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:736:41 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:752:9 - error: Type of "sel" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:752:15 - error: Type of "curselection" is partially unknown
-    Type of "curselection" is "() -> Unknown" (reportUnknownMemberType)
+  ┬á┬áType of "curselection" is "() -> Unknown" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:756:9 - error: Type of "bi" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:756:13 - error: Type of "_" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:756:17 - error: Type of "_unqif_sorted" is partially unknown
-    Type of "_unqif_sorted" is "list[Unknown]" (reportUnknownMemberType)
+  ┬á┬áType of "_unqif_sorted" is "list[Unknown]" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:757:16 - error: Return type is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:762:9 - error: Type of "sel" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:762:15 - error: Type of "curselection" is partially unknown
-    Type of "curselection" is "() -> Unknown" (reportUnknownMemberType)
+  ┬á┬áType of "curselection" is "() -> Unknown" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:766:9 - error: Type of "ei" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:766:13 - error: Type of "_" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:766:17 - error: Type of "_unx_sorted" is partially unknown
-    Type of "_unx_sorted" is "list[Unknown]" (reportUnknownMemberType)
+  ┬á┬áType of "_unx_sorted" is "list[Unknown]" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:767:16 - error: Return type is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:775:13 - error: Type of "mb" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:775:13 - error: Type of "showinfo" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:799:17 - error: Type of "idxs" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:799:24 - error: Type of "curselection" is partially unknown
-    Type of "curselection" is "() -> Unknown" (reportUnknownMemberType)
+  ┬á┬áType of "curselection" is "() -> Unknown" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:803:17 - error: Type of "_bi" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:803:22 - error: Type of "b" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:803:26 - error: Type of "_unqif_sorted" is partially unknown
-    Type of "_unqif_sorted" is "list[Unknown]" (reportUnknownMemberType)
+  ┬á┬áType of "_unqif_sorted" is "list[Unknown]" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:808:37 - error: Type of "date" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:808:37 - error: Type of "isoformat" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:809:51 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:810:46 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:811:49 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:812:45 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:818:17 - error: Type of "idxs" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:818:24 - error: Type of "curselection" is partially unknown
-    Type of "curselection" is "() -> Unknown" (reportUnknownMemberType)
+  ┬á┬áType of "curselection" is "() -> Unknown" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:822:17 - error: Type of "_ei" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:822:22 - error: Type of "e" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:822:26 - error: Type of "_unx_sorted" is partially unknown
-    Type of "_unx_sorted" is "list[Unknown]" (reportUnknownMemberType)
+  ┬á┬áType of "_unx_sorted" is "list[Unknown]" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:823:17 - error: Type of "first" is partially unknown
-    Type of "first" is "Unknown | None" (reportUnknownVariableType)
+  ┬á┬áType of "first" is "Unknown | None" (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:823:26 - error: Type of "splits" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:828:46 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:829:37 - error: Type of "date" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:829:37 - error: Type of "isoformat" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:830:53 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:831:48 - error: Type of "splits" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:831:48 - error: Argument type is partially unknown
-    Argument corresponds to parameter "obj" in function "len"
-    Argument type is "Unknown | list[Any]" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "obj" in function "len"
+  ┬á┬áArgument type is "Unknown | list[Any]" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:832:51 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:834:41 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:836:56 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:842:17 - error: Type of "idxs" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:842:24 - error: Type of "curselection" is partially unknown
-    Type of "curselection" is "() -> Unknown" (reportUnknownMemberType)
+  ┬á┬áType of "curselection" is "() -> Unknown" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:846:17 - error: Type of "_bi" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:846:22 - error: Type of "_ei" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:846:27 - error: Type of "b" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:846:30 - error: Type of "e" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:846:34 - error: Type of "_pairs_sorted" is partially unknown
-    Type of "_pairs_sorted" is "list[Unknown]" (reportUnknownMemberType)
+  ┬á┬áType of "_pairs_sorted" is "list[Unknown]" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:847:17 - error: Type of "excel_row" is partially unknown
-    Type of "excel_row" is "dict[str, Any | str | Unknown | int]" (reportUnknownVariableType)
+  ┬á┬áType of "excel_row" is "dict[str, Any | str | Unknown | int]" (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:848:38 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:849:29 - error: Type of "date" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:849:29 - error: Type of "isoformat" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:850:45 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:851:40 - error: Type of "splits" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:851:40 - error: Argument type is partially unknown
-    Argument corresponds to parameter "obj" in function "len"
-    Argument type is "Unknown | list[Any]" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "obj" in function "len"
+  ┬á┬áArgument type is "Unknown | list[Any]" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:853:33 - error: Argument type is partially unknown
-    Argument corresponds to parameter "o" in function "getattr"
-    Argument type is "Unknown | None" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr"
+  ┬á┬áArgument type is "Unknown | None" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:853:34 - error: Type of "splits" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:853:73 - error: Type of "splits" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:856:33 - error: Argument type is partially unknown
-    Argument corresponds to parameter "o" in function "getattr"
-    Argument type is "Unknown | None" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr"
+  ┬á┬áArgument type is "Unknown | None" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:856:34 - error: Type of "splits" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:857:28 - error: Type of "splits" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:860:48 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:862:17 - error: Type of "qif_tx" is partially unknown
-    Type of "qif_tx" is "dict[str, Unknown | str | Any]" (reportUnknownVariableType)
+  ┬á┬áType of "qif_tx" is "dict[str, Unknown | str | Any]" (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:863:29 - error: Type of "date" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:863:29 - error: Type of "isoformat" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:864:43 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:865:38 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:866:41 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:867:37 - error: Argument type is unknown
-    Argument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
 c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:25:24 - error: Type of parameter "master" is unknown (reportUnknownParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:25:24 - error: Type annotation is missing for parameter "master" (reportMissingParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:25:32 - error: Type of parameter "mb" is unknown (reportUnknownParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:25:32 - error: Type annotation is missing for parameter "mb" (reportMissingParameterType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:26:26 - error: Argument type is unknown
-    Argument corresponds to parameter "master" in function "__init__" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "master" in function "__init__" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:37:32 - error: Argument of type "int" cannot be assigned to parameter "cnf" of type "Mapping[str, Any] | None" in function "pack_configure"
-    Type "int" is not assignable to type "Mapping[str, Any] | None"
-      "int" is not assignable to "Mapping[str, Any]"
-      "int" is not assignable to "None" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Mapping[str, Any] | None"
+  ┬á┬á┬á┬á"int" is not assignable to "Mapping[str, Any]"
+  ┬á┬á┬á┬á"int" is not assignable to "None" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:37:32 - error: Argument of type "int" cannot be assigned to parameter "after" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:37:32 - error: Argument of type "int" cannot be assigned to parameter "anchor" of type "_Anchor" in function "pack_configure"
-    Type "int" is not assignable to type "_Anchor"
-      "int" is not assignable to "Literal['nw']"
-      "int" is not assignable to "Literal['n']"
-      "int" is not assignable to "Literal['ne']"
-      "int" is not assignable to "Literal['w']"
-      "int" is not assignable to "Literal['center']"
-      "int" is not assignable to "Literal['e']"
-      "int" is not assignable to "Literal['sw']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "_Anchor"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['nw']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['n']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['ne']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['w']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['center']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['e']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['sw']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:37:32 - error: Argument of type "int" cannot be assigned to parameter "before" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:37:32 - error: Argument of type "int" cannot be assigned to parameter "expand" of type "bool | Literal[0, 1]" in function "pack_configure"
-    Type "int" is not assignable to type "bool | Literal[0, 1]"
-      "int" is not assignable to "bool"
-      "int" is not assignable to type "Literal[0]"
-      "int" is not assignable to type "Literal[1]" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "bool | Literal[0, 1]"
+  ┬á┬á┬á┬á"int" is not assignable to "bool"
+  ┬á┬á┬á┬á"int" is not assignable to type "Literal[0]"
+  ┬á┬á┬á┬á"int" is not assignable to type "Literal[1]" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:37:32 - error: Argument of type "int" cannot be assigned to parameter "side" of type "Literal['left', 'right', 'top', 'bottom']" in function "pack_configure"
-    Type "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
-      "int" is not assignable to "Literal['left']"
-      "int" is not assignable to "Literal['right']"
-      "int" is not assignable to "Literal['top']"
-      "int" is not assignable to "Literal['bottom']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['left']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['right']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['top']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['bottom']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:37:32 - error: Argument of type "int" cannot be assigned to parameter "in_" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:62:34 - error: Argument of type "int" cannot be assigned to parameter "cnf" of type "Mapping[str, Any] | None" in function "pack_configure"
-    Type "int" is not assignable to type "Mapping[str, Any] | None"
-      "int" is not assignable to "Mapping[str, Any]"
-      "int" is not assignable to "None" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Mapping[str, Any] | None"
+  ┬á┬á┬á┬á"int" is not assignable to "Mapping[str, Any]"
+  ┬á┬á┬á┬á"int" is not assignable to "None" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:62:34 - error: Argument of type "int" cannot be assigned to parameter "after" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:62:34 - error: Argument of type "int" cannot be assigned to parameter "anchor" of type "_Anchor" in function "pack_configure"
-    Type "int" is not assignable to type "_Anchor"
-      "int" is not assignable to "Literal['nw']"
-      "int" is not assignable to "Literal['n']"
-      "int" is not assignable to "Literal['ne']"
-      "int" is not assignable to "Literal['w']"
-      "int" is not assignable to "Literal['center']"
-      "int" is not assignable to "Literal['e']"
-      "int" is not assignable to "Literal['sw']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "_Anchor"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['nw']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['n']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['ne']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['w']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['center']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['e']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['sw']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:62:34 - error: Argument of type "int" cannot be assigned to parameter "before" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:62:34 - error: Argument of type "int" cannot be assigned to parameter "expand" of type "bool | Literal[0, 1]" in function "pack_configure"
-    Type "int" is not assignable to type "bool | Literal[0, 1]"
-      "int" is not assignable to "bool"
-      "int" is not assignable to type "Literal[0]"
-      "int" is not assignable to type "Literal[1]" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "bool | Literal[0, 1]"
+  ┬á┬á┬á┬á"int" is not assignable to "bool"
+  ┬á┬á┬á┬á"int" is not assignable to type "Literal[0]"
+  ┬á┬á┬á┬á"int" is not assignable to type "Literal[1]" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:62:34 - error: Argument of type "int" cannot be assigned to parameter "side" of type "Literal['left', 'right', 'top', 'bottom']" in function "pack_configure"
-    Type "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
-      "int" is not assignable to "Literal['left']"
-      "int" is not assignable to "Literal['right']"
-      "int" is not assignable to "Literal['top']"
-      "int" is not assignable to "Literal['bottom']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['left']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['right']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['top']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['bottom']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:62:34 - error: Argument of type "int" cannot be assigned to parameter "in_" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:68:46 - error: Argument of type "int" cannot be assigned to parameter "cnf" of type "Mapping[str, Any] | None" in function "pack_configure"
-    Type "int" is not assignable to type "Mapping[str, Any] | None"
-      "int" is not assignable to "Mapping[str, Any]"
-      "int" is not assignable to "None" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Mapping[str, Any] | None"
+  ┬á┬á┬á┬á"int" is not assignable to "Mapping[str, Any]"
+  ┬á┬á┬á┬á"int" is not assignable to "None" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:68:46 - error: Argument of type "int" cannot be assigned to parameter "after" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:68:46 - error: Argument of type "int" cannot be assigned to parameter "anchor" of type "_Anchor" in function "pack_configure"
-    Type "int" is not assignable to type "_Anchor"
-      "int" is not assignable to "Literal['nw']"
-      "int" is not assignable to "Literal['n']"
-      "int" is not assignable to "Literal['ne']"
-      "int" is not assignable to "Literal['w']"
-      "int" is not assignable to "Literal['center']"
-      "int" is not assignable to "Literal['e']"
-      "int" is not assignable to "Literal['sw']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "_Anchor"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['nw']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['n']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['ne']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['w']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['center']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['e']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['sw']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:68:46 - error: Argument of type "int" cannot be assigned to parameter "before" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:68:46 - error: Argument of type "int" cannot be assigned to parameter "side" of type "Literal['left', 'right', 'top', 'bottom']" in function "pack_configure"
-    Type "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
-      "int" is not assignable to "Literal['left']"
-      "int" is not assignable to "Literal['right']"
-      "int" is not assignable to "Literal['top']"
-      "int" is not assignable to "Literal['bottom']" (reportArgumentType)
+  ┬á┬áType "int" is not assignable to type "Literal['left', 'right', 'top', 'bottom']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['left']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['right']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['top']"
+  ┬á┬á┬á┬á"int" is not assignable to "Literal['bottom']" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:68:46 - error: Argument of type "int" cannot be assigned to parameter "in_" of type "Misc" in function "pack_configure"
-    "int" is not assignable to "Misc" (reportArgumentType)
+  ┬á┬á"int" is not assignable to "Misc" (reportArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:125:17 - error: Type of "showerror" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:139:13 - error: Type of "showinfo" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:142:13 - error: Type of "showerror" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:145:9 - error: Type of "sel" is unknown (reportUnknownVariableType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:145:15 - error: Type of "curselection" is partially unknown
-    Type of "curselection" is "() -> Unknown" (reportUnknownMemberType)
+  ┬á┬áType of "curselection" is "() -> Unknown" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:149:25 - error: Type of "get" is partially unknown
-    Type of "get" is "(first: str | int, last: str | int | None = None) -> Unknown" (reportUnknownMemberType)
+  ┬á┬áType of "get" is "(first: str | int, last: str | int | None = None) -> Unknown" (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:149:25 - error: Argument type is unknown
-    Argument corresponds to parameter "args" in function "__init__" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "args" in function "__init__" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:149:46 - error: Argument type is unknown
-    Argument corresponds to parameter "first" in function "get" (reportUnknownArgumentType)
+  ┬á┬áArgument corresponds to parameter "first" in function "get" (reportUnknownArgumentType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:156:13 - error: Type of "showinfo" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:167:13 - error: Type of "showerror" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:172:13 - error: Type of "showinfo" is unknown (reportUnknownMemberType)
   c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\probe_tab.py:177:13 - error: Type of "showerror" is unknown (reportUnknownMemberType)
-500 errors, 0 warnings, 0 informations
+388 errors, 0 warnings, 0 informations

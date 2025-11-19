@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, Optional, Set, Tuple
+from typing import Any, Callable, Dict, List, Optional, Sequence, Set, Tuple, cast
 
 try:
     # Keep import local to the module for easy monkeypatching in tests
@@ -11,16 +11,51 @@ try:
 except Exception:  # pragma: no cover
     mex = None  # will raise at runtime if used without being available
 
+from quicken_helper.controllers.match_session import MatchSession
+
 
 @dataclass(frozen=True)
 class _MB:
     """Minimal interface we expect from a messagebox-like object."""
 
-    showinfo: Callable
-    showerror: Callable
+    showinfo: Callable[[str, str], Any]
+    showerror: Callable[[str, str], Any]
 
 
-def compute_category_sets(session, xlsx_path: Path | str) -> Tuple[Set[str], Set[str]]:
+def _coerce_txn_dict(txn: Any) -> Dict[str, Any]:
+    if isinstance(txn, dict):
+        typed_txn = cast(Dict[Any, Any], txn)
+        converted: Dict[str, Any] = {}
+        for key_obj, value in typed_txn.items():
+            converted[str(key_obj)] = value
+        return converted
+    as_dict = getattr(txn, "to_dict", None)
+    if callable(as_dict):
+        result = as_dict()
+        if isinstance(result, dict):
+            typed_result = cast(Dict[Any, Any], result)
+            converted: Dict[str, Any] = {}
+            for key_obj, value in typed_result.items():
+                converted[str(key_obj)] = value
+            return converted
+    splits_payload: List[Dict[str, Any]] = []
+    for split in getattr(txn, "splits", []) or []:
+        splits_payload.append(
+            {
+                "category": getattr(split, "category", ""),
+                "memo": getattr(split, "memo", ""),
+                "amount": getattr(split, "amount", ""),
+            }
+        )
+    return {
+        "category": getattr(txn, "category", ""),
+        "splits": splits_payload,
+    }
+
+
+def compute_category_sets(
+    session: MatchSession, xlsx_path: Path | str
+) -> Tuple[Set[str], Set[str]]:
     """
     Compute the set of QIF categories present in the *matched* transactions and the set
     of Excel categories present in the source spreadsheet.
@@ -34,19 +69,23 @@ def compute_category_sets(session, xlsx_path: Path | str) -> Tuple[Set[str], Set
         raise RuntimeError("merge_excel module not available")
 
     matched_txns = mex.build_matched_only_txns(session)
-    qif_cats: Set[str] = set(mex.extract_qif_categories(matched_txns) or set())
-    excel_cats: Set[str] = set(mex.extract_excel_categories(xlsx_path) or set())
+    dict_txns: Sequence[Dict[str, Any]] = [
+        _coerce_txn_dict(txn) for txn in matched_txns
+    ]
+    qif_cats: Set[str] = set(mex.extract_qif_categories(list(dict_txns)) or set())
+    excel_path = Path(xlsx_path)
+    excel_cats: Set[str] = set(mex.extract_excel_categories(excel_path) or set())
     return qif_cats, excel_cats
 
 
 def open_normalize_modal(
-    master,
-    session,
+    master: Any,
+    session: MatchSession,
     xlsx_path: Path | str,
     mb: Optional[_MB] = None,
     *,
     show_ui: bool = True,
-):
+) -> Tuple[Set[str], Set[str]]:
     """
     Entry point for the 'Normalize Categories' flow.
 

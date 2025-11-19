@@ -1,4 +1,7 @@
 # Tests import/monkeypatch these off `quicken_helper.gui_viewers`
+from __future__ import annotations
+
+from typing import Any
 
 # Re-export shared helpers used by tests (you already have these in your new split code)
 from .csv_profiles import (
@@ -24,7 +27,7 @@ __all__ = [
 
 
 # Lazily expose App to avoid importing tkinter during package import
-def __getattr__(name):
+def __getattr__(name: str) -> Any:
     if name == "App":
         from .app import App  # imported only when actually accessed
 

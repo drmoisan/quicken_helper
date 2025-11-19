@@ -2,13 +2,25 @@
 from __future__ import annotations
 
 import re
-from datetime import datetime
-from typing import Any, Dict, List, Optional
+from datetime import date, datetime
+from typing import Any, Dict, List, Mapping, Optional, Sequence, cast
 
 # Project module is optional here; we use hasattr-guard in apply_multi_payee_filters
 from quicken_helper.legacy import qif_writer as mod
 
+TxnDict = Dict[str, Any]
 _DATE_FORMATS = ["%m/%d'%y", "%m/%d/%Y", "%Y-%m-%d"]
+
+__all__ = [
+    "parse_date_maybe",
+    "filter_date_range",
+    "local_filter_by_payee",
+    "apply_multi_payee_filters",
+    "_set_text",
+    "_fmt_txn",
+    "_fmt_excel_row",
+    "decode_best_effort",
+]
 
 
 def parse_date_maybe(s: str) -> Optional[datetime]:
@@ -31,17 +43,17 @@ def parse_date_maybe(s: str) -> Optional[datetime]:
 
 
 def filter_date_range(
-    txns: List[Dict[str, Any]], start_str: str, end_str: str
-) -> List[Dict[str, Any]]:
-    def _d(s):
-        d = parse_date_maybe(s)
-        return d.date() if d else None
+    txns: Sequence[TxnDict], start_str: str, end_str: str
+) -> List[TxnDict]:
+    def _d(s: str) -> Optional[date]:
+        parsed = parse_date_maybe(s)
+        return parsed.date() if parsed else None
 
     start = _d(start_str) if start_str else None
     end = _d(end_str) if end_str else None
     if not start and not end:
-        return txns
-    out = []
+        return list(txns)
+    out: List[TxnDict] = []
     for t in txns:
         d = parse_date_maybe(str(t.get("date", "")).strip())
         if not d:
@@ -54,16 +66,22 @@ def filter_date_range(
     return out
 
 
-def local_filter_by_payee(txns, query, mode="contains", case_sensitive=False):
-    if mode != "regex" and mode != "glob" and not case_sensitive:
-        query_cmp = str(query).lower()
-    else:
-        query_cmp = str(query)
-    out = []
+def local_filter_by_payee(
+    txns: Sequence[TxnDict],
+    query: str,
+    mode: str = "contains",
+    case_sensitive: bool = False,
+) -> List[TxnDict]:
+    query_cmp = (
+        query if (mode in {"regex", "glob"} or case_sensitive) else query.lower()
+    )
+    out: List[TxnDict] = []
     for t in txns:
-        payee = t.get("payee", "")
+        payee_raw = str(t.get("payee", ""))
         payee_cmp = (
-            payee if (case_sensitive or mode in ("regex", "glob")) else payee.lower()
+            payee_raw
+            if (case_sensitive or mode in {"regex", "glob"})
+            else payee_raw.lower()
         )
         match = False
         if mode == "contains":
@@ -82,40 +100,44 @@ def local_filter_by_payee(txns, query, mode="contains", case_sensitive=False):
                 ch.isalpha() and ch.isupper() for ch in query
             )
             flags = 0 if smart_case else re.IGNORECASE
-            match = re.search(pattern, payee, flags) is not None
+            match = re.search(pattern, payee_raw, flags) is not None
         elif mode == "regex":
             flags = 0 if case_sensitive else re.IGNORECASE
-            match = re.search(query, payee, flags) is not None
+            match = re.search(query, payee_raw, flags) is not None
         if match:
             out.append(t)
     return out
 
 
 def apply_multi_payee_filters(
-    txns: List[Dict[str, Any]],
-    queries: List[str],
+    txns: Sequence[TxnDict],
+    queries: Sequence[str],
     mode: str = "contains",
     case_sensitive: bool = False,
     combine: str = "any",
-) -> List[Dict[str, Any]]:
-    queries = [q.strip() for q in (queries or []) if q and q.strip()]
+) -> List[TxnDict]:
+    queries = [q.strip() for q in queries if q and q.strip()]
     if not queries:
-        return txns
+        return list(txns)
 
-    def run_filter(tlist, q):
+    def run_filter(tlist: Sequence[TxnDict], q: str) -> List[TxnDict]:
+        tlist_materialized = list(tlist)
         if hasattr(mod, "filter_by_payee"):
             return [
                 t
-                for t in tlist
+                for t in tlist_materialized
                 if t
                 in mod.filter_by_payee(
-                    tlist, q, mode=mode, case_sensitive=case_sensitive
+                    tlist_materialized, q, mode=mode, case_sensitive=case_sensitive
                 )
             ]
-        return local_filter_by_payee(tlist, q, mode=mode, case_sensitive=case_sensitive)
+        return local_filter_by_payee(
+            tlist_materialized, q, mode=mode, case_sensitive=case_sensitive
+        )
 
     if combine == "any":
-        seen, out = set(), []
+        seen: set[int] = set()
+        out: List[TxnDict] = []
         for q in queries:
             subset = run_filter(txns, q)
             for t in subset:
@@ -125,13 +147,13 @@ def apply_multi_payee_filters(
                     out.append(t)
         return out
     else:
-        cur = list(txns)
+        cur: List[TxnDict] = list(txns)
         for q in queries:
             cur = run_filter(cur, q)
         return cur
 
 
-def _set_text(widget, text: str):
+def _set_text(widget: Any, text: str) -> None:
     try:
         widget.configure(state="normal")
         widget.delete("1.0", "end")
@@ -141,12 +163,13 @@ def _set_text(widget, text: str):
         pass
 
 
-def _fmt_txn(t: dict) -> str:
-    if not isinstance(t, dict):
+def _fmt_txn(t: Any) -> str:
+    if not isinstance(t, Mapping):
         return str(t)
+    mapping = cast(Mapping[str, Any], t)
 
-    def g(k, d=""):
-        return str(t.get(k, d) or "")
+    def g(k: str, d: str = "") -> str:
+        return str(mapping.get(k, d) or "")
 
     lines = [
         f"Date: {g('date')}",
@@ -156,7 +179,18 @@ def _fmt_txn(t: dict) -> str:
         f"Memo: {g('memo')}",
         f"Transfer Account: {g('transfer_account')}",
     ]
-    splits = t.get("splits") or []
+    splits_raw = mapping.get("splits")
+    splits: List[Mapping[str, Any]] = []
+    if isinstance(splits_raw, Sequence):
+        seq = cast(Sequence[Any], splits_raw)
+        for entry in seq:
+            entry_obj: Any = entry
+            if isinstance(entry_obj, Mapping):
+                splits.append(cast(Mapping[str, Any], entry_obj))
+            elif hasattr(entry_obj, "to_dict"):
+                converted = entry_obj.to_dict()  # type: ignore[attr-defined]
+                if isinstance(converted, Mapping):
+                    splits.append(cast(Mapping[str, Any], converted))
     if splits:
         lines.append("Splits:")
         for i, s in enumerate(splits, 1):
@@ -166,14 +200,14 @@ def _fmt_txn(t: dict) -> str:
     return "\n".join(lines)
 
 
-def _fmt_excel_row(row) -> str:
-    if hasattr(row, "to_dict"):
-        row = row.to_dict()
-    if not isinstance(row, dict):
-        return str(row)
+def _fmt_excel_row(row: Any) -> str:
+    candidate = row.to_dict() if hasattr(row, "to_dict") else row
+    if not isinstance(candidate, Mapping):
+        return str(candidate)
+    mapping = cast(Mapping[str, Any], candidate)
 
-    def g(c):
-        return str(row.get(c, "") or "")
+    def g(c: str) -> str:
+        return str(mapping.get(c, "") or "")
 
     cols = [
         "Date",

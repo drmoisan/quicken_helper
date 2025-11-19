@@ -4,15 +4,26 @@
 1. `poetry install` - creates the managed `.venv` with runtime + dev dependencies.
 2. `poetry run pre-commit install` - ensures local git hooks mirror CI once lint/type checks are tightened.
 3. Confirm the virtualenv is active for the commands below (`poetry run ...`).
+4. For a broader overview of the local tooling, see `docs/developer-tooling.md`.
 
-## Required workflow for **every** code change
+## **Required workflow** - should be run after **every** code change
 1. **Read the policy** - skim `docs/unit-test-policy.md` before touching or adding any test to stay aligned on docstring + AAA expectations.
-2. **Format** - `poetry run black .` (or `black --check` for validation-only changes).
-3. **Lint** - `poetry run ruff check` (initially runs `E`, `F`, `I`; broaden once pyright is green).
-4. **Type check** - `poetry run pyright` (must pass with zero errors; only suppress diagnostics we fully understand).
-5. **Tests** - `poetry run pytest` and review coverage in `.coverage` (keep the suite deterministic and isolated from external services).
-6. **Spot-check logs** - when failures produce `pyright.log`/`pytest.log`, keep them around until the issue is fixed, then delete before committing.
-7. **Document** - mention which of the above commands ran (and their outcome) in PR summaries or commit messages for traceability.
+2. **Review tooling** (optional) - consult `docs/developer-tooling.md` for context on Black, Ruff, Pyright, pytest, coverage, and VS Code tasks.
+3. **Format** - `poetry run black .` (or `black --check` for validation-only changes).
+4. **Lint** - `poetry run ruff check` (initially runs `E`, `F`, `I`; broaden once pyright is green).
+5. **Type check** - `poetry run pyright` (must pass with zero errors; only suppress diagnostics we fully understand).
+6. **Tests** - `poetry run pytest` and review coverage in `.coverage` (keep the suite deterministic and isolated from external services).
+7. **Spot-check logs** - when failures produce `pyright.log`/`pytest.log`, keep them around until the issue is fixed, then delete before committing.
+8. **Document** - mention which of the above commands ran (and their outcome) in PR summaries or commit messages for traceability.
+
+## **Canonical Prioritization Hierarchy:**
+  1. data_model.interfaces
+  2. data_model.q_wrapper
+  3. data_model.excel
+  4. utilities
+  5. controllers
+  6. legacy
+  7. gui_viewers
 
 ## Backlog reduction plan
 
@@ -74,12 +85,37 @@
 - Expand Ruff rules once pyright is green (add `['B', 'UP', 'S', 'TID', 'TCH']` etc. in `pyproject.toml`).
 
 ### Phase 4 - update tests to satisfy strict typing + policy _(blocked until earlier phases are complete)_
+- **Temporary deviation**: pyright currently excludes the `tests/` tree entirely to unblock work on the rest of the codebase. This will be re-enabled in phase 4c piece by piece. 
+- For all changes in phase 4, please prioritize tests in the order of the Canonical Prioritization Hierarchy 
+
+#### Phase 4a - remove obsolete tests
+
 - Sweep the `tests/` tree:
+  - Remove any test that was designed for code functionality that no longer exists. 
+  - Do not create shims in production code to maintain obsolete tests. Rather, remove the tests
+  - In a later phase I will address code coverage, but the code is changing too much at this point
+
+#### Phase 4b - fix failing tests
+
+- If the tests are addressing current production code, but the tests fail, please fix them
+  - Determine whether test assertions are appropriate for the current code state. If not change them
+  - If assertions are appropriate but test fails, fix production code
+  - With any production code fix, please rerun pyrite, ruff, black, and retest
+- With any change to production code, please rerun pyrite, ruff, black, and retest
+
+#### Phase 4c - clean up test typing
+
+- For each folder and subfolder in the `tests/` tree in order of the Canonical Prioritization Hierarchy:
+  - Re-enable type checking for the group of folders
   - Add docstrings for every `test_*` (examples: `tests/utilities/test_core_utilities.py`, `tests/utilities/test_from_dict.py`).
   - Annotate fixtures (`monkeypatch: pytest.MonkeyPatch`, `tmp_path: Path`) and stub returns.
   - Introduce typed aliases/protocols for GUI stubs (`_ListboxProtocol`, `_TextProtocol`) in `tests/gui_viewers/test_merge_tab.py`.
-- After each module batch, run `poetry run pyright tests/<module>` to keep the workload incremental, followed by the full suite when completed.
-- **Temporary deviation**: pyright currently excludes the `tests/` tree entirely to unblock work on the rest of the codebase. Re-enable once the earlier phases are complete.
+- After each module batch, 
+  1. Please follow the "**Required workflow**" for the module batch
+  2. Run the "**Required worklow**" for the entire project
+  3. If any **new** problems appear that did not exist prior to working on the module, please correct them and repeat steps 1-3.
+  4. Do not proceed to the next module batch until the prior one passes steps 1-3.  
+
 
 ## Ongoing verification
 - Maintain the command cadence (`black` → `ruff` → `pyright` → `pytest`) before **every** commit or pull request.

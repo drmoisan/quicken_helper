@@ -5,10 +5,11 @@ import logging
 import logging.config
 import tkinter as tk
 from pathlib import Path
-from tkinter import filedialog, ttk
-from typing import List
+from tkinter import filedialog, messagebox, ttk
+from typing import Any, Dict, List, Optional, Protocol, cast
 
 import quicken_helper.controllers.qif_loader
+from quicken_helper.controllers.data_session import DataSession
 from quicken_helper.gui_viewers.csv_profiles import (
     write_csv_quicken_mac,
     write_csv_quicken_windows,
@@ -23,20 +24,48 @@ from quicken_helper.utilities import LOGGING
 logging.config.dictConfig(LOGGING)
 log = logging.getLogger(__name__)
 
+TxnDict = Dict[str, Any]
+
+
+def _txn_to_dict(obj: Any) -> TxnDict:
+    if isinstance(obj, dict):
+        typed = cast(Dict[Any, Any], obj)
+        return {str(k): v for k, v in typed.items()}
+    to_dict = getattr(obj, "to_dict", None)
+    if callable(to_dict):
+        result = to_dict()
+        if isinstance(result, dict):
+            typed_result = cast(Dict[Any, Any], result)
+            return {str(k): v for k, v in typed_result.items()}
+    raise TypeError(f"Cannot convert transaction to dict: {type(obj)!r}")
+
+
+class MessageBoxProtocol(Protocol):
+    def showinfo(self, title: str, message: str) -> Any: ...
+
+    def showerror(self, title: str, message: str) -> Any: ...
+
+    def askyesno(self, title: str, message: str) -> bool: ...
+
 
 class ConvertTab(ttk.Frame):
     """Primary function: Convert QIF → CSV/QIF with filters and profiles."""
 
-    def __init__(self, master, mb, session=None):
+    def __init__(
+        self,
+        master: tk.Misc,
+        mb: Optional[MessageBoxProtocol] = None,
+        session: Optional[DataSession] = None,
+    ) -> None:
         super().__init__(master)
-        self.mb = mb
-        self.session = session
+        self.mb: MessageBoxProtocol = mb or messagebox
+        self.session: Optional[DataSession] = session
+        self.payees_text: tk.Text
+        self.log: tk.Text
         self._build()
 
     # ---------- UI ----------
-    def _build(self):
-        pad = {"padx": 8, "pady": 6}
-
+    def _build(self) -> None:
         self.in_path = tk.StringVar()
         self.out_path = tk.StringVar()
         self.emit_var = tk.StringVar(value="csv")
@@ -49,7 +78,7 @@ class ConvertTab(ttk.Frame):
         self.date_to = tk.StringVar()
 
         io_frame = ttk.LabelFrame(self, text="Files")
-        io_frame.pack(fill="x", **pad)
+        io_frame.pack(fill="x", padx=8, pady=6)
 
         ttk.Label(io_frame, text="Input QIF:").grid(row=0, column=0, sticky="w")
         ttk.Entry(io_frame, textvariable=self.in_path, width=90).grid(
@@ -69,7 +98,7 @@ class ConvertTab(ttk.Frame):
         io_frame.columnconfigure(1, weight=1)
 
         opt = ttk.LabelFrame(self, text="Options")
-        opt.pack(fill="x", **pad)
+        opt.pack(fill="x", padx=8, pady=6)
         ttk.Label(opt, text="Emit:").grid(row=0, column=0, sticky="w")
         ttk.Radiobutton(opt, text="CSV", variable=self.emit_var, value="csv").grid(
             row=0, column=1, sticky="w"
@@ -90,7 +119,7 @@ class ConvertTab(ttk.Frame):
         ).grid(row=0, column=5, sticky="w")
 
         flt = ttk.LabelFrame(self, text="Filters")
-        flt.pack(fill="x", **pad)
+        flt.pack(fill="x", padx=8, pady=6)
         ttk.Label(flt, text="Payee filters (comma or newline separated):").grid(
             row=0, column=0, sticky="w"
         )
@@ -134,24 +163,24 @@ class ConvertTab(ttk.Frame):
         )
 
         runf = ttk.Frame(self)
-        runf.pack(fill="x", **pad)
+        runf.pack(fill="x", padx=8, pady=6)
         ttk.Button(runf, text="Run Conversion", command=self.run_conversion).pack(
             side="left"
         )
         ttk.Button(runf, text="Quit", command=self.master.destroy).pack(side="right")
 
         logf = ttk.LabelFrame(self, text="Log")
-        logf.pack(fill="both", expand=True, **pad)
+        logf.pack(fill="both", expand=True, padx=8, pady=6)
         self.log = tk.Text(logf, height=12)
         self.log.pack(fill="both", expand=True, padx=5, pady=5)
 
-        def _on_emit_change(*_):
+        def _on_emit_change(*_: Any) -> None:
             self._update_output_extension()
 
         self.emit_var.trace_add("write", _on_emit_change)
 
     # ---------- actions ----------
-    def _browse_in(self):
+    def _browse_in(self) -> None:
         path = filedialog.askopenfilename(
             title="Select input file",
             filetypes=[
@@ -164,7 +193,7 @@ class ConvertTab(ttk.Frame):
         if path:
             self.in_path.set(path)
 
-    def _browse_out(self):
+    def _browse_out(self) -> None:
         emit = self.emit_var.get()
         if emit == "data_model":
             default_ext = ".qif"
@@ -178,7 +207,7 @@ class ConvertTab(ttk.Frame):
         if path:
             self.out_path.set(path)
 
-    def logln(self, msg: str):
+    def logln(self, msg: str) -> None:
         self.log.insert("end", msg + "\n")
         self.log.see("end")
         self.update_idletasks()
@@ -187,14 +216,14 @@ class ConvertTab(ttk.Frame):
         raw = self.payees_text.get("1.0", "end").strip()
         if not raw:
             return []
-        parts = []
+        parts: List[str] = []
         for chunk in raw.replace(",", "\n").splitlines():
             s = chunk.strip()
             if s:
                 parts.append(s)
         return parts
 
-    def _update_output_extension(self):
+    def _update_output_extension(self) -> None:
         desired_ext = ".csv" if self.emit_var.get() == "csv" else ".qif"
         cur = self.out_path.get().strip()
         if not cur:
@@ -212,7 +241,7 @@ class ConvertTab(ttk.Frame):
             )
             self.out_path.set(new_path)
 
-    def run_conversion(self):
+    def run_conversion(self) -> None:
         try:
             in_path = Path(self.in_path.get().strip())
             out_path = Path(self.out_path.get().strip())
@@ -242,20 +271,15 @@ class ConvertTab(ttk.Frame):
             case_sensitive = self.case_var.get()
             combine = self.combine_var.get()
 
-            txns: List[dict]
+            txns: List[TxnDict]
+            session = self.session
             # Prefer cached session when available and matches the chosen path
-            if (
-                getattr(self, "session", None)
-                and getattr(self.session, "qif_path", None) == in_path
-            ):
+            if session is not None and session.qif_path == in_path:
                 log.info(
                     "Using cached transactions from DataSession (%d txns)",
-                    len(self.session.qif_txns),
+                    len(session.qif_txns),
                 )
-                txns = [
-                    t.to_dict() if hasattr(t, "to_dict") else dict(t)
-                    for t in self.session.qif_txns
-                ]
+                txns = [_txn_to_dict(t) for t in session.qif_txns]
             else:
                 # Fall back to direct parsing (QIF/QFX), then memoize if a session exists
                 ext = in_path.suffix.lower()
@@ -269,10 +293,10 @@ class ConvertTab(ttk.Frame):
                     qf = quicken_helper.controllers.qif_loader.parse_qif_unified_protocol(
                         in_path
                     )
-                    txns = [t.to_dict() for t in qf.transactions]
-                if getattr(self, "session", None):
+                    txns = [_txn_to_dict(t) for t in qf.transactions]
+                if session is not None:
                     try:
-                        self.session.load_qif(in_path)
+                        session.load_qif(in_path)
                     except Exception:
                         # do not fail conversion if memoize fails; diagnostics go to log
                         log.exception(
@@ -301,7 +325,7 @@ class ConvertTab(ttk.Frame):
             self.logln(f"Transactions after filters: {len(txns)}")
             if emit == "data_model":
                 self.logln(f"Writing QIF → {out_path}")
-                mod.write_qif(txns, out_path)
+                mod.write_qif(out_path, txns)
                 self.mb.showinfo("Done", f"Filtered QIF written:\n{out_path}")
                 return
 
