@@ -16,7 +16,9 @@ from __future__ import annotations
 import importlib
 import sys
 import types
+from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -25,129 +27,131 @@ import pytest
 # --------------------------
 
 
-def _install_tk_stubs(monkeypatch):
+def _install_tk_stubs(monkeypatch: pytest.MonkeyPatch) -> None:
     """Install minimal tkinter/ttk/font/messagebox/filedialog stubs usable by ConvertTab."""
 
     # --- tkinter base module ---
     tk = types.ModuleType("tkinter")
 
     class _VarBase:
-        def __init__(self, value=None):
-            self._v = value
+        def __init__(self, value: Any = None) -> None:
+            self._v: Any = value
 
-        def get(self):
+        def get(self) -> Any:
             return self._v
 
-        def set(self, v):
+        def set(self, v: Any) -> None:
             self._v = v
 
-        def trace_add(self, *a, **k):
+        def trace_add(self, *a: object, **k: object) -> str:
             return "token"  # used by emit_var
 
     class Tk:
-        def __init__(self, *a, **k):
+        def __init__(self, *a: object, **k: object) -> None:
             pass
 
-        def withdraw(self):
+        def withdraw(self) -> None:
             pass
 
-        def mainloop(self):
+        def mainloop(self) -> None:
             pass
 
-        def after(self, ms, func=None, *args):  # execute immediately in tests
+        def after(
+            self, ms: int, func: Callable[..., object] | None = None, *args: object
+        ) -> None:  # execute immediately in tests
             if func is not None:
                 func(*args)
 
     class StringVar(_VarBase):
-        def __init__(self, value=""):
+        def __init__(self, value: str = "") -> None:
             super().__init__(value)
 
     class BooleanVar(_VarBase):
-        def __init__(self, value=False):
+        def __init__(self, value: bool = False) -> None:
             super().__init__(value)
 
     class IntVar(_VarBase):
-        def __init__(self, value=0):
+        def __init__(self, value: int = 0) -> None:
             super().__init__(value)
 
     class Text:
-        def __init__(self, *a, **k):
-            self.master = a[0] if a else None
-            self._buf = ""
+        def __init__(self, *a: object, **k: object) -> None:
+            self.master: object = a[0] if a else None
+            self._buf: str = ""
 
-        def get(self, s, e):
+        def get(self, s: object, e: object) -> str:
             return self._buf
 
-        def insert(self, i, s):
+        def insert(self, i: object, s: str) -> None:
             self._buf += s
 
-        def delete(self, s, e):
+        def delete(self, s: object, e: object) -> None:
             self._buf = ""
 
-        def see(self, i):
+        def see(self, i: object) -> None:
             pass
 
         # geometry & events
-        def grid(self, *a, **k):
+        def grid(self, *a: object, **k: object) -> None:
             pass
 
-        def pack(self, *a, **k):
+        def pack(self, *a: object, **k: object) -> None:
             pass
 
-        def grid_remove(self, *a, **k):
+        def grid_remove(self, *a: object, **k: object) -> None:
             pass
 
-        def bind(self, *a, **k):
+        def bind(self, *a: object, **k: object) -> None:
             pass
 
     # Export tkinter symbols
-    tk.Tk = Tk
-    tk.StringVar = StringVar
-    tk.BooleanVar = BooleanVar
-    tk.IntVar = IntVar
-    tk.Text = Text
-    tk.END = "end"
-    tk.INSERT = "insert"
+    tk.Tk = Tk  # type: ignore[attr-defined]
+    tk.StringVar = StringVar  # type: ignore[attr-defined]
+    tk.BooleanVar = BooleanVar  # type: ignore[attr-defined]
+    tk.IntVar = IntVar  # type: ignore[attr-defined]
+    tk.Text = Text  # type: ignore[attr-defined]
+    tk.END = "end"  # type: ignore[attr-defined]
+    tk.INSERT = "insert"  # type: ignore[attr-defined]
 
     # --- tkinter.ttk submodule ---
     ttk = types.ModuleType("tkinter.ttk")
 
     class _Widget:
-        def __init__(self, *a, **k):
+        def __init__(self, *a: object, **k: object) -> None:
             # emulate Tkinter storing parent on every widget
-            self.master = a[0] if a else None
+            self.master: object = a[0] if a else None
 
-        def pack(self, *a, **k):
+        def pack(self, *a: object, **k: object) -> None:
             pass
 
-        def grid(self, *a, **k):
+        def grid(self, *a: object, **k: object) -> None:
             pass
 
-        def place(self, *a, **k):
+        def place(self, *a: object, **k: object) -> None:
             pass
 
-        def grid_remove(self, *a, **k):
+        def grid_remove(self, *a: object, **k: object) -> None:
             pass
 
-        def columnconfigure(self, *a, **k):
+        def columnconfigure(self, *a: object, **k: object) -> None:
             pass
 
-        def rowconfigure(self, *a, **k):
+        def rowconfigure(self, *a: object, **k: object) -> None:
             pass
 
-        def bind(self, *a, **k):
+        def bind(self, *a: object, **k: object) -> None:
             pass
 
-        def configure(self, *a, **k):
+        def configure(self, *a: object, **k: object) -> None:
             pass
 
-        def destroy(self, *a, **k):
+        def destroy(self, *a: object, **k: object) -> None:
             pass
 
-        def winfo_ismapped(self):
+        def winfo_ismapped(self) -> bool:
             return True
 
-        def update_idletasks(self):
+        def update_idletasks(self) -> None:
             pass  # used in ConvertTab.logln()
 
     class Frame(_Widget):
@@ -172,38 +176,44 @@ def _install_tk_stubs(monkeypatch):
         pass
 
     class Combobox(_Widget):
-        def __init__(self, *a, values=None, textvariable=None, **k):
+        def __init__(
+            self,
+            *a: object,
+            values: list[str] | None = None,
+            textvariable: Any = None,
+            **k: object,
+        ) -> None:
             super().__init__(*a, **k)
-            self._values = values or []
-            self._tv = textvariable
+            self._values: list[str] = values or []
+            self._tv: Any = textvariable
 
-        def set(self, v):
+        def set(self, v: str) -> None:
             if self._tv:
                 self._tv.set(v)
 
-        def get(self):
+        def get(self) -> str:
             return (
                 self._tv.get()
                 if self._tv
                 else (self._values[0] if self._values else "")
             )
 
-        def current(self, idx):
+        def current(self, idx: int) -> None:
             if self._values and 0 <= idx < len(self._values):
                 self.set(self._values[idx])
 
     class Notebook(Frame):
-        def add(self, *a, **k):
+        def add(self, *a: object, **k: object) -> None:
             pass
 
     class Style:
-        def theme_use(self, *a, **k):
+        def theme_use(self, *a: object, **k: object) -> None:
             pass
 
-        def configure(self, *a, **k):
+        def configure(self, *a: object, **k: object) -> None:
             pass
 
-        def map(self, *a, **k):
+        def map(self, *a: object, **k: object) -> None:
             pass
 
     class Separator(_Widget):
@@ -212,63 +222,63 @@ def _install_tk_stubs(monkeypatch):
     class Progressbar(_Widget):
         pass
 
-    ttk.Frame = Frame
-    ttk.LabelFrame = LabelFrame
-    ttk.Label = Label
-    ttk.Button = Button
-    ttk.Entry = Entry
-    ttk.Checkbutton = Checkbutton
-    ttk.Radiobutton = Radiobutton
-    ttk.Combobox = Combobox
-    ttk.Notebook = Notebook
-    ttk.Style = Style
-    ttk.Separator = Separator
-    ttk.Progressbar = Progressbar
+    ttk.Frame = Frame  # type: ignore[attr-defined]
+    ttk.LabelFrame = LabelFrame  # type: ignore[attr-defined]
+    ttk.Label = Label  # type: ignore[attr-defined]
+    ttk.Button = Button  # type: ignore[attr-defined]
+    ttk.Entry = Entry  # type: ignore[attr-defined]
+    ttk.Checkbutton = Checkbutton  # type: ignore[attr-defined]
+    ttk.Radiobutton = Radiobutton  # type: ignore[attr-defined]
+    ttk.Combobox = Combobox  # type: ignore[attr-defined]
+    ttk.Notebook = Notebook  # type: ignore[attr-defined]
+    ttk.Style = Style  # type: ignore[attr-defined]
+    ttk.Separator = Separator  # type: ignore[attr-defined]
+    ttk.Progressbar = Progressbar  # type: ignore[attr-defined]
 
     # --- filedialog and messagebox ---
     filedialog = types.ModuleType("tkinter.filedialog")
-    filedialog.askopenfilename = lambda **k: ""
-    filedialog.asksaveasfilename = lambda **k: ""
+    filedialog.askopenfilename = lambda **k: ""  # type: ignore[attr-defined,misc]
+    filedialog.asksaveasfilename = lambda **k: ""  # type: ignore[attr-defined,misc]
 
     messagebox = types.ModuleType("tkinter.messagebox")
 
     class _FakeMB:
         """Captures info/error prompts and simulates overwrite confirmations."""
 
-        def __init__(self, ask=True):
-            self.calls = []
+        def __init__(self, ask: bool = True) -> None:
+            self.calls: list[tuple[str, tuple[object, ...], dict[str, object]]] = []
             self._ask = ask
 
-        def showinfo(self, *a, **k):
+        def showinfo(self, *a: object, **k: object) -> None:
             self.calls.append(("showinfo", a, k))
 
-        def showerror(self, *a, **k):
+        def showerror(self, *a: object, **k: object) -> None:
             self.calls.append(("showerror", a, k))
 
-        def askyesno(self, *a, **k):
+        def askyesno(self, *a: object, **k: object) -> bool:
             self.calls.append(("askyesno", a, k))
             return self._ask
 
-    messagebox._FakeMB = _FakeMB
+    messagebox._FakeMB = _FakeMB  # type: ignore[attr-defined]
 
     # --- font ---
     font = types.ModuleType("tkinter.font")
 
     class _Font:
-        def __init__(self, *a, **k):
+        def __init__(self, *a: object, **k: object) -> None:
             pass
 
-        def cget(self, k):
+        def cget(self, k: str) -> int:
             return 10
 
-        def configure(self, **k):
+        def configure(self, **k: object) -> None:
             pass
 
-    def nametofont(name):
+    def nametofont(name: str) -> _Font:
         return _Font()
 
-    font.Font = _Font
-    font.nametofont = nametofont
+    font.Font = _Font  # type: ignore[attr-defined]
+    font.nametofont = nametofont  # type: ignore[attr-defined]
 
     # Register stubs
     monkeypatch.setitem(sys.modules, "tkinter", tk)
@@ -284,7 +294,7 @@ def _install_tk_stubs(monkeypatch):
 
 
 @pytest.fixture
-def convert_mod(monkeypatch):
+def convert_mod(monkeypatch: pytest.MonkeyPatch) -> types.ModuleType:
     """Import convert_tab with Tk/Ttk and dialogs stubbed, ensuring a clean module."""
     _install_tk_stubs(monkeypatch)
     # Ensure a fresh import (avoid prior state)
@@ -292,13 +302,13 @@ def convert_mod(monkeypatch):
     return importlib.import_module("quicken_helper.gui_viewers.convert_tab")
 
 
-def _make_tab(convert_mod):
+def _make_tab(convert_mod: types.ModuleType) -> tuple[Any, Any]:
     """Create a ConvertTab with a proper parent chain and a fake messagebox API."""
     tk = sys.modules["tkinter"]
-    root = tk.Tk()
+    root = tk.Tk()  # type: ignore[attr-defined]
     master = convert_mod.ttk.Frame(root)  # parented frame so .master exists
     mb_mod = sys.modules["tkinter.messagebox"]
-    mb = mb_mod._FakeMB(ask=True)
+    mb = mb_mod._FakeMB(ask=True)  # type: ignore[attr-defined]
     tab = convert_mod.ConvertTab(master, mb, session=None)
     return tab, mb
 
@@ -308,25 +318,27 @@ def _make_tab(convert_mod):
 # --------------------------
 
 
-def _patch_qif_parser(monkeypatch, convert_mod, n_txns=2):
+def _patch_qif_parser(
+    monkeypatch: pytest.MonkeyPatch, convert_mod: types.ModuleType, n_txns: int = 2
+) -> None:
     """Return a fake ledger with transactions regardless of which parser symbol is used."""
 
     class _Txn:
-        def __init__(self, i):
+        def __init__(self, i: int) -> None:
             self.i = i
 
-        def to_dict(self):
+        def to_dict(self) -> dict[str, object]:
             return {"id": self.i, "amount": "1.00"}
 
     class _Ledger:
-        def __init__(self, n):
+        def __init__(self, n: int) -> None:
             self.transactions = [_Txn(i) for i in range(n)]
 
     # Patch both potential locations
     monkeypatch.setattr(
         convert_mod,
         "parse_qif_unified_protocol",
-        lambda p: _Ledger(n_txns),
+        lambda p: _Ledger(n_txns),  # type: ignore[misc]
         raising=False,
     )
     try:
@@ -334,18 +346,22 @@ def _patch_qif_parser(monkeypatch, convert_mod, n_txns=2):
         monkeypatch.setattr(
             loader,
             "parse_qif_unified_protocol",
-            lambda p: _Ledger(n_txns),
+            lambda p: _Ledger(n_txns),  # type: ignore[misc]
             raising=False,
         )
     except Exception:
         pass
 
 
-def _patch_csv_writers(monkeypatch, convert_mod, calls):
+def _patch_csv_writers(
+    monkeypatch: pytest.MonkeyPatch,
+    convert_mod: types.ModuleType,
+    calls: list[tuple[str, int, str]],
+) -> None:
     """Record CSV writer invocations without writing files."""
 
-    def _recorder(txns, out_path):
-        count = len(getattr(txns, "transactions", txns))
+    def _recorder(txns: object, out_path: object) -> None:
+        count = len(getattr(txns, "transactions", txns))  # type: ignore[arg-type]
         calls.append(("writer_called", count, str(out_path)))
 
     # Writers imported into convert_tab module namespace
@@ -364,31 +380,41 @@ def _patch_csv_writers(monkeypatch, convert_mod, calls):
         pass
 
 
-def _patch_helpers_passthrough(monkeypatch):
+def _patch_helpers_passthrough(monkeypatch: pytest.MonkeyPatch) -> None:
     """Ensure filter helpers don't alter data (deterministic pass-through)."""
     try:
         helpers = importlib.import_module("quicken_helper.gui_viewers.helpers")
         monkeypatch.setattr(
-            helpers, "filter_date_range", lambda txns, df, dt: txns, raising=False
+            helpers,
+            "filter_date_range",
+            lambda txns, df, dt: txns,  # type: ignore[misc]
+            raising=False,
         )
         monkeypatch.setattr(
             helpers,
             "apply_multi_payee_filters",
-            lambda txns, *a, **k: txns,
+            lambda txns, *a, **k: txns,  # type: ignore[misc]
             raising=False,
         )
     except Exception:
         pass
 
 
-def _patch_path_exists(monkeypatch, convert_mod, predicate):
+def _patch_path_exists(
+    monkeypatch: pytest.MonkeyPatch,
+    convert_mod: types.ModuleType,
+    predicate: Callable[[str], bool],
+) -> None:
     """Make Path.exists return predicate(path_str) everywhere (module-local and global Path)."""
     if hasattr(convert_mod, "Path"):
         monkeypatch.setattr(
-            convert_mod.Path, "exists", lambda self: predicate(str(self)), raising=False
+            convert_mod.Path,
+            "exists",
+            lambda self: predicate(str(self)),  # type: ignore[misc]
+            raising=False,
         )
     monkeypatch.setattr(
-        Path, "exists", lambda self: predicate(str(self)), raising=False
+        Path, "exists", lambda self: predicate(str(self)), raising=False  # type: ignore[misc]
     )
 
 
@@ -397,7 +423,9 @@ def _patch_path_exists(monkeypatch, convert_mod, predicate):
 # --------------------------
 
 
-def test_update_output_extension_blank_out_uses_in_path(convert_mod):
+def test_update_output_extension_blank_out_uses_in_path(
+    convert_mod: types.ModuleType,
+) -> None:
     """Arrange: blank out_path, valid .qif in_path; Act: _update_output_extension; Assert: out uses stem + .csv."""
     # Arrange
     tab, _ = _make_tab(convert_mod)
@@ -412,7 +440,9 @@ def test_update_output_extension_blank_out_uses_in_path(convert_mod):
     assert out.stem == "input"
 
 
-def test_update_output_extension_switches_extension(convert_mod):
+def test_update_output_extension_switches_extension(
+    convert_mod: types.ModuleType,
+) -> None:
     """Arrange: out_path with .qif; Act: update for csv emit; Assert: suffix becomes .csv."""
     # Arrange
     tab, _ = _make_tab(convert_mod)
@@ -424,7 +454,9 @@ def test_update_output_extension_switches_extension(convert_mod):
     assert Path(tab.out_path.get()).suffix == ".csv"
 
 
-def test_parse_payee_filters_parses_lines_and_commas(convert_mod):
+def test_parse_payee_filters_parses_lines_and_commas(
+    convert_mod: types.ModuleType,
+) -> None:
     """Arrange: mixed commas/newlines + whitespace; Act: _parse_payee_filters; Assert: trimmed non-empty tokens."""
     # Arrange
     tab, _ = _make_tab(convert_mod)
@@ -435,7 +467,7 @@ def test_parse_payee_filters_parses_lines_and_commas(convert_mod):
     assert got == ["Alpha", "Beta", "Gamma"]
 
 
-def test_run_missing_input_shows_error(convert_mod):
+def test_run_missing_input_shows_error(convert_mod: types.ModuleType) -> None:
     """Arrange: missing input; Act: run_conversion; Assert: error dialog reported; no writer call needed."""
     # Arrange
     tab, mb = _make_tab(convert_mod)
@@ -447,11 +479,13 @@ def test_run_missing_input_shows_error(convert_mod):
     tab.run_conversion()
     # Assert
     assert any(
-        kind == "showerror" for kind, *_ in mb.calls
+        kind == "showerror" for kind, *_ in mb.calls  # type: ignore[misc]
     ), "Expected error dialog for missing input"
 
 
-def test_run_missing_output_shows_error(convert_mod, monkeypatch):
+def test_run_missing_output_shows_error(
+    convert_mod: types.ModuleType, monkeypatch: pytest.MonkeyPatch
+) -> None:
     """Arrange: valid input exists but output missing; Act: run_conversion; Assert: error dialog reported."""
     # Arrange
     tab, mb = _make_tab(convert_mod)
@@ -466,11 +500,13 @@ def test_run_missing_output_shows_error(convert_mod, monkeypatch):
     tab.run_conversion()
     # Assert
     assert any(
-        kind == "showerror" for kind, *_ in mb.calls
+        kind == "showerror" for kind, *_ in mb.calls  # type: ignore[misc]
     ), "Expected error dialog for missing output"
 
 
-def test_run_decline_overwrite_does_not_write(convert_mod, monkeypatch):
+def test_run_decline_overwrite_does_not_write(
+    convert_mod: types.ModuleType, monkeypatch: pytest.MonkeyPatch
+) -> None:
     """Arrange: output 'exists' and user declines; Act: run_conversion; Assert: writer not invoked, confirmation asked."""
     # Arrange
     tab, mb = _make_tab(convert_mod)
@@ -485,7 +521,7 @@ def test_run_decline_overwrite_does_not_write(convert_mod, monkeypatch):
         convert_mod,
         predicate=lambda p: p.endswith("input.qif") or p.endswith("out.csv"),
     )
-    calls = []
+    calls: list[tuple[str, int, str]] = []
     _patch_qif_parser(monkeypatch, convert_mod)
     _patch_csv_writers(monkeypatch, convert_mod, calls)
     # Act
@@ -495,11 +531,13 @@ def test_run_decline_overwrite_does_not_write(convert_mod, monkeypatch):
         c[0] == "writer_called" for c in calls
     ), "Writer should not be called when overwrite is declined"
     assert any(
-        kind == "askyesno" for kind, *_ in mb.calls
+        kind == "askyesno" for kind, *_ in mb.calls  # type: ignore[misc]
     ), "Expected overwrite confirmation prompt"
 
 
-def test_run_writes_csv_windows_profile(convert_mod, monkeypatch):
+def test_run_writes_csv_windows_profile(
+    convert_mod: types.ModuleType, monkeypatch: pytest.MonkeyPatch
+) -> None:
     """Arrange: CSV ('quicken-windows') profile; Act: run_conversion; Assert: writer called & info shown."""
     # Arrange
     tab, mb = _make_tab(convert_mod)
@@ -515,12 +553,12 @@ def test_run_writes_csv_windows_profile(convert_mod, monkeypatch):
     )
     _patch_helpers_passthrough(monkeypatch)  # ensure filters are deterministic
     _patch_qif_parser(monkeypatch, convert_mod, n_txns=2)
-    calls = []
+    calls: list[tuple[str, int, str]] = []
     _patch_csv_writers(monkeypatch, convert_mod, calls)
     # Act
     tab.run_conversion()
     # Assert
     assert any(c[0] == "writer_called" for c in calls), "CSV writer should be invoked"
     assert any(
-        kind == "showinfo" for kind, *_ in mb.calls
+        kind == "showinfo" for kind, *_ in mb.calls  # type: ignore[misc]
     ), "Expected completion info dialog"
