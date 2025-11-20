@@ -2,7 +2,8 @@
 from quicken_helper.data_model.q_wrapper.qif_header import QifHeader
 
 
-def test_qifentry_formats_record_exactly():
+def test_qifentry_formats_record_exactly() -> None:
+    """Test qif_entry formats header code with newline and caret terminator."""
     # Arrange
     h = QifHeader(
         code="!Type:Bank", description="Bank section", type="Type"
@@ -15,7 +16,8 @@ def test_qifentry_formats_record_exactly():
     ), "QifEntry should be 'code' + newline + '^' exactly."  # :contentReference[oaicite:1]{index=1}
 
 
-def test_equality_compares_only_code_and_ignores_other_fields():
+def test_equality_compares_only_code_and_ignores_other_fields() -> None:
+    """Test equality is based solely on code field, ignoring description and type."""
     # Arrange
     a = QifHeader(
         code="!Type:Bank", description="desc A", type="X"
@@ -31,7 +33,8 @@ def test_equality_compares_only_code_and_ignores_other_fields():
     ), "Different code ⇒ headers not equal."  # :contentReference[oaicite:4]{index=4}
 
 
-def test_equality_with_non_header_returns_false():
+def test_equality_with_non_header_returns_false() -> None:
+    """Test equality with non-QifHeader object returns False."""
     # Arrange
     h = QifHeader(code="!Type:Bank", description="d", type="t")
     # Act / Assert
@@ -40,7 +43,8 @@ def test_equality_with_non_header_returns_false():
     ) is False, "__eq__ must return False for non-QifHeader objects."  # :contentReference[oaicite:5]{index=5}
 
 
-def test_hash_is_based_on_code_and_consistent_with_equality():
+def test_hash_is_based_on_code_and_consistent_with_equality() -> None:
+    """Test hash is based on code field and consistent with equality."""
     # Arrange
     a = QifHeader(code="!Type:Bank", description="a", type="x")
     b = QifHeader(code="!Type:Bank", description="b", type="y")
@@ -56,7 +60,8 @@ def test_hash_is_based_on_code_and_consistent_with_equality():
     ), "Different code should generally produce a different hash."  # :contentReference[oaicite:7]{index=7}
 
 
-def test_can_be_used_in_sets_and_dict_keys_uniquely_by_code():
+def test_can_be_used_in_sets_and_dict_keys_uniquely_by_code() -> None:
+    """Test QifHeader can be used in sets and dicts, deduplicating by code."""
     # Arrange
     a1 = QifHeader(code="!Type:Bank", description="a1", type="x")
     a2 = QifHeader(code="!Type:Bank", description="a2", type="y")
@@ -71,7 +76,8 @@ def test_can_be_used_in_sets_and_dict_keys_uniquely_by_code():
     ), "Dict keying uses code equality; last value wins."  # :contentReference[oaicite:8]{index=8}
 
 
-def test_changing_non_code_fields_does_not_affect_equality():
+def test_changing_non_code_fields_does_not_affect_equality() -> None:
+    """Test changing non-code fields does not affect equality."""
     # Arrange
     h1 = QifHeader(code="!Type:Bank", description="A", type="X")
     h2 = QifHeader(code="!Type:Bank", description="B", type="Y")

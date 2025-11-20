@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import csv
 import io
+from collections.abc import Sequence
 from pathlib import Path
+
+import pytest
 
 import quicken_helper.legacy.qif_writer as qw
 
@@ -10,8 +13,8 @@ import quicken_helper.legacy.qif_writer as qw
 
 
 def test_write_qif_emits_account_and_type_headers_and_resets_on_account_change(
-    tmp_path,
-):
+    tmp_path: Path,
+) -> None:
     """write_qif: emits an !Account block on account changes (with N and T lines)
     and emits !Type:<Type> whenever the transaction type changes. After switching
     accounts, the writer re-emits the !Type header before the next transaction.
@@ -70,7 +73,9 @@ def test_write_qif_emits_account_and_type_headers_and_resets_on_account_change(
     assert pos_acct2 < pos_type2
 
 
-def test_write_qif_writes_core_fields_memo_address_splits_and_terminator(tmp_path):
+def test_write_qif_writes_core_fields_memo_address_splits_and_terminator(
+    tmp_path: Path,
+) -> None:
     """write_qif: writes D/T/P/M/L core fields; emits one M line *per* memo line
     (not a single M with embedded newline); splits 'address' into multiple A lines;
     writes split entries (S/E/$) in order; and terminates the record with '^'.
@@ -131,7 +136,7 @@ def test_write_qif_writes_core_fields_memo_address_splits_and_terminator(tmp_pat
     assert out.strip().endswith("^")
 
 
-def test_write_qif_investment_fields_and_checknum_lines(tmp_path):
+def test_write_qif_investment_fields_and_checknum_lines(tmp_path: Path) -> None:
     """write_qif: in investment transactions, writes investment fields:
     N<Action> (action), Y<security>, Q<quantity>, I<price>, O<commission>.
     The writer also writes check number with 'N<checknum>' (so two 'N' lines can appear).
@@ -165,7 +170,7 @@ def test_write_qif_investment_fields_and_checknum_lines(tmp_path):
     assert "O5.00\n" in out
 
 
-def test_write_qif_writes_to_path_with_utf8_encoding(tmp_path: Path):
+def test_write_qif_writes_to_path_with_utf8_encoding(tmp_path: Path) -> None:
     """write_qif: writes to a filesystem path when 'out' is a pathlike; output is
     encoded as specified (default utf-8). This test verifies that content lands on disk.
     """
@@ -182,16 +187,24 @@ def test_write_qif_writes_to_path_with_utf8_encoding(tmp_path: Path):
 # ----------------------------- CSV writer tests ------------------------------
 
 
-def _capture_csv(monkeypatch, call_fn, txns, *, newline=""):
+def _capture_csv(
+    monkeypatch: pytest.MonkeyPatch,
+    call_fn: object,
+    txns: Sequence[dict[str, object]],
+    *,
+    newline: str = "",
+) -> str:
     """Helper: monkeypatch qw._open_for_write to return an in-memory file-like object
     that captures its contents on close so we can read it after the writer exits."""
     captured = {}
 
-    def fake_open(path, *, binary=False, newline=""):
+    def fake_open(
+        path: object, *, binary: bool = False, newline: str = ""
+    ) -> io.StringIO:
         import io
 
         class CapturingStringIO(io.StringIO):
-            def close(self):
+            def close(self) -> None:
                 # Save contents before closing so tests can read them safely.
                 captured["text"] = self.getvalue()
                 super().close()
@@ -202,13 +215,15 @@ def _capture_csv(monkeypatch, call_fn, txns, *, newline=""):
     monkeypatch.setattr(qw, "_open_for_write", fake_open, raising=True)
 
     # Invoke the writer (it will 'with _open_for_write(...) as f:' and then close f)
-    call_fn(txns, Path("dummy.csv"), newline=newline)
+    call_fn(txns, Path("dummy.csv"), newline=newline)  # type: ignore[operator]
 
     # Return the text captured at close time (safe even though the stream is closed)
-    return captured["text"]
+    return captured["text"]  # type: ignore[return-value]
 
 
-def test_write_csv_flat_includes_split_aggregates_and_headers(monkeypatch):
+def test_write_csv_flat_includes_split_aggregates_and_headers(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """write_csv_flat: produces one row per transaction with split aggregates:
     split_count, split_category|split_memo|split_amount joined via ' | '. Unknown
     fields are ignored via extrasaction='ignore'. Header order matches the writer.
@@ -233,7 +248,7 @@ def test_write_csv_flat_includes_split_aggregates_and_headers(monkeypatch):
         }
     ]
 
-    csv_text = _capture_csv(monkeypatch, qw.write_csv_flat, txns)
+    csv_text = _capture_csv(monkeypatch, qw.write_csv_flat, txns)  # type: ignore[arg-type]
     rows = list(csv.DictReader(io.StringIO(csv_text)))
 
     assert len(rows) == 1
@@ -247,8 +262,8 @@ def test_write_csv_flat_includes_split_aggregates_and_headers(monkeypatch):
 
 
 def test_write_csv_exploded_emits_one_row_per_split_and_single_row_when_no_splits(
-    monkeypatch,
-):
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """write_csv_exploded: emits one row per split when present, otherwise one row per
     transaction. Split fields appear in split_category/split_memo/split_amount columns.
     """
@@ -276,7 +291,7 @@ def test_write_csv_exploded_emits_one_row_per_split_and_single_row_when_no_split
         },
     ]
 
-    csv_text = _capture_csv(monkeypatch, qw.write_csv_exploded, txns)
+    csv_text = _capture_csv(monkeypatch, qw.write_csv_exploded, txns)  # type: ignore[arg-type]
     rows = list(csv.DictReader(io.StringIO(csv_text)))
 
     # First txn -> 2 split rows; second txn -> 1 row => total 3 rows
@@ -294,8 +309,8 @@ def test_write_csv_exploded_emits_one_row_per_split_and_single_row_when_no_split
 
 
 def test_write_csv_quicken_windows_uses_signed_amount_and_empty_debit_credit(
-    monkeypatch,
-):
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """write_csv_quicken_windows: writes the Quicken Windows header order; leaves the
     'Debit/Credit' column empty and keeps 'Amount' signed exactly as provided.
     """
@@ -316,7 +331,7 @@ def test_write_csv_quicken_windows_uses_signed_amount_and_empty_debit_credit(
         },
     ]
 
-    csv_text = _capture_csv(monkeypatch, qw.write_csv_quicken_windows, txns)
+    csv_text = _capture_csv(monkeypatch, qw.write_csv_quicken_windows, txns)  # type: ignore[arg-type]
     rows = list(csv.DictReader(io.StringIO(csv_text)))
 
     assert [r["Amount"] for r in rows] == ["-12.34", "56.78"]
@@ -324,7 +339,9 @@ def test_write_csv_quicken_windows_uses_signed_amount_and_empty_debit_credit(
     assert rows[0]["Payee"] == "Alpha" and rows[1]["Payee"] == "Beta"
 
 
-def test_write_csv_quicken_mac_sets_type_by_sign_and_amount_is_abs(monkeypatch):
+def test_write_csv_quicken_mac_sets_type_by_sign_and_amount_is_abs(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """write_csv_quicken_mac: outputs 'Transaction Type' = 'credit' for positive amounts
     and 'debit' for zero/negative; 'Amount' is the absolute value. If the amount field is
     missing/empty, the amount cell is empty but the type defaults to 'debit'.
@@ -353,7 +370,7 @@ def test_write_csv_quicken_mac_sets_type_by_sign_and_amount_is_abs(monkeypatch):
         },
     ]
 
-    csv_text = _capture_csv(monkeypatch, qw.write_csv_quicken_mac, txns)
+    csv_text = _capture_csv(monkeypatch, qw.write_csv_quicken_mac, txns)  # type: ignore[arg-type]
     rows = list(csv.DictReader(io.StringIO(csv_text)))
 
     # Abs amounts

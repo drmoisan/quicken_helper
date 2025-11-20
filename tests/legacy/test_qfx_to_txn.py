@@ -2,37 +2,42 @@ from __future__ import annotations
 
 import sys
 from datetime import datetime
+from pathlib import Path
 from types import ModuleType
 
+import pytest
+
 import quicken_helper.legacy.qfx_to_txns as qfx
+from quicken_helper.legacy.qfx_to_txns import (
+    _to_date,  # type: ignore[reportPrivateUsage]
+    _tx,  # type: ignore[reportPrivateUsage]
+)
 
 # ------------------------------- _to_date -------------------------------------
 
 
-def test__to_date_parses_plain_time_and_tz():
+def test__to_date_parses_plain_time_and_tz() -> None:
     """_to_date: parses OFX/QFX date formats like YYYYMMDD, YYYYMMDDThhmmss,
     and strips timezone brackets, returning 'mm/dd/YYYY' or '' if invalid."""
-    assert qfx._to_date("20250115") == "01/15/2025"
-    assert qfx._to_date("20250115T120000") == "01/15/2025"
-    assert qfx._to_date("20250115[0:GMT]") == "01/15/2025"
+    assert _to_date("20250115") == "01/15/2025"
+    assert _to_date("20250115T120000") == "01/15/2025"
+    assert _to_date("20250115[0:GMT]") == "01/15/2025"
 
 
-def test__to_date_returns_empty_on_invalid():
+def test__to_date_returns_empty_on_invalid() -> None:
     """_to_date: invalid/partial inputs return empty string (defensive)."""
-    assert qfx._to_date("") == ""
-    assert qfx._to_date("2025") == ""  # too short
-    assert qfx._to_date("20251340") == ""  # impossible month/day
+    assert _to_date("") == ""
+    assert _to_date("2025") == ""  # too short
+    assert _to_date("20251340") == ""  # impossible month/day
 
 
 # --------------------------------- _tx ----------------------------------------
 
 
-def test__tx_formats_amount_and_schema_defaults():
+def test__tx_formats_amount_and_schema_defaults() -> None:
     """_tx: returns a dict in the expected schema with 2-decimal amount,
     empty strings for optional text fields, and an empty splits list."""
-    t = qfx._tx(
-        -12.3, payee=" ACME ", memo=" Memo ", date="01/02/2025", checknum=" 99 "
-    )
+    t = _tx(-12.3, payee=" ACME ", memo=" Memo ", date="01/02/2025", checknum=" 99 ")
     assert t == {
         "date": "01/02/2025",
         "payee": " ACME ",  # _tx does not strip; caller is responsible
@@ -48,14 +53,23 @@ def test__tx_formats_amount_and_schema_defaults():
 # ------------------------------- parse_qfx ------------------------------------
 
 
-def test_parse_qfx_uses_ofxparse_when_available(monkeypatch, tmp_path):
+def test_parse_qfx_uses_ofxparse_when_available(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
     """parse_qfx: when 'ofxparse' is importable, it uses OfxParser.parse(...)
     and maps transactions -> dicts via _tx. We install a fake ofxparse module
     that returns a minimal object graph with accounts/statement/transactions."""
 
     # Prepare a fake 'ofxparse' module
     class FakeTxn:
-        def __init__(self, amount, payee, memo, date, checknum=""):
+        def __init__(
+            self,
+            amount: float,
+            payee: str,
+            memo: str,
+            date: datetime,
+            checknum: str = "",
+        ) -> None:
             self.amount = amount
             self.payee = payee
             self.memo = memo
@@ -63,20 +77,20 @@ def test_parse_qfx_uses_ofxparse_when_available(monkeypatch, tmp_path):
             self.checknum = checknum
 
     class FakeStatement:
-        def __init__(self, transactions):
+        def __init__(self, transactions: list[FakeTxn]) -> None:
             self.transactions = transactions
 
     class FakeAccount:
-        def __init__(self, txns):
+        def __init__(self, txns: list[FakeTxn]) -> None:
             self.statement = FakeStatement(txns)
 
     class FakeOfx:
-        def __init__(self, accounts):
+        def __init__(self, accounts: list[FakeAccount]) -> None:
             self.accounts = accounts
 
     class FakeParser:
         @staticmethod
-        def parse(f):  # file-like; content not needed
+        def parse(f: object) -> FakeOfx:  # file-like; content not needed
             txns = [
                 FakeTxn(
                     amount=12.34,
@@ -95,7 +109,7 @@ def test_parse_qfx_uses_ofxparse_when_available(monkeypatch, tmp_path):
             return FakeOfx([FakeAccount(txns)])
 
     fake_mod = ModuleType("ofxparse")
-    fake_mod.OfxParser = FakeParser
+    fake_mod.OfxParser = FakeParser  # type: ignore[attr-defined]
     monkeypatch.setitem(sys.modules, "ofxparse", fake_mod)
 
     # Write any file contents (parser ignores)
@@ -119,7 +133,9 @@ def test_parse_qfx_uses_ofxparse_when_available(monkeypatch, tmp_path):
     assert out[1]["checknum"] == ""
 
 
-def test_parse_qfx_fallback_scans_stmttrn_blocks(monkeypatch, tmp_path):
+def test_parse_qfx_fallback_scans_stmttrn_blocks(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
     """parse_qfx (fallback): when ofxparse fails, scans <STMTTRN>...</STMTTRN>
     blocks and extracts TRNAMT/NAME/MEMO/DTPOSTED/CHECKNUM into _tx schema.
     Values like '1,234.56' are normalized, and dates are converted via _to_date."""
@@ -127,11 +143,11 @@ def test_parse_qfx_fallback_scans_stmttrn_blocks(monkeypatch, tmp_path):
     # Force the function into the fallback path by providing an ofxparse with a failing parse
     class FailingParser:
         @staticmethod
-        def parse(f):
+        def parse(f: object) -> None:
             raise RuntimeError("boom")
 
     failing_mod = ModuleType("ofxparse")
-    failing_mod.OfxParser = FailingParser
+    failing_mod.OfxParser = FailingParser  # type: ignore[attr-defined]
     monkeypatch.setitem(sys.modules, "ofxparse", failing_mod)
 
     # Craft minimal QFX/OFX text with two STMTTRN blocks (uppercase tags)

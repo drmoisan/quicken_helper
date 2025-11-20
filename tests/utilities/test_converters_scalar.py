@@ -13,10 +13,10 @@ from decimal import Decimal
 import pytest
 
 from quicken_helper.utilities.converters_scalar import (
-    _to_bool,
-    _to_float,
-    _to_int,
-    _to_str,
+    _to_bool,  # type: ignore[reportPrivateUsage]
+    _to_float,  # type: ignore[reportPrivateUsage]
+    _to_int,  # type: ignore[reportPrivateUsage]
+    _to_str,  # type: ignore[reportPrivateUsage]
     clean_number_like_string,
     default_date,
     to_date,
@@ -29,7 +29,7 @@ from quicken_helper.utilities.converters_scalar import (
 # ============================================================================
 
 
-def test_to_decimal_from_decimal_returns_same():
+def test_to_decimal_from_decimal_returns_same() -> None:
     """
     Positive: Decimal input returns unchanged.
     """
@@ -42,7 +42,7 @@ def test_to_decimal_from_decimal_returns_same():
     assert result is d
 
 
-def test_to_decimal_from_int():
+def test_to_decimal_from_int() -> None:
     """
     Positive: Integer converts to exact Decimal.
     """
@@ -54,7 +54,7 @@ def test_to_decimal_from_int():
     assert result == Decimal("42")
 
 
-def test_to_decimal_from_float():
+def test_to_decimal_from_float() -> None:
     """
     Positive: Float converts via string to avoid binary artifacts.
     """
@@ -66,7 +66,7 @@ def test_to_decimal_from_float():
     assert result == Decimal("3.14")
 
 
-def test_to_decimal_us_format_with_comma_thousands():
+def test_to_decimal_us_format_with_comma_thousands() -> None:
     """
     Positive: US-style "1,234.56" parsed correctly.
     """
@@ -76,7 +76,7 @@ def test_to_decimal_us_format_with_comma_thousands():
     assert result == Decimal("1234.56")
 
 
-def test_to_decimal_eu_format_with_dot_thousands():
+def test_to_decimal_eu_format_with_dot_thousands() -> None:
     """
     Positive: EU-style "1.234,56" - documents actual behavior.
 
@@ -95,7 +95,7 @@ def test_to_decimal_eu_format_with_dot_thousands():
     assert result == Decimal("1.23456")
 
 
-def test_to_decimal_parentheses_indicate_negative():
+def test_to_decimal_parentheses_indicate_negative() -> None:
     """
     Positive: Parentheses like "(123.45)" indicate negative.
     """
@@ -105,7 +105,7 @@ def test_to_decimal_parentheses_indicate_negative():
     assert result == Decimal("-123.45")
 
 
-def test_to_decimal_trailing_minus_indicates_negative():
+def test_to_decimal_trailing_minus_indicates_negative() -> None:
     """
     Positive: Trailing minus "123.45-" indicates negative.
     """
@@ -115,7 +115,7 @@ def test_to_decimal_trailing_minus_indicates_negative():
     assert result == Decimal("-123.45")
 
 
-def test_to_decimal_with_currency_symbol():
+def test_to_decimal_with_currency_symbol() -> None:
     """
     Positive: Currency symbols like "$1,234.56" are stripped.
     """
@@ -125,7 +125,7 @@ def test_to_decimal_with_currency_symbol():
     assert result == Decimal("1234.56")
 
 
-def test_to_decimal_with_spaces_and_nbsp():
+def test_to_decimal_with_spaces_and_nbsp() -> None:
     """
     Positive: Whitespace and non-breaking spaces are stripped.
     """
@@ -135,7 +135,7 @@ def test_to_decimal_with_spaces_and_nbsp():
     assert result == Decimal("1234.56")
 
 
-def test_to_decimal_empty_string_raises():
+def test_to_decimal_empty_string_raises() -> None:
     """
     Negative: Empty string raises ValueError.
     """
@@ -144,7 +144,7 @@ def test_to_decimal_empty_string_raises():
         to_decimal("")
 
 
-def test_to_decimal_no_digits_raises():
+def test_to_decimal_no_digits_raises() -> None:
     """
     Negative: String with no digits raises ValueError.
     """
@@ -153,7 +153,7 @@ def test_to_decimal_no_digits_raises():
         to_decimal("abc")
 
 
-def test_to_decimal_unsupported_type_raises():
+def test_to_decimal_unsupported_type_raises() -> None:
     """
     Negative: Non-numeric, non-string type raises ValueError.
     """
@@ -167,7 +167,7 @@ def test_to_decimal_unsupported_type_raises():
 # ============================================================================
 
 
-def test_clean_number_like_string_us_format():
+def test_clean_number_like_string_us_format() -> None:
     """
     Positive: US format "1,234.56" cleans to "1234.56".
     """
@@ -177,7 +177,7 @@ def test_clean_number_like_string_us_format():
     assert result == "1234.56"
 
 
-def test_clean_number_like_string_eu_format():
+def test_clean_number_like_string_eu_format() -> None:
     """
     Positive: EU format "1.234,56" cleans to "1234.56" when decimal_char=",".
     """
@@ -187,7 +187,7 @@ def test_clean_number_like_string_eu_format():
     assert result == "1234.56"
 
 
-def test_clean_number_like_string_auto_detect_decimal():
+def test_clean_number_like_string_auto_detect_decimal() -> None:
     """
     Positive: Auto-detects decimal separator (last separator used).
     """
@@ -200,7 +200,7 @@ def test_clean_number_like_string_auto_detect_decimal():
     assert result2 == "1234.56"
 
 
-def test_clean_number_like_string_negative_with_parentheses():
+def test_clean_number_like_string_negative_with_parentheses() -> None:
     """
     Positive: Parentheses "(123)" convert to "-123".
     """
@@ -210,7 +210,7 @@ def test_clean_number_like_string_negative_with_parentheses():
     assert result == "-123"
 
 
-def test_clean_number_like_string_trailing_minus():
+def test_clean_number_like_string_trailing_minus() -> None:
     """
     Positive: Trailing minus "123-" converts to "-123".
     """
@@ -220,7 +220,7 @@ def test_clean_number_like_string_trailing_minus():
     assert result == "-123"
 
 
-def test_clean_number_like_string_unicode_minus():
+def test_clean_number_like_string_unicode_minus() -> None:
     """
     Positive: Unicode minus sign (U+2212) normalized to ASCII '-'.
     """
@@ -230,7 +230,7 @@ def test_clean_number_like_string_unicode_minus():
     assert result == "-123"
 
 
-def test_clean_number_like_string_invalid_decimal_char_raises():
+def test_clean_number_like_string_invalid_decimal_char_raises() -> None:
     """
     Negative: Invalid decimal_char raises ValueError.
     """
@@ -239,7 +239,7 @@ def test_clean_number_like_string_invalid_decimal_char_raises():
         clean_number_like_string("123", "x")
 
 
-def test_clean_number_like_string_empty_raises():
+def test_clean_number_like_string_empty_raises() -> None:
     """
     Negative: Empty string raises ValueError.
     """
@@ -253,7 +253,7 @@ def test_clean_number_like_string_empty_raises():
 # ============================================================================
 
 
-def test_to_int_from_int_returns_same():
+def test_to_int_from_int_returns_same() -> None:
     """
     Positive: int input returns unchanged.
     """
@@ -266,7 +266,7 @@ def test_to_int_from_int_returns_same():
     assert isinstance(result, int)
 
 
-def test_to_int_from_bool_when_allowed():
+def test_to_int_from_bool_when_allowed() -> None:
     """
     Positive: bool converts to int (0 or 1) when _ALLOW_BOOL_TO_INT is True.
     """
@@ -278,7 +278,7 @@ def test_to_int_from_bool_when_allowed():
     assert result_false == 0
 
 
-def test_to_int_from_decimal():
+def test_to_int_from_decimal() -> None:
     """
     Positive: Decimal converts to int (truncating fractional part).
     """
@@ -290,7 +290,7 @@ def test_to_int_from_decimal():
     assert result == 42
 
 
-def test_to_int_from_float_integer_value():
+def test_to_int_from_float_integer_value() -> None:
     """
     Positive: Float with integer value (e.g., 5.0) converts to int.
     """
@@ -300,7 +300,7 @@ def test_to_int_from_float_integer_value():
     assert result == 5
 
 
-def test_to_int_from_float_non_integer_raises():
+def test_to_int_from_float_non_integer_raises() -> None:
     """
     Negative: Float with fractional part raises ValueError.
     """
@@ -309,7 +309,7 @@ def test_to_int_from_float_non_integer_raises():
         _to_int(3.14)
 
 
-def test_to_int_from_string():
+def test_to_int_from_string() -> None:
     """
     Positive: Numeric string converts to int.
     """
@@ -319,7 +319,7 @@ def test_to_int_from_string():
     assert result == 42
 
 
-def test_to_int_from_string_with_commas():
+def test_to_int_from_string_with_commas() -> None:
     """
     Positive: String with commas like "1,234" converts to int.
     """
@@ -329,7 +329,7 @@ def test_to_int_from_string_with_commas():
     assert result == 1234
 
 
-def test_to_int_unsupported_type_raises():
+def test_to_int_unsupported_type_raises() -> None:
     """
     Negative: Unsupported type raises ValueError.
     """
@@ -343,7 +343,7 @@ def test_to_int_unsupported_type_raises():
 # ============================================================================
 
 
-def test_to_float_from_float_returns_same():
+def test_to_float_from_float_returns_same() -> None:
     """
     Positive: float input returns unchanged.
     """
@@ -355,7 +355,7 @@ def test_to_float_from_float_returns_same():
     assert result == 3.14
 
 
-def test_to_float_from_int():
+def test_to_float_from_int() -> None:
     """
     Positive: int converts to float.
     """
@@ -365,7 +365,7 @@ def test_to_float_from_int():
     assert result == 42.0
 
 
-def test_to_float_from_bool():
+def test_to_float_from_bool() -> None:
     """
     Positive: bool converts to float (0.0 or 1.0).
     """
@@ -377,7 +377,7 @@ def test_to_float_from_bool():
     assert result_false == 0.0
 
 
-def test_to_float_from_decimal():
+def test_to_float_from_decimal() -> None:
     """
     Positive: Decimal converts to float.
     """
@@ -387,7 +387,7 @@ def test_to_float_from_decimal():
     assert result == 123.45
 
 
-def test_to_float_from_string():
+def test_to_float_from_string() -> None:
     """
     Positive: Numeric string converts to float.
     """
@@ -397,7 +397,7 @@ def test_to_float_from_string():
     assert result == 3.14
 
 
-def test_to_float_unsupported_type_raises():
+def test_to_float_unsupported_type_raises() -> None:
     """
     Negative: Unsupported type raises ValueError.
     """
@@ -411,7 +411,7 @@ def test_to_float_unsupported_type_raises():
 # ============================================================================
 
 
-def test_to_bool_from_bool_returns_same():
+def test_to_bool_from_bool_returns_same() -> None:
     """
     Positive: bool input returns unchanged.
     """
@@ -465,7 +465,7 @@ def test_to_bool_falsy_strings(value: str):
     assert result is False
 
 
-def test_to_bool_from_numeric_nonzero():
+def test_to_bool_from_numeric_nonzero() -> None:
     """
     Positive: Non-zero numeric values convert to True.
     """
@@ -481,7 +481,7 @@ def test_to_bool_from_numeric_nonzero():
     assert result4 is True
 
 
-def test_to_bool_from_numeric_zero():
+def test_to_bool_from_numeric_zero() -> None:
     """
     Positive: Zero numeric values convert to False.
     """
@@ -495,7 +495,7 @@ def test_to_bool_from_numeric_zero():
     assert result3 is False
 
 
-def test_to_bool_unsupported_type_raises():
+def test_to_bool_unsupported_type_raises() -> None:
     """
     Negative: Unsupported type raises ValueError.
     """
@@ -509,7 +509,7 @@ def test_to_bool_unsupported_type_raises():
 # ============================================================================
 
 
-def test_to_str_from_string_returns_same():
+def test_to_str_from_string_returns_same() -> None:
     """
     Positive: String input returns unchanged.
     """
@@ -519,7 +519,7 @@ def test_to_str_from_string_returns_same():
     assert result == "hello"
 
 
-def test_to_str_from_none():
+def test_to_str_from_none() -> None:
     """
     Edge: None converts to empty string.
     """
@@ -529,7 +529,7 @@ def test_to_str_from_none():
     assert result == ""
 
 
-def test_to_str_from_int():
+def test_to_str_from_int() -> None:
     """
     Positive: int converts to string representation.
     """
@@ -539,7 +539,7 @@ def test_to_str_from_int():
     assert result == "42"
 
 
-def test_to_str_from_float():
+def test_to_str_from_float() -> None:
     """
     Positive: float converts to string representation.
     """
@@ -549,7 +549,7 @@ def test_to_str_from_float():
     assert result == "3.14"
 
 
-def test_to_str_from_decimal():
+def test_to_str_from_decimal() -> None:
     """
     Positive: Decimal converts to string representation.
     """
@@ -564,7 +564,7 @@ def test_to_str_from_decimal():
 # ============================================================================
 
 
-def test_to_date_from_date_returns_same():
+def test_to_date_from_date_returns_same() -> None:
     """
     Positive: date input returns unchanged.
     """
@@ -576,7 +576,7 @@ def test_to_date_from_date_returns_same():
     assert result == d
 
 
-def test_to_date_from_datetime():
+def test_to_date_from_datetime() -> None:
     """
     Positive: datetime converts to date (ignoring time).
     """
@@ -588,7 +588,7 @@ def test_to_date_from_datetime():
     assert result == date(2025, 1, 15)
 
 
-def test_to_date_from_iso_string():
+def test_to_date_from_iso_string() -> None:
     """
     Positive: ISO format "2025-01-15" parses correctly.
     """
@@ -598,7 +598,7 @@ def test_to_date_from_iso_string():
     assert result == date(2025, 1, 15)
 
 
-def test_to_date_from_us_format():
+def test_to_date_from_us_format() -> None:
     """
     Positive: US format "12/31/2024" parses correctly.
     """
@@ -608,7 +608,7 @@ def test_to_date_from_us_format():
     assert result == date(2024, 12, 31)
 
 
-def test_to_date_from_qif_apostrophe_format():
+def test_to_date_from_qif_apostrophe_format() -> None:
     """
     Positive: QIF format "12/31'24" parses correctly.
     """
@@ -618,7 +618,7 @@ def test_to_date_from_qif_apostrophe_format():
     assert result == date(2024, 12, 31)
 
 
-def test_to_date_from_iso_compact():
+def test_to_date_from_iso_compact() -> None:
     """
     Positive: ISO compact format "20250115" parses correctly.
     """
@@ -628,7 +628,7 @@ def test_to_date_from_iso_compact():
     assert result == date(2025, 1, 15)
 
 
-def test_to_date_from_excel_serial():
+def test_to_date_from_excel_serial() -> None:
     """
     Positive: Excel serial date (e.g., 45567) converts correctly.
     """
@@ -639,7 +639,7 @@ def test_to_date_from_excel_serial():
     assert result == date(2024, 10, 2)
 
 
-def test_to_date_from_iso_datetime_with_time():
+def test_to_date_from_iso_datetime_with_time() -> None:
     """
     Positive: ISO datetime with time and Z suffix parses (time ignored).
     """
@@ -649,17 +649,17 @@ def test_to_date_from_iso_datetime_with_time():
     assert result == date(2025, 1, 15)
 
 
-def test_to_date_none_returns_default():
+def test_to_date_none_returns_default() -> None:
     """
     Edge: None returns default date (1900-01-01).
     """
     # Act
-    result = to_date(None, False)
+    result = to_date(None, False)  # type: ignore[arg-type]
     # Assert
     assert result == date(1900, 1, 1)
 
 
-def test_to_date_empty_string_returns_default():
+def test_to_date_empty_string_returns_default() -> None:
     """
     Edge: Empty string returns default date (1900-01-01).
     """
@@ -669,7 +669,7 @@ def test_to_date_empty_string_returns_default():
     assert result == date(1900, 1, 1)
 
 
-def test_to_date_unrecognized_raises():
+def test_to_date_unrecognized_raises() -> None:
     """
     Negative: Unrecognized format raises ValueError.
     """
@@ -678,7 +678,7 @@ def test_to_date_unrecognized_raises():
         to_date("not-a-date", True)
 
 
-def test_to_date_unrecognized_returns_default_when_not_raising():
+def test_to_date_unrecognized_returns_default_when_not_raising() -> None:
     """
     Edge: Unrecognized format returns default when should_raise=False.
     """
@@ -688,7 +688,7 @@ def test_to_date_unrecognized_returns_default_when_not_raising():
     assert result == date(1900, 1, 1)
 
 
-def test_default_date_returns_1900_01_01():
+def test_default_date_returns_1900_01_01() -> None:
     """
     Positive: default_date() returns the sentinel date.
     """
@@ -703,7 +703,7 @@ def test_default_date_returns_1900_01_01():
 # ============================================================================
 
 
-def test_to_datetime_from_datetime_returns_same():
+def test_to_datetime_from_datetime_returns_same() -> None:
     """
     Positive: datetime input returns unchanged.
     """
@@ -715,7 +715,7 @@ def test_to_datetime_from_datetime_returns_same():
     assert result == dt
 
 
-def test_to_datetime_from_date():
+def test_to_datetime_from_date() -> None:
     """
     Positive: date converts to datetime at midnight.
     """
@@ -727,7 +727,7 @@ def test_to_datetime_from_date():
     assert result == datetime(2025, 1, 15, 0, 0, 0)
 
 
-def test_to_datetime_from_posix_timestamp_int():
+def test_to_datetime_from_posix_timestamp_int() -> None:
     """
     Positive: POSIX timestamp (int) converts to local datetime.
     """
@@ -742,7 +742,7 @@ def test_to_datetime_from_posix_timestamp_int():
     assert result.year in (2020, 2021)
 
 
-def test_to_datetime_from_posix_timestamp_float():
+def test_to_datetime_from_posix_timestamp_float() -> None:
     """
     Positive: POSIX timestamp (float) converts to local datetime.
     """
@@ -755,7 +755,7 @@ def test_to_datetime_from_posix_timestamp_float():
     assert result.microsecond > 0  # fractional seconds preserved
 
 
-def test_to_datetime_from_iso_string():
+def test_to_datetime_from_iso_string() -> None:
     """
     Positive: ISO format string parses correctly.
     """
@@ -765,7 +765,7 @@ def test_to_datetime_from_iso_string():
     assert result == datetime(2025, 1, 15, 14, 30, 0)
 
 
-def test_to_datetime_from_iso_string_with_z():
+def test_to_datetime_from_iso_string_with_z() -> None:
     """
     Positive: ISO format with trailing 'Z' parses correctly (Z converted to +00:00).
     """
@@ -780,7 +780,7 @@ def test_to_datetime_from_iso_string_with_z():
     assert result.minute == 30
 
 
-def test_to_datetime_invalid_string_raises():
+def test_to_datetime_invalid_string_raises() -> None:
     """
     Negative: Invalid string raises ValueError.
     """
@@ -789,10 +789,10 @@ def test_to_datetime_invalid_string_raises():
         to_datetime("not-a-datetime")
 
 
-def test_to_datetime_unsupported_type_raises():
+def test_to_datetime_unsupported_type_raises() -> None:
     """
     Negative: Unsupported type raises ValueError.
     """
     # Assert
     with pytest.raises(ValueError):
-        to_datetime([2025, 1, 15])
+        to_datetime([2025, 1, 15])  # type: ignore[arg-type]

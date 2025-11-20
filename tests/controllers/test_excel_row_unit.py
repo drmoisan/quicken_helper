@@ -8,7 +8,7 @@ import pytest
 from quicken_helper.data_model.excel.excel_row import ExcelRow
 
 
-def test_excel_row_basic_fields_and_equality():
+def test_excel_row_basic_fields_and_equality() -> None:
     # Arrange
     r1 = ExcelRow(
         idx=0,
@@ -46,7 +46,7 @@ def test_excel_row_basic_fields_and_equality():
     assert hash(r1) == hash(r2), "Equal frozen dataclasses must have equal hashes"
 
 
-def test_excel_row_is_immutable_and_hashable():
+def test_excel_row_is_immutable_and_hashable() -> None:
     # Arrange
     r = ExcelRow(
         idx=7,
@@ -60,8 +60,8 @@ def test_excel_row_is_immutable_and_hashable():
 
     # Act / Assert immutability
     with pytest.raises(FrozenInstanceError):
-        # Use setattr to avoid IDE “read-only” warning while still triggering runtime error
-        r.idx = 9
+        # Use setattr to avoid IDE "read-only" warning while still triggering runtime error
+        r.idx = 9  # type: ignore[misc]
 
     # Act / Assert hashability (usable as dict key / set member)
     d = {r: "ok"}
@@ -70,7 +70,7 @@ def test_excel_row_is_immutable_and_hashable():
     assert r in s
 
 
-def test_excel_row_repr_contains_useful_fields():
+def test_excel_row_repr_contains_useful_fields() -> None:
     # Arrange
     r = ExcelRow(
         idx=3,
@@ -91,7 +91,7 @@ def test_excel_row_repr_contains_useful_fields():
     assert "amount=Decimal('1.23')" in rep or 'amount=Decimal("1.23")' in rep
 
 
-def test_excel_row_type_hints_are_present_and_correct():
+def test_excel_row_type_hints_are_present_and_correct() -> None:
     # Arrange / Act
     hints = get_type_hints(ExcelRow)
 
@@ -111,7 +111,7 @@ def test_excel_row_type_hints_are_present_and_correct():
     assert hints["amount"] is _Decimal
 
 
-def test_excel_row_inequality_when_any_field_differs():
+def test_excel_row_inequality_when_any_field_differs() -> None:
     # Arrange
     base = dict(
         idx=0,
@@ -122,8 +122,8 @@ def test_excel_row_inequality_when_any_field_differs():
         category="C",
         rationale="R",
     )
-    a = ExcelRow(**base)
-    b = ExcelRow(**{**base, "txn_id": "Y"})  # change one field
+    a = ExcelRow(**base)  # type: ignore[arg-type]
+    b = ExcelRow(**{**base, "txn_id": "Y"})  # type: ignore[arg-type]  # change one field
 
     # Act / Assert
     assert a != b

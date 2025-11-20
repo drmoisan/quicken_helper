@@ -12,12 +12,12 @@ from collections import deque
 import pytest
 
 from quicken_helper.utilities.converters_collection import (
-    _to_deque,
-    _to_dict,
-    _to_frozenset,
-    _to_list,
-    _to_set,
-    _to_tuple,
+    _to_deque,  # type: ignore[reportPrivateUsage]
+    _to_dict,  # type: ignore[reportPrivateUsage]
+    _to_frozenset,  # type: ignore[reportPrivateUsage]
+    _to_list,  # type: ignore[reportPrivateUsage]
+    _to_set,  # type: ignore[reportPrivateUsage]
+    _to_tuple,  # type: ignore[reportPrivateUsage]
 )
 
 
@@ -36,7 +36,9 @@ def _int_converter(target_type: object, value: object) -> int:
     return int(value)  # type: ignore[arg-type]
 
 
-def _str_converter(target_type: object, value: object) -> str:
+def _str_converter(  # noqa: ARG001  # type: ignore[reportUnusedFunction]
+    target_type: object, value: object
+) -> str:
     """
     Mock converter that converts value to str.
     """
@@ -48,7 +50,7 @@ def _str_converter(target_type: object, value: object) -> str:
 # ============================================================================
 
 
-def test_to_list_empty_iterable():
+def test_to_list_empty_iterable() -> None:
     """
     Positive: Empty iterable converts to empty list.
     """
@@ -61,7 +63,7 @@ def test_to_list_empty_iterable():
     assert result == []
 
 
-def test_to_list_converts_elements():
+def test_to_list_converts_elements() -> None:
     """
     Positive: Elements are converted using provided converter.
     """
@@ -75,7 +77,7 @@ def test_to_list_converts_elements():
     assert all(isinstance(x, int) for x in result)
 
 
-def test_to_list_no_type_args_defaults_to_object():
+def test_to_list_no_type_args_defaults_to_object() -> None:
     """
     Edge: Empty args tuple defaults to object type.
     """
@@ -88,7 +90,7 @@ def test_to_list_no_type_args_defaults_to_object():
     assert result == [1, "two", 3.0]
 
 
-def test_to_list_treats_string_as_atomic():
+def test_to_list_treats_string_as_atomic() -> None:
     """
     Edge: String input treated as single element, not iterated.
     """
@@ -101,7 +103,7 @@ def test_to_list_treats_string_as_atomic():
     assert result == ["hello"]
 
 
-def test_to_list_treats_bytes_as_atomic():
+def test_to_list_treats_bytes_as_atomic() -> None:
     """
     Edge: Bytes input treated as single element, not iterated.
     """
@@ -114,7 +116,7 @@ def test_to_list_treats_bytes_as_atomic():
     assert result == [b"hello"]
 
 
-def test_to_list_non_iterable_raises():
+def test_to_list_non_iterable_raises() -> None:
     """
     Negative: Non-iterable input raises TypeError.
     """
@@ -131,7 +133,7 @@ def test_to_list_non_iterable_raises():
 # ============================================================================
 
 
-def test_to_set_empty_iterable():
+def test_to_set_empty_iterable() -> None:
     """
     Positive: Empty iterable converts to empty set.
     """
@@ -144,7 +146,7 @@ def test_to_set_empty_iterable():
     assert result == set()
 
 
-def test_to_set_converts_elements():
+def test_to_set_converts_elements() -> None:
     """
     Positive: Elements are converted using provided converter.
     """
@@ -157,7 +159,7 @@ def test_to_set_converts_elements():
     assert result == {1, 2, 3}
 
 
-def test_to_set_treats_string_as_atomic():
+def test_to_set_treats_string_as_atomic() -> None:
     """
     Edge: String input treated as single element.
     """
@@ -170,7 +172,7 @@ def test_to_set_treats_string_as_atomic():
     assert result == {"hello"}
 
 
-def test_to_set_non_iterable_raises():
+def test_to_set_non_iterable_raises() -> None:
     """
     Negative: Non-iterable input raises TypeError.
     """
@@ -182,7 +184,7 @@ def test_to_set_non_iterable_raises():
         _to_set(args, value, _int_converter)
 
 
-def test_to_set_unhashable_elements_raises():
+def test_to_set_unhashable_elements_raises() -> None:
     """
     Negative: Unhashable elements after conversion raise TypeError.
     """
@@ -203,7 +205,7 @@ def test_to_set_unhashable_elements_raises():
 # ============================================================================
 
 
-def test_to_frozenset_empty_iterable():
+def test_to_frozenset_empty_iterable() -> None:
     """
     Positive: Empty iterable converts to empty frozenset.
     """
@@ -216,7 +218,7 @@ def test_to_frozenset_empty_iterable():
     assert result == frozenset()
 
 
-def test_to_frozenset_converts_elements():
+def test_to_frozenset_converts_elements() -> None:
     """
     Positive: Elements are converted using provided converter.
     """
@@ -229,7 +231,7 @@ def test_to_frozenset_converts_elements():
     assert result == frozenset({1, 2, 3})
 
 
-def test_to_frozenset_treats_string_as_atomic():
+def test_to_frozenset_treats_string_as_atomic() -> None:
     """
     Edge: String input treated as single element.
     """
@@ -242,7 +244,7 @@ def test_to_frozenset_treats_string_as_atomic():
     assert result == frozenset({"hello"})
 
 
-def test_to_frozenset_non_iterable_raises():
+def test_to_frozenset_non_iterable_raises() -> None:
     """
     Negative: Non-iterable input raises TypeError.
     """
@@ -254,7 +256,7 @@ def test_to_frozenset_non_iterable_raises():
         _to_frozenset(args, value, _int_converter)
 
 
-def test_to_frozenset_unhashable_elements_raises():
+def test_to_frozenset_unhashable_elements_raises() -> None:
     """
     Negative: Unhashable elements after conversion raise TypeError.
     """
@@ -275,7 +277,7 @@ def test_to_frozenset_unhashable_elements_raises():
 # ============================================================================
 
 
-def test_to_tuple_empty_iterable():
+def test_to_tuple_empty_iterable() -> None:
     """
     Positive: Empty iterable converts to empty tuple.
     """
@@ -288,7 +290,7 @@ def test_to_tuple_empty_iterable():
     assert result == ()
 
 
-def test_to_tuple_converts_elements():
+def test_to_tuple_converts_elements() -> None:
     """
     Positive: Elements are converted using provided converter (variadic tuple).
     """
@@ -302,7 +304,7 @@ def test_to_tuple_converts_elements():
     assert all(isinstance(x, int) for x in result)
 
 
-def test_to_tuple_treats_string_as_atomic():
+def test_to_tuple_treats_string_as_atomic() -> None:
     """
     Edge: String input treated as single element.
     """
@@ -315,7 +317,7 @@ def test_to_tuple_treats_string_as_atomic():
     assert result == ("hello",)
 
 
-def test_to_tuple_non_iterable_raises():
+def test_to_tuple_non_iterable_raises() -> None:
     """
     Negative: Non-iterable input raises TypeError.
     """
@@ -332,7 +334,7 @@ def test_to_tuple_non_iterable_raises():
 # ============================================================================
 
 
-def test_to_dict_empty_mapping():
+def test_to_dict_empty_mapping() -> None:
     """
     Positive: Empty mapping converts to empty dict.
     """
@@ -345,7 +347,7 @@ def test_to_dict_empty_mapping():
     assert result == {}
 
 
-def test_to_dict_from_mapping():
+def test_to_dict_from_mapping() -> None:
     """
     Positive: Mapping converts with key and value conversion.
     """
@@ -367,7 +369,7 @@ def test_to_dict_from_mapping():
     assert result == {"a": 1, "b": 2}
 
 
-def test_to_dict_from_iterable_of_pairs():
+def test_to_dict_from_iterable_of_pairs() -> None:
     """
     Positive: Iterable of 2-item pairs converts to dict.
     """
@@ -389,7 +391,7 @@ def test_to_dict_from_iterable_of_pairs():
     assert result == {"a": 1, "b": 2}
 
 
-def test_to_dict_no_args_defaults_to_object():
+def test_to_dict_no_args_defaults_to_object() -> None:
     """
     Edge: Empty args defaults to (object, object).
     """
@@ -402,7 +404,7 @@ def test_to_dict_no_args_defaults_to_object():
     assert result == {"a": 1, "b": 2}
 
 
-def test_to_dict_one_arg_uses_object_for_value():
+def test_to_dict_one_arg_uses_object_for_value() -> None:
     """
     Edge: Single arg in args defaults value type to object.
     """
@@ -415,7 +417,7 @@ def test_to_dict_one_arg_uses_object_for_value():
     assert result == {"a": 1, "b": 2}
 
 
-def test_to_dict_string_input_raises():
+def test_to_dict_string_input_raises() -> None:
     """
     Negative: String input (atomic) raises TypeError.
     """
@@ -427,7 +429,7 @@ def test_to_dict_string_input_raises():
         _to_dict(args, value, _int_converter)
 
 
-def test_to_dict_bytes_input_raises():
+def test_to_dict_bytes_input_raises() -> None:
     """
     Negative: Bytes input (atomic) raises TypeError.
     """
@@ -439,7 +441,7 @@ def test_to_dict_bytes_input_raises():
         _to_dict(args, value, _int_converter)
 
 
-def test_to_dict_iterable_non_pair_elements_raises():
+def test_to_dict_iterable_non_pair_elements_raises() -> None:
     """
     Negative: Iterable with non-2-item elements raises TypeError.
     """
@@ -451,7 +453,7 @@ def test_to_dict_iterable_non_pair_elements_raises():
         _to_dict(args, value, _int_converter)
 
 
-def test_to_dict_unhashable_keys_raises():
+def test_to_dict_unhashable_keys_raises() -> None:
     """
     Negative: Unhashable keys after conversion raise TypeError.
     """
@@ -462,14 +464,15 @@ def test_to_dict_unhashable_keys_raises():
     def _list_key_converter(target_type: object, value: object) -> object:
         """Converter that converts tuple keys to lists (unhashable)."""
         if target_type is list and isinstance(value, tuple):
-            return list(value)  # Convert tuple to list (unhashable)
+            result: list[object] = list(value)  # type: ignore[arg-type]  # Convert tuple to list (unhashable)
+            return result
         elif target_type is int:
             return int(value)  # type: ignore[arg-type]
         return value
 
     # Assert
     with pytest.raises(TypeError, match="Unhashable key"):
-        _to_dict(args, value, _list_key_converter)
+        _to_dict(args, value, _list_key_converter)  # type: ignore[arg-type]
 
 
 # ============================================================================
@@ -477,7 +480,7 @@ def test_to_dict_unhashable_keys_raises():
 # ============================================================================
 
 
-def test_to_deque_empty_iterable():
+def test_to_deque_empty_iterable() -> None:
     """
     Positive: Empty iterable converts to empty deque.
     """
@@ -490,7 +493,7 @@ def test_to_deque_empty_iterable():
     assert result == deque()
 
 
-def test_to_deque_converts_elements():
+def test_to_deque_converts_elements() -> None:
     """
     Positive: Elements are converted using provided converter.
     """
@@ -504,7 +507,7 @@ def test_to_deque_converts_elements():
     assert all(isinstance(x, int) for x in result)
 
 
-def test_to_deque_treats_string_as_atomic():
+def test_to_deque_treats_string_as_atomic() -> None:
     """
     Edge: String input treated as single element.
     """
@@ -517,7 +520,7 @@ def test_to_deque_treats_string_as_atomic():
     assert result == deque(["hello"])
 
 
-def test_to_deque_non_iterable_raises():
+def test_to_deque_non_iterable_raises() -> None:
     """
     Negative: Non-iterable input raises TypeError.
     """

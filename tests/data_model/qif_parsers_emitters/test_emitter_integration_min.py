@@ -1,8 +1,11 @@
 # tests/data_model/qif_parsers_emitters/test_emitter_integration_min.py
 import importlib
 import sys
+import types
 from collections.abc import Iterable
 from typing import TYPE_CHECKING
+
+import pytest
 
 # Adjust these to your actual package paths once, then forget about it.
 MODEL_MOD = "quicken_helper.data_model.q_wrapper.q_file"
@@ -15,12 +18,13 @@ if TYPE_CHECKING:
     )
 
 
-def _fresh_import(name: str):
+def _fresh_import(name: str) -> types.ModuleType:
+    """Remove module from cache and import it fresh."""
     sys.modules.pop(name, None)
     return importlib.import_module(name)
 
 
-def test_model_import_does_not_pull_emitter():
+def test_model_import_does_not_pull_emitter() -> None:
     """
     Import the model only; ensure the emitter module is not imported as a side effect.
     This guards against circular deps (model -> emitter).
@@ -31,7 +35,7 @@ def test_model_import_does_not_pull_emitter():
     assert hasattr(model, "QuickenFile")
 
 
-def test_parse_sets_backref_using_fake_emitter():
+def test_parse_sets_backref_using_fake_emitter() -> None:
     """
     A minimal fake emitter implementing the protocol sets file.emitter = self
     and returns an iterable of files. Verifies the back-reference.
@@ -48,18 +52,18 @@ def test_parse_sets_backref_using_fake_emitter():
             return [f]
 
         def emit(self, obj: "Iterable[IQuickenFile] | IQuickenFile") -> str:
-            # delegate to the model’s own emission API
+            # delegate to the model's own emission API
             if hasattr(obj, "emit_qif"):
-                return obj.emit_qif()  # single file
-            return "\n".join(x.emit_qif() for x in obj)  # many files
+                return obj.emit_qif()  # type: ignore[attr-defined]  # single file
+            return "\n".join(x.emit_qif() for x in obj)  # type: ignore[union-attr]  # many files
 
     E = FakeEmitter()
     files = list(E.parse("dummy"))
     assert files and files[0].emitter is E
 
 
-def test_emit_delegates_to_model(monkeypatch):
-    """Emission should delegate to the model’s own method (no emitter->model cycle needed)."""
+def test_emit_delegates_to_model(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Emission should delegate to the model's own method (no emitter->model cycle needed)."""
     model = _fresh_import(MODEL_MOD)
     f = model.QuickenFile()
 
@@ -72,8 +76,8 @@ def test_emit_delegates_to_model(monkeypatch):
 
         def emit(self, obj: "Iterable[IQuickenFile] | IQuickenFile") -> str:
             if hasattr(obj, "emit_qif"):
-                return obj.emit_qif()
-            return "\n".join(x.emit_qif() for x in obj)
+                return obj.emit_qif()  # type: ignore[attr-defined]
+            return "\n".join(x.emit_qif() for x in obj)  # type: ignore[union-attr]
 
     E = FakeEmitter()
     assert E.emit(f) == "SENTINEL-QIF"

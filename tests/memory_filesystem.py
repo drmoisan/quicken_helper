@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import io
+from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 
 class MemFS:
@@ -32,7 +34,9 @@ class MemFS:
         return self._files[key]
 
     # Builtins/open-compatible function
-    def open_builtin(self, file, mode="r", *args, **kwargs):
+    def open_builtin(
+        self, file: Path | str, mode: str = "r", *args: Any, **kwargs: Any
+    ) -> io.StringIO:
         # Only text mode for the tests
         path = self._normalize(file)
         if "b" in mode:
@@ -45,13 +49,13 @@ class MemFS:
             initial = self._files.get(path, "") if "a" in mode else ""
             buf = io.StringIO(initial)
 
-            def _close_and_store():
+            def _close_and_store() -> None:
                 self._files[path] = buf.getvalue()
 
             # Hook close() to persist back into MemFS
-            orig_close = buf.close
+            orig_close: Callable[[], None] = buf.close
 
-            def close():
+            def close() -> None:
                 _close_and_store()
                 orig_close()
 
@@ -61,5 +65,7 @@ class MemFS:
             raise ValueError(f"Unsupported mode: {mode}")
 
     # Path.open-compatible method
-    def open_path(self, self_path: Path, mode="r", *args, **kwargs):
+    def open_path(
+        self, self_path: Path, mode: str = "r", *args: Any, **kwargs: Any
+    ) -> io.StringIO:
         return self.open_builtin(self_path, mode, *args, **kwargs)

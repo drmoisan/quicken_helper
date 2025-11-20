@@ -12,22 +12,24 @@ from quicken_helper.data_model.q_wrapper.qif_header import QifHeader
 
 def _mk_txn(
     *,
-    date=date(2025, 1, 2),
-    amount=Decimal("-12.34"),
-    payee="Coffee Shop",
-    memo="Latte",
-    category="Food:Coffee",
-    tag="",
-    checknum="101",
-    cleared=EnumClearedStatus.CLEARED,
-    account_name="Checking",
-    account_type="Bank",
-    type_code="!Type:Bank",
-    splits=None,
-):
+    date: date = date(2025, 1, 2),
+    amount: Decimal = Decimal("-12.34"),
+    payee: str = "Coffee Shop",
+    memo: str = "Latte",
+    category: str = "Food:Coffee",
+    tag: str = "",
+    checknum: str = "101",
+    cleared: EnumClearedStatus = EnumClearedStatus.CLEARED,
+    account_name: str = "Checking",
+    account_type: str = "Bank",
+    type_code: str = "!Type:Bank",
+    splits: list[QSplit] | None = None,
+) -> QTransaction:
     """Helper to build a QifTxn wired to a basic account+header."""
     acct = QAccount(name=account_name, type=account_type, description="")
     header = QifHeader(code=type_code, description="Bank block", type="Bank")
+    # Convert splits to match expected type
+    split_list: list[QSplit] = splits if splits is not None else []
     return QTransaction(
         account=acct,
         type=header,
@@ -39,11 +41,12 @@ def _mk_txn(
         memo=memo,
         category=category,
         tag=tag,
-        splits=splits or [],
+        splits=split_list,  # type: ignore[arg-type]
     )
 
 
-def test_emit_category_no_splits_with_tag():
+def test_emit_category_no_splits_with_tag() -> None:
+    """Test emit_category formats category and tag without splits."""
     # Arrange
     t = _mk_txn(category="Food:Coffee", tag="Reimb", splits=[])
 
@@ -55,7 +58,8 @@ def test_emit_category_no_splits_with_tag():
     assert line == "LFood:Coffee/Reimb"
 
 
-def test_emit_category_with_splits_uses_split_marker_and_preserves_tag():
+def test_emit_category_with_splits_uses_split_marker_and_preserves_tag() -> None:
+    """Test emit_category uses split marker when splits exist and preserves tag."""
     # Arrange
     s = QSplit(category="Food:Coffee", memo="Latte", amount=Decimal(-10.00), tag="")
     t = _mk_txn(
@@ -72,13 +76,8 @@ def test_emit_category_with_splits_uses_split_marker_and_preserves_tag():
     assert line == "L--Split--/Reimb"
 
 
-def test_security_exists_is_false_by_default_then_true_after_access():
-    """
-    Test security_exists() returns False when security field is the sentinel.
-
-    Note: Accessing .security just returns the sentinel; it doesn't instantiate
-    a new object. The sentinel check remains False unless explicitly set.
-    """
+def test_security_exists_is_false_by_default_then_true_after_access() -> None:
+    """Test security_exists returns False by default and True after assignment."""
     # Arrange
     t = _mk_txn()
 
@@ -105,7 +104,10 @@ def test_security_exists_is_false_by_default_then_true_after_access():
     assert t.security_exists() is True
 
 
-def test_emit_qif_includes_headers_when_requested_and_emits_core_fields_and_splits():
+def test_emit_qif_includes_headers_when_requested_and_emits_core_fields_and_splits() -> (
+    None
+):
+    """Test emit_qif includes headers and all core fields with splits."""
     # Arrange
     t = _mk_txn(
         date=date(2025, 2, 1),
@@ -167,7 +169,8 @@ def test_emit_qif_includes_headers_when_requested_and_emits_core_fields_and_spli
     assert text.rstrip().endswith("^")
 
 
-def test_emit_qif_without_headers_omits_account_and_type_blocks():
+def test_emit_qif_without_headers_omits_account_and_type_blocks() -> None:
+    """Test emit_qif without headers omits account and type blocks."""
     # Arrange
     t = _mk_txn()
 
@@ -183,14 +186,19 @@ def test_emit_qif_without_headers_omits_account_and_type_blocks():
     assert "PCoffee Shop" in text
 
 
-def test_ordering_by_date_ascending_with_strict_iso_format():
+def test_ordering_by_date_ascending_with_strict_iso_format() -> None:
+    """Test QTransaction ordering by date in ascending order."""
     # Arrange
-    a = _mk_txn(date="2025-01-01")
-    b = _mk_txn(date="2025-01-02")
-    c = _mk_txn(date="2025-01-03")
+    a = _mk_txn(date=date(2025, 1, 1))
+    b = _mk_txn(date=date(2025, 1, 2))
+    c = _mk_txn(date=date(2025, 1, 3))
 
     # Act
     ordered = sorted([c, a, b])
 
     # Assert
-    assert [t.date for t in ordered] == ["2025-01-01", "2025-01-02", "2025-01-03"]
+    assert [t.date for t in ordered] == [
+        date(2025, 1, 1),
+        date(2025, 1, 2),
+        date(2025, 1, 3),
+    ]

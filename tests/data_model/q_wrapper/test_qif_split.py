@@ -4,7 +4,8 @@ from decimal import Decimal
 from quicken_helper.data_model.q_wrapper.q_split import QSplit
 
 
-def test_equality_and_hash_are_consistent():
+def test_equality_and_hash_are_consistent() -> None:
+    """Test QSplit equality and hash are consistent for identical values."""
     # Arrange
     a1 = QSplit(category="Food:Coffee", amount=Decimal("-10.00"), memo="Latte", tag="")
     a2 = QSplit(
@@ -27,7 +28,8 @@ def test_equality_and_hash_are_consistent():
     ), "Equal objects must have identical hashes for set/dict correctness."
 
 
-def test_can_be_used_in_set_and_deduplicates_equal_items():
+def test_can_be_used_in_set_and_deduplicates_equal_items() -> None:
+    """Test QSplit can be used in sets and deduplicates equal items."""
     # Arrange
     s1 = QSplit("Cat:A", Decimal("1.00"), "m", tag="")
     s2 = QSplit("Cat:A", Decimal("1.00"), "m", tag="")  # equal to s1
@@ -41,7 +43,8 @@ def test_can_be_used_in_set_and_deduplicates_equal_items():
     assert s1 in unique and s3 in unique
 
 
-def test_can_be_used_as_dict_key():
+def test_can_be_used_as_dict_key() -> None:
+    """Test QSplit can be used as dictionary key with correct equality semantics."""
     # Arrange
     k1 = QSplit("Cat:B", Decimal("-2.50"), "x", tag="T")
     k2 = QSplit("Cat:B", Decimal("-2.50"), "x", tag="T")  # equal key
@@ -58,11 +61,8 @@ def test_can_be_used_as_dict_key():
     assert v_miss is None, "Different key must not collide."
 
 
-def test_ordering_primary_category_then_tag_then_amount_then_memo():
-    """
-    Arrange different splits so that sorting must respect the strict precedence:
-      1) category  2) tag  3) amount  4) memo
-    """
+def test_ordering_primary_category_then_tag_then_amount_then_memo() -> None:
+    """Test QSplit ordering follows category, tag, amount, then memo precedence."""
     # Arrange
     s_catA_tagA_amt1_memoA = QSplit("A", Decimal("1.00"), "a", tag="A")
     s_catA_tagA_amt1_memoB = QSplit("A", Decimal("1.00"), "b", tag="A")
@@ -94,7 +94,8 @@ def test_ordering_primary_category_then_tag_then_amount_then_memo():
     ), "Sorting must honor category → tag → amount → memo precedence."
 
 
-def test_ordering_with_negative_and_positive_amounts():
+def test_ordering_with_negative_and_positive_amounts() -> None:
+    """Test QSplit ordering handles negative and positive amounts correctly."""
     # Arrange: identical category/tag, amounts differ
     p = QSplit("Food", Decimal("5.00"), "m", tag="")
     n = QSplit("Food", Decimal("-5.00"), "m", tag="")
@@ -106,7 +107,8 @@ def test_ordering_with_negative_and_positive_amounts():
     assert sorted_pair == [n, p]
 
 
-def test_ordering_uses_memo_as_tiebreaker_only():
+def test_ordering_uses_memo_as_tiebreaker_only() -> None:
+    """Test QSplit ordering uses memo as tiebreaker when other fields are equal."""
     # Arrange: same category/tag/amount; memo decides order
     m1 = QSplit("X", Decimal("1.00"), "aaa", tag="T")
     m2 = QSplit("X", Decimal("1.00"), "bbb", tag="T")

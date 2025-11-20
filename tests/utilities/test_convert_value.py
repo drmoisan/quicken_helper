@@ -18,7 +18,7 @@ from quicken_helper.utilities.core_util import convert_value
 # -------------------------
 
 
-def test_convert_decimal_from_string():
+def test_convert_decimal_from_string() -> None:
     """Positive: Convert a numeric string to Decimal."""
     # Arrange
     target_type = Decimal
@@ -38,7 +38,9 @@ def test_convert_decimal_from_string():
         (str, 123, "123"),
     ],
 )
-def test_convert_basic_scalars_from_strings(target_type, value, expected):
+def test_convert_basic_scalars_from_strings(
+    target_type: type[object], value: object, expected: object
+) -> None:
     """Positive: Convert strings to int/float and arbitrary to str."""
     # Act
     out = convert_value(target_type, value)
@@ -61,7 +63,7 @@ def test_convert_basic_scalars_from_strings(target_type, value, expected):
         ("N", False),
     ],
 )
-def test_convert_bool_from_various_strings(value, expected):
+def test_convert_bool_from_various_strings(value: object, expected: object) -> None:
     """Positive: Convert common boolean string forms to bool."""
     # Act
     out = convert_value(bool, value)
@@ -69,7 +71,7 @@ def test_convert_bool_from_various_strings(value, expected):
     assert out is expected
 
 
-def test_convert_path_from_string():
+def test_convert_path_from_string() -> None:
     """Positive: Convert a string path into a pathlib.Path."""
     # Arrange
     p = "some/where/file.txt"
@@ -90,7 +92,7 @@ class Color(Enum):
     BLUE = "blue"
 
 
-def test_convert_enum_by_name():
+def test_convert_enum_by_name() -> None:
     """Positive: Convert enum by name (e.g., 'RED')."""
     # Act
     out = convert_value(Color, "RED")
@@ -98,7 +100,7 @@ def test_convert_enum_by_name():
     assert out is Color.RED
 
 
-def test_convert_enum_by_value():
+def test_convert_enum_by_value() -> None:
     """Positive: Convert enum by value (e.g., 'red')."""
     # Act
     out = convert_value(Color, "red")
@@ -111,7 +113,7 @@ def test_convert_enum_by_value():
 # -------------------------
 
 
-def test_convert_date_from_iso_string():
+def test_convert_date_from_iso_string() -> None:
     """Positive: Convert ISO date string to datetime.date."""
     # Act
     out = convert_value(date, "2025-02-01")
@@ -120,7 +122,7 @@ def test_convert_date_from_iso_string():
     assert out == date(2025, 2, 1)
 
 
-def test_convert_date_from_datetime():
+def test_convert_date_from_datetime() -> None:
     """Positive: datetime -> date via .date()."""
     # Arrange
     dt = datetime(2025, 2, 1, 12, 30, 0)
@@ -130,7 +132,7 @@ def test_convert_date_from_datetime():
     assert out == date(2025, 2, 1)
 
 
-def test_convert_datetime_from_iso_string():
+def test_convert_datetime_from_iso_string() -> None:
     """Positive: Convert ISO datetime string to datetime."""
     # Act
     out = convert_value(datetime, "2025-02-01T12:00:00")
@@ -139,7 +141,7 @@ def test_convert_datetime_from_iso_string():
     assert out == datetime(2025, 2, 1, 12, 0, 0)
 
 
-def test_convert_date_invalid_input_raises():
+def test_convert_date_invalid_input_raises() -> None:
     """Negative: Invalid date string raises ValueError."""
     # Assert
     with pytest.raises(ValueError):
@@ -151,7 +153,7 @@ def test_convert_date_invalid_input_raises():
 # -------------------------
 
 
-def test_convert_optional_accepts_none():
+def test_convert_optional_accepts_none() -> None:
     """Edge: Optional[T] preserves None."""
     # Act
     out = convert_value(Optional[int], None)
@@ -159,7 +161,7 @@ def test_convert_optional_accepts_none():
     assert out is None
 
 
-def test_convert_union_picks_first_matching_type():
+def test_convert_union_picks_first_matching_type() -> None:
     """Positive: Union[int, str] with '10' should yield int 10 (first matching)."""
     # Act
     out = convert_value(Union[int, str], "10")
@@ -168,7 +170,7 @@ def test_convert_union_picks_first_matching_type():
     assert isinstance(out, int)
 
 
-def test_convert_union_falls_back_to_second_type():
+def test_convert_union_falls_back_to_second_type() -> None:
     """Positive: Union[int, str] with 'abc' should yield 'abc' (int fails, str works)."""
     # Act
     out = convert_value(Union[int, str], "abc")
@@ -182,7 +184,7 @@ def test_convert_union_falls_back_to_second_type():
 # -------------------------
 
 
-def test_convert_list_of_ints_from_strings():
+def test_convert_list_of_ints_from_strings() -> None:
     """Positive: list[int] converts each item."""
     # Act
     out = convert_value(list[int], ["1", "2", "3"])
@@ -191,7 +193,7 @@ def test_convert_list_of_ints_from_strings():
     assert all(isinstance(x, int) for x in out)
 
 
-def test_convert_set_of_decimals_from_strings():
+def test_convert_set_of_decimals_from_strings() -> None:
     """Positive: set[Decimal] converts members."""
     # Act
     out = convert_value(set[Decimal], ["1.0", "2.5"])
@@ -200,7 +202,7 @@ def test_convert_set_of_decimals_from_strings():
     assert all(isinstance(x, Decimal) for x in out)
 
 
-def test_convert_tuple_fixed_length_heterogeneous():
+def test_convert_tuple_fixed_length_heterogeneous() -> None:
     """Positive: tuple[int, str] converts positionally."""
     # Act
     out = convert_value(tuple[int, str], ["7", 8])
@@ -209,7 +211,7 @@ def test_convert_tuple_fixed_length_heterogeneous():
     assert isinstance(out[0], int) and isinstance(out[1], str)
 
 
-def test_convert_tuple_variadic_single_type():
+def test_convert_tuple_variadic_single_type() -> None:
     """Positive: tuple[int, ...] converts all items to int."""
     # Act
     out = convert_value(tuple[int, ...], ["1", "2", "3"])
@@ -218,7 +220,7 @@ def test_convert_tuple_variadic_single_type():
     assert all(isinstance(x, int) for x in out)
 
 
-def test_convert_typed_dict_str_int():
+def test_convert_typed_dict_str_int() -> None:
     """Positive: dict[str, int] converts keys and values."""
     # Arrange
     src = {"a": "1", "b": "2"}
@@ -241,7 +243,7 @@ class Child:
     y: Decimal = Decimal("0")
 
 
-def test_convert_nested_dataclass_from_dict():
+def test_convert_nested_dataclass_from_dict() -> None:
     """Positive: Converting dict -> dataclass (uses from_dict under the hood)."""
     # Arrange
     payload = {"x": "3", "y": "4.5"}
@@ -253,7 +255,7 @@ def test_convert_nested_dataclass_from_dict():
     assert out.y == Decimal("4.5")
 
 
-def test_convert_nested_dataclass_respects_defaults():
+def test_convert_nested_dataclass_respects_defaults() -> None:
     """Edge: Missing optional field uses dataclass default (no override)."""
     # Arrange
     payload = {"x": "7"}  # omit 'y' -> default remains

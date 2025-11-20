@@ -8,12 +8,12 @@ from quicken_helper.data_model import QSecurity
 
 
 def _mk_security_txn(
-    name="Apple Inc.",
-    price=Decimal("150.00"),
-    quantity=Decimal("10"),
-    commission=Decimal("0.00"),
-    transfer_amount=Decimal("0.00"),
-):
+    name: str = "Apple Inc.",
+    price: Decimal = Decimal("150.00"),
+    quantity: Decimal = Decimal("10"),
+    commission: Decimal = Decimal("0.00"),
+    transfer_amount: Decimal = Decimal("0.00"),
+) -> QSecurity:
     """
     Helper to build a QifSecurityTxn with sensible defaults. Keeps tests concise
     and deterministic while centralizing object creation.
@@ -27,7 +27,8 @@ def _mk_security_txn(
     )
 
 
-def test_creation_and_field_values():
+def test_creation_and_field_values() -> None:
+    """Test QSecurity creation stores all field values correctly."""
     # Arrange
     name = "Apple Inc."
     price = Decimal("150.00")
@@ -52,7 +53,8 @@ def test_creation_and_field_values():
     assert s.transfer_amount == transfer_amount
 
 
-def test_equality_for_identical_fields_and_inequality_for_different():
+def test_equality_for_identical_fields_and_inequality_for_different() -> None:
+    """Test QSecurity equality is based on all field values."""
     # Arrange
     a = _mk_security_txn(
         name="Apple Inc.",
@@ -82,7 +84,8 @@ def test_equality_for_identical_fields_and_inequality_for_different():
     assert a != c, "Objects with different field values should not be equal."
 
 
-def test_hashability_if_frozen_otherwise_skip():
+def test_hashability_if_frozen_otherwise_skip() -> None:
+    """Test QSecurity hashability when frozen, or skip if not hashable."""
     # Arrange
     a = _mk_security_txn()
     b = _mk_security_txn()
@@ -100,7 +103,8 @@ def test_hashability_if_frozen_otherwise_skip():
         assert len(s) == 2, "Equal instances should hash equal and collapse in a set."
 
 
-def test_repr_contains_key_fields():
+def test_repr_contains_key_fields() -> None:
+    """Test QSecurity repr/str contains key field values."""
     # Arrange
     t = _mk_security_txn(
         name="Apple Inc.", price=Decimal("150.00"), quantity=Decimal("2")

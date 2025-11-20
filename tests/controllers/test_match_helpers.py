@@ -6,15 +6,21 @@ from decimal import Decimal
 
 import pytest
 
-from quicken_helper.controllers.match_helpers import _candidate_cost, _flatten_qif_txns
+from quicken_helper.controllers.match_helpers import (
+    _candidate_cost,  # type: ignore[reportPrivateUsage]
+    _flatten_qif_txns,  # type: ignore[reportPrivateUsage]
+)
 from quicken_helper.legacy.qif_item_key import QIFItemKey
 from quicken_helper.legacy.qif_txn_view import QIFTxnView
-from quicken_helper.utilities.converters_scalar import _to_date, to_decimal
+from quicken_helper.utilities.converters_scalar import (
+    _to_date,  # type: ignore[reportPrivateUsage]
+    to_decimal,
+)
 
 # ----------------------- _to_decimal -----------------------
 
 
-def test_to_decimal_accepts_decimal_int_float_and_str():
+def test_to_decimal_accepts_decimal_int_float_and_str() -> None:
     # Arrange / Act
     d_from_dec = to_decimal(Decimal("-12.34"))
     d_from_int = to_decimal(7)
@@ -28,11 +34,11 @@ def test_to_decimal_accepts_decimal_int_float_and_str():
     assert d_from_str == Decimal("-1234.56")
 
 
-def test_to_decimal_strips_currency_and_commas_and_space():
+def test_to_decimal_strips_currency_and_commas_and_space() -> None:
     assert to_decimal(" $ 2,345.00 ") == Decimal("2345.00")
 
 
-def test_to_decimal_raises_on_empty_plus_minus():
+def test_to_decimal_raises_on_empty_plus_minus() -> None:
     with pytest.raises(ValueError):
         to_decimal("")
     with pytest.raises(ValueError):
@@ -54,11 +60,11 @@ def test_to_decimal_raises_on_empty_plus_minus():
         ("08/01’25", date(2025, 8, 1)),  # curly apostrophe replaced
     ],
 )
-def test_parse_date_supported_formats(raw, expected):
+def test_parse_date_supported_formats(raw: str, expected: date) -> None:
     assert _to_date(raw) == expected
 
 
-def test_parse_date_raises_on_unrecognized():
+def test_parse_date_raises_on_unrecognized() -> None:
     with pytest.raises(ValueError):
         _to_date("not a date")
 
@@ -66,7 +72,7 @@ def test_parse_date_raises_on_unrecognized():
 # ----------------------- _candidate_cost -----------------------
 
 
-def test_candidate_cost_within_and_outside_window():
+def test_candidate_cost_within_and_outside_window() -> None:
     d0 = date(2025, 1, 10)
     assert _candidate_cost(d0, d0) == 0
     assert _candidate_cost(d0, d0 + timedelta(days=1)) == 1
@@ -80,8 +86,15 @@ def test_candidate_cost_within_and_outside_window():
 # ----------------------- _flatten_qif_txns -----------------------
 
 
-def _mk_tx(d: str, amount: str, payee="P", memo="", category="", splits=None):
-    tx = {
+def _mk_tx(
+    d: str,
+    amount: str,
+    payee: str = "P",
+    memo: str = "",
+    category: str = "",
+    splits: list[dict[str, object]] | None = None,
+) -> dict[str, object]:
+    tx: dict[str, object] = {
         "date": d,
         "amount": amount,
         "payee": payee,
@@ -93,7 +106,7 @@ def _mk_tx(d: str, amount: str, payee="P", memo="", category="", splits=None):
     return tx
 
 
-def test_flatten_qif_txns_handles_non_split_and_split_transactions():
+def test_flatten_qif_txns_handles_non_split_and_split_transactions() -> None:
     # Arrange
     txns = [
         _mk_tx("2025-01-02", "-10.00", payee="A", memo="m1", category="Cat1"),
@@ -146,9 +159,9 @@ def test_flatten_qif_txns_handles_non_split_and_split_transactions():
     assert v2.amount == Decimal("-15.00")
 
 
-def test_flatten_qif_txns_handles_missing_optional_fields_gracefully():
+def test_flatten_qif_txns_handles_missing_optional_fields_gracefully() -> None:
     # Arrange: some optional fields not present
-    txns = [
+    txns: list[dict[str, object]] = [
         {"date": "2025-02-01", "amount": "-1.00"},
         {
             "date": "2025-02-02",

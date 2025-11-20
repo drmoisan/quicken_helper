@@ -6,7 +6,7 @@ from quicken_helper.legacy.qif_item_key import QIFItemKey
 from quicken_helper.legacy.qif_txn_view import QIFTxnView
 
 
-def test_init_and_field_access():
+def test_init_and_field_access() -> None:
     # Arrange
     key = QIFItemKey(txn_index=7, split_index=None)
     d = date(2025, 8, 10)
@@ -34,7 +34,7 @@ def test_init_and_field_access():
     assert view.category == category
 
 
-def test_equality_semantics():
+def test_equality_semantics() -> None:
     # Arrange
     key = QIFItemKey(txn_index=1, split_index=None)
     d = date(2025, 1, 2)
@@ -69,7 +69,7 @@ def test_equality_semantics():
     assert a != c
 
 
-def test_key_split_flags():
+def test_key_split_flags() -> None:
     # Non-split transaction
     k1 = QIFItemKey(txn_index=0, split_index=None)
     v1 = QIFTxnView(

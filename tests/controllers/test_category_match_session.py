@@ -11,7 +11,9 @@ from quicken_helper.controllers.category_match_session import CategoryMatchSessi
 # ------------------------------ auto_match ------------------------------------
 
 
-def test_auto_match_uses_fuzzy_autopairs_and_builds_mapping(monkeypatch):
+def test_auto_match_uses_fuzzy_autopairs_and_builds_mapping(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """auto_match: delegates to cms.fuzzy_autopairs with the given threshold and
     updates the session mapping from the returned (data_model, excel, score) pairs.
 
@@ -21,9 +23,13 @@ def test_auto_match_uses_fuzzy_autopairs_and_builds_mapping(monkeypatch):
     # Arrange
     qif = ["Food:Groceries", "Food:Restaurants"]
     excel = ["Groceries", "Restaurants"]
-    called = {}
+    called: dict[str, object] = {}
 
-    def fake_fuzzy_autopairs(qif_cats, excel_cats, threshold):
+    def fake_fuzzy_autopairs(
+        qif_cats: list[str], excel_cats: list[str], threshold: float
+    ) -> tuple[
+        list[tuple[str, str, float]], list[str], list[str]
+    ]:  # (pairs, unmatched_qif, unmatched_excel)
         # capture what was passed
         called["args"] = (tuple(qif_cats), tuple(excel_cats), threshold)
         # return deterministic pairs (data_model, excel, score)
@@ -51,15 +57,17 @@ def test_auto_match_uses_fuzzy_autopairs_and_builds_mapping(monkeypatch):
     }
 
 
-def test_auto_match_threshold_controls_pairs(monkeypatch):
+def test_auto_match_threshold_controls_pairs(monkeypatch: pytest.MonkeyPatch) -> None:
     """auto_match: passes the threshold through to cms.fuzzy_autopairs, and if
     no pairs are returned above that threshold, the mapping remains empty.
     """
     # Arrange
     s = CategoryMatchSession(["A"], ["a"])
-    seen = {}
+    seen: dict[str, object] = {}
 
-    def fake(q, e, t):
+    def fake(
+        q: list[str], e: list[str], t: float
+    ) -> tuple[list[tuple[str, str, float]], list[str], list[str]]:
         seen["threshold"] = t
         return [], ["A"], ["a"]
 
@@ -76,7 +84,7 @@ def test_auto_match_threshold_controls_pairs(monkeypatch):
 # ----------------------------- manual_match -----------------------------------
 
 
-def test_manual_match_accepts_valid_names_and_enforces_one_to_one():
+def test_manual_match_accepts_valid_names_and_enforces_one_to_one() -> None:
     """manual_match: accepts valid Excel/QIF names and enforces a one-to-one
     mapping by removing any other Excel key previously mapped to the same QIF.
     """
@@ -103,8 +111,8 @@ def test_manual_match_accepts_valid_names_and_enforces_one_to_one():
     ],
 )
 def test_manual_match_rejects_unknown_names(
-    excel_name, qif_name, expect_ok, expect_msg
-):
+    excel_name: str, qif_name: str, expect_ok: bool, expect_msg: str
+) -> None:
     """manual_match: rejects Excel/QIF names that are not present in the
     session's source lists and returns explanatory messages.
     """
@@ -119,7 +127,7 @@ def test_manual_match_rejects_unknown_names(
 # ---------------------------- manual_unmatch ----------------------------------
 
 
-def test_manual_unmatch_returns_true_when_present_false_when_absent():
+def test_manual_unmatch_returns_true_when_present_false_when_absent() -> None:
     """manual_unmatch: returns True iff a mapping entry existed and was removed,
     otherwise False (idempotent on repeated calls).
     """
@@ -145,7 +153,9 @@ def test_unmatched_returns_items_not_in_mapping():
 # --------------------------- apply_to_excel -----------------------------------
 
 
-def test_apply_to_excel_replaces_cells_and_writes_default_output(monkeypatch, tmp_path):
+def test_apply_to_excel_replaces_cells_and_writes_default_output(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
     """apply_to_excel: reads an Excel file, replaces cells in the 'Canonical MECE Category'
     column using the session mapping, and writes to a default '*_normalized.xlsx' file.
 
@@ -163,12 +173,12 @@ def test_apply_to_excel_replaces_cells_and_writes_default_output(monkeypatch, tm
     )
 
     # Monkeypatch pandas IO
-    monkeypatch.setattr(pd, "read_excel", lambda p: df)
-    captured = {}
+    monkeypatch.setattr(pd, "read_excel", lambda p: df)  # type: ignore[misc]
+    captured: dict[str, object] = {}
 
-    def fake_to_excel(self, out_path, index=False):
+    def fake_to_excel(self: pd.DataFrame, out_path: Path, index: bool = False) -> None:
         captured["out_path"] = out_path
-        captured["values"] = self["Canonical MECE Category"].tolist()
+        captured["values"] = self["Canonical MECE Category"].tolist()  # type: ignore[misc]
 
     monkeypatch.setattr(pd.DataFrame, "to_excel", fake_to_excel, raising=False)
 
@@ -186,17 +196,20 @@ def test_apply_to_excel_replaces_cells_and_writes_default_output(monkeypatch, tm
 
     # Assert
     assert Path(out_path).name == "cats_normalized.xlsx"
-    assert Path(captured["out_path"]).name == "cats_normalized.xlsx"
+    assert isinstance(captured["out_path"], Path)
+    assert captured["out_path"].name == "cats_normalized.xlsx"
     assert captured["values"] == ["Food:Groceries", "Unmapped", "Food:Restaurants"]
 
 
-def test_apply_to_excel_raises_if_column_missing(monkeypatch, tmp_path):
+def test_apply_to_excel_raises_if_column_missing(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
     """apply_to_excel: raises ValueError when the expected 'Canonical MECE Category'
     column is missing in the input Excel sheet."""
     # Arrange
     input_path = tmp_path / "cats.xlsx"
     df = pd.DataFrame({"Wrong Column": ["x"]})
-    monkeypatch.setattr(pd, "read_excel", lambda p: df)
+    monkeypatch.setattr(pd, "read_excel", lambda p: df)  # type: ignore[misc]
 
     s = CategoryMatchSession(qif_cats=["A"], excel_cats=["a"])
 
@@ -206,17 +219,19 @@ def test_apply_to_excel_raises_if_column_missing(monkeypatch, tmp_path):
     assert "Canonical MECE Category" in str(ei.value)
 
 
-def test_apply_to_excel_respects_explicit_output_path(monkeypatch, tmp_path):
+def test_apply_to_excel_respects_explicit_output_path(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
     """apply_to_excel: honors an explicit output path if provided and writes there
     instead of using the default '*_normalized.xlsx' filename."""
     # Arrange
     input_path = tmp_path / "cats.xlsx"
     explicit = tmp_path / "out.xlsx"
     df = pd.DataFrame({"Canonical MECE Category": ["A"]})
-    monkeypatch.setattr(pd, "read_excel", lambda p: df)
-    captured = {}
+    monkeypatch.setattr(pd, "read_excel", lambda p: df)  # type: ignore[misc]
+    captured: dict[str, object] = {}
 
-    def fake_to_excel(self, out_path, index=False):
+    def fake_to_excel(self: pd.DataFrame, out_path: Path, index: bool = False) -> None:
         captured["out_path"] = out_path
 
     monkeypatch.setattr(pd.DataFrame, "to_excel", fake_to_excel, raising=False)
@@ -228,4 +243,5 @@ def test_apply_to_excel_respects_explicit_output_path(monkeypatch, tmp_path):
 
     # Assert
     assert out_path == explicit
+    assert isinstance(captured["out_path"], Path)
     assert captured["out_path"] == explicit

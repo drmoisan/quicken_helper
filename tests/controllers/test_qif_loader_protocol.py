@@ -38,19 +38,21 @@ class _StubTxn:
 class _StubFile:
     """Lightweight file stub exposing the single attribute the loader consumes."""
 
-    transactions: list[_StubTxn] = field(default_factory=list)
+    transactions: list[_StubTxn] = field(default_factory=lambda: [])
 
 
 # ---- Tests -------------------------------------------------------------------
 
 
-def test_loader_calls_parse_and_returns_transactions(monkeypatch):
+def test_loader_calls_parse_and_returns_transactions(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """Positive: loader wires to parse function and returns the file's transactions list."""
 
     # Arrange
     called = {}
 
-    def fake_parse_qif_unified(path: Path, encoding: str = "utf-8"):
+    def fake_parse_qif_unified(path: Path, encoding: str = "utf-8") -> _StubFile:
         called["args"] = (path, encoding)
         return _StubFile(
             transactions=[
@@ -89,11 +91,11 @@ def test_loader_calls_parse_and_returns_transactions(monkeypatch):
     )
 
 
-def test_loader_propagates_parse_errors(monkeypatch):
+def test_loader_propagates_parse_errors(monkeypatch: pytest.MonkeyPatch) -> None:
     """Negative: loader must not swallow exceptions raised by the parser."""
 
     # Arrange
-    def boom(*_a, **_kw):
+    def boom(*_a: object, **_kw: object) -> None:
         raise ValueError("bad qif")
 
     monkeypatch.setattr(ql, "parse_qif_unified_protocol", boom)
@@ -104,13 +106,15 @@ def test_loader_propagates_parse_errors(monkeypatch):
     assert "bad qif" in str(ei.value)
 
 
-def test_loader_does_not_mutate_transactions_identity(monkeypatch):
+def test_loader_does_not_mutate_transactions_identity(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """Positive: loader must pass through the original transaction objects without copying."""
 
     # Arrange
     tx = _StubTxn(date=date(2025, 1, 1), amount=Decimal("2.00"))
 
-    def fake(*_a, **_kw):
+    def fake(*_a: object, **_kw: object) -> _StubFile:
         return _StubFile([tx])
 
     monkeypatch.setattr(ql, "parse_qif_unified_protocol", fake)
@@ -124,12 +128,14 @@ def test_loader_does_not_mutate_transactions_identity(monkeypatch):
     ), "Returned object should be the same instance produced by the parser"
 
 
-def test_loader_returns_empty_list_when_no_transactions(monkeypatch):
+def test_loader_returns_empty_list_when_no_transactions(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """Edge: gracefully handle empty files by returning an empty list."""
 
     # Arrange
     monkeypatch.setattr(
-        ql, "parse_qif_unified_protocol", lambda *_a, **_kw: _StubFile([])
+        ql, "parse_qif_unified_protocol", lambda p, encoding="utf-8": _StubFile([])  # type: ignore[misc]
     )
 
     # Act
@@ -140,7 +146,7 @@ def test_loader_returns_empty_list_when_no_transactions(monkeypatch):
     assert out == []
 
 
-def test_investment_action_passthrough(monkeypatch):
+def test_investment_action_passthrough(monkeypatch: pytest.MonkeyPatch) -> None:
     """Positive: ensure loader preserves investment action fields unchanged."""
 
     # Arrange
@@ -150,31 +156,31 @@ def test_investment_action_passthrough(monkeypatch):
         action="Buy",  # Investment action should survive intact
     )
     monkeypatch.setattr(
-        ql, "parse_qif_unified_protocol", lambda *_a, **_kw: _StubFile([stub])
+        ql, "parse_qif_unified_protocol", lambda p, encoding="utf-8": _StubFile([stub])  # type: ignore[misc]
     )
 
     # Act
     out = ql.load_transactions_protocol(Path("inv.qif"))
 
     # Assert
-    assert out[0].action == "Buy"
+    assert out[0].action == "Buy"  # type: ignore[attr-defined]
 
 
-def test_splits_passthrough(monkeypatch):
+def test_splits_passthrough(monkeypatch: pytest.MonkeyPatch) -> None:
     """Positive: ensure loader preserves splits list without modification."""
 
     # Arrange
     splits = [{"category": "Food:Groceries", "amount": Decimal("50.00")}]
     stub = _StubTxn(date=date(2025, 2, 2), amount=Decimal("50.00"), splits=splits)
     monkeypatch.setattr(
-        ql, "parse_qif_unified_protocol", lambda *_a, **_kw: _StubFile([stub])
+        ql, "parse_qif_unified_protocol", lambda p, encoding="utf-8": _StubFile([stub])  # type: ignore[misc]
     )
 
     # Act
     out = ql.load_transactions_protocol(Path("splits.qif"))
 
     # Assert
-    assert out[0].splits == splits
+    assert out[0].splits == splits  # type: ignore[attr-defined]
     assert (
-        out[0].splits is splits
+        out[0].splits is splits  # type: ignore[attr-defined]
     ), "Identity check: loader must not copy or transform splits"

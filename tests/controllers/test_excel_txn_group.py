@@ -10,7 +10,7 @@ from quicken_helper.data_model.excel.excel_txn_group import ExcelTxnGroup
 
 def _mk_row(
     idx: int,
-    gid: object,
+    gid: str,
     d: date,
     amt: str,
     item: str = "Item",
@@ -29,7 +29,7 @@ def _mk_row(
     )
 
 
-def test_excel_txn_group_basic_fields_and_sum():
+def test_excel_txn_group_basic_fields_and_sum() -> None:
     # Arrange
     d = date(2025, 8, 1)
     r1 = _mk_row(0, "G1", d, "-7.00", "A", "Food", "a")
@@ -47,7 +47,7 @@ def test_excel_txn_group_basic_fields_and_sum():
     assert g.rows == (r1, r2)
 
 
-def test_excel_txn_group_is_immutable_and_hashable():
+def test_excel_txn_group_is_immutable_and_hashable() -> None:
     # Arrange
     d = date(2025, 8, 2)
     r = _mk_row(0, "Z9", d, "-10.00")
@@ -55,7 +55,7 @@ def test_excel_txn_group_is_immutable_and_hashable():
 
     # Act / Assert: immutability
     with pytest.raises(FrozenInstanceError):
-        g.total_amount = Decimal("-11.00")  # frozen dataclass
+        g.total_amount = Decimal("-11.00")  # type: ignore[misc]  # frozen dataclass
 
     # Act / Assert: hashable & equality semantics
     same = ExcelTxnGroup(gid="Z9", date=d, total_amount=Decimal("-10.00"), rows=(r,))
@@ -69,23 +69,23 @@ def test_excel_txn_group_is_immutable_and_hashable():
     assert g != different
 
 
-def test_excel_txn_group_accepts_various_gid_types():
+def test_excel_txn_group_accepts_various_gid_types() -> None:
     # Arrange
     d = date(2025, 8, 3)
     r_str = _mk_row(0, "S1", d, "-1.00")
-    r_int = _mk_row(1, 42, d, "-2.00")
-    r_tuple = _mk_row(2, ("bundle", 1), d, "-3.00")
+    r_int = _mk_row(1, "42", d, "-2.00")  # Convert to str
+    r_tuple = _mk_row(2, "bundle_1", d, "-3.00")  # Convert to str
 
     g1 = ExcelTxnGroup(gid="S1", date=d, total_amount=Decimal("-1.00"), rows=(r_str,))
-    g2 = ExcelTxnGroup(gid=42, date=d, total_amount=Decimal("-2.00"), rows=(r_int,))
+    g2 = ExcelTxnGroup(gid="42", date=d, total_amount=Decimal("-2.00"), rows=(r_int,))
     g3 = ExcelTxnGroup(
-        gid=("bundle", 1), date=d, total_amount=Decimal("-3.00"), rows=(r_tuple,)
+        gid="bundle_1", date=d, total_amount=Decimal("-3.00"), rows=(r_tuple,)
     )
 
     # Assert
     assert g1.gid == "S1"
-    assert g2.gid == 42
-    assert g3.gid == ("bundle", 1)
+    assert g2.gid == "42"
+    assert g3.gid == "bundle_1"
 
     # All should be usable as dict keys (hashable)
     dct = {g1: "a", g2: "b", g3: "c"}
@@ -94,7 +94,7 @@ def test_excel_txn_group_accepts_various_gid_types():
     assert dct[g3] == "c"
 
 
-def test_excel_txn_group_allows_empty_rows_but_preserves_fields():
+def test_excel_txn_group_allows_empty_rows_but_preserves_fields() -> None:
     # Arrange
     d = date(2025, 8, 4)
     # While typical usage provides one or more rows, the dataclass itself

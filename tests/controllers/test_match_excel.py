@@ -15,7 +15,7 @@ from quicken_helper.legacy.qif_item_key import QIFItemKey
 # --------------------------- load_excel_rows ----------------------------------
 
 
-def test_load_excel_rows_parses_rows(monkeypatch):
+def test_load_excel_rows_parses_rows(monkeypatch: pytest.MonkeyPatch) -> None:
     """load_excel_rows: parses a DataFrame into typed ExcelRow objects, preserving
     per-row index (idx), grouping IDs (TxnID), and converting Amount to Decimal.
     """
@@ -29,7 +29,7 @@ def test_load_excel_rows_parses_rows(monkeypatch):
             "Categorization Rationale": ["r1", "r2", "r3"],
         }
     )
-    monkeypatch.setattr(pd, "read_excel", lambda p: df)
+    monkeypatch.setattr(pd, "read_excel", lambda p: df)  # type: ignore[misc]
 
     rows = mx.load_excel_rows(Path("dummy.xlsx"))
 
@@ -42,10 +42,12 @@ def test_load_excel_rows_parses_rows(monkeypatch):
     assert rows[1].txn_id == "G1" and rows[2].txn_id == "G2"
 
 
-def test_load_excel_rows_missing_columns_raises(monkeypatch):
+def test_load_excel_rows_missing_columns_raises(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """load_excel_rows: raises a ValueError if required columns are absent."""
     df = pd.DataFrame({"TxnID": ["X"], "Date": [date(2025, 8, 10)]})
-    monkeypatch.setattr(pd, "read_excel", lambda p: df)
+    monkeypatch.setattr(pd, "read_excel", lambda p: df)  # type: ignore[misc]
 
     with pytest.raises(ValueError) as ei:
         mx.load_excel_rows(Path("missing.xlsx"))
@@ -55,7 +57,7 @@ def test_load_excel_rows_missing_columns_raises(monkeypatch):
 # --------------------------- group_excel_rows ---------------------------------
 
 
-def test_group_excel_rows_groups_and_sorts():
+def test_group_excel_rows_groups_and_sorts() -> None:
     """group_excel_rows: groups rows by TxnID, sums total_amount, uses the earliest
     date as the group date, sorts groups by (date, gid), and preserves row order within groups.
     """
@@ -100,22 +102,24 @@ def test_group_excel_rows_groups_and_sorts():
 # ----------------------------- _txn_amount ------------------------------------
 
 
-def test__txn_amount_prefers_splits_sum_over_txn_amount():
+def test__txn_amount_prefers_splits_sum_over_txn_amount() -> None:
     """_txn_amount: if splits exist, returns the sum of split amounts (ignores txn-level amount)."""
     t = {"amount": "-999.99", "splits": [{"amount": "-1.00"}, {"amount": "-2.00"}]}
-    assert mx._txn_amount(t) == Decimal("-3.00")
+    assert mx._txn_amount(t) == Decimal("-3.00")  # type: ignore[reportPrivateUsage]
 
 
-def test__txn_amount_falls_back_to_txn_amount_when_no_splits():
+def test__txn_amount_falls_back_to_txn_amount_when_no_splits() -> None:
     """_txn_amount: if no splits, returns the transaction-level amount."""
-    t = {"amount": "-12.34", "splits": []}
-    assert mx._txn_amount(t) == Decimal("-12.34")
+    t: dict[str, object] = {"amount": "-12.34", "splits": []}
+    assert mx._txn_amount(t) == Decimal("-12.34")  # type: ignore[reportPrivateUsage,arg-type]
 
 
 # --------------------------- _flatten_qif_txns --------------------------------
 
 
-def test_flatten_qif_txns_includes_split_views_and_whole_txn_and_skips_bad_split_amounts():
+def test_flatten_qif_txns_includes_split_views_and_whole_txn_and_skips_bad_split_amounts() -> (
+    None
+):
     """_flatten_qif_txns: produces a flat list of views for (valid) splits and for unsplit
     transactions, skipping any split with a non-numeric amount and any non-transaction input.
     """
@@ -143,7 +147,7 @@ def test_flatten_qif_txns_includes_split_views_and_whole_txn_and_skips_bad_split
         # txn 2: not a transaction (bad date) → dropped
         {"date": "not-a-date", "amount": "-1.00"},
     ]
-    views = mx._flatten_qif_txns(txns)
+    views = mx._flatten_qif_txns(txns)  # type: ignore[reportPrivateUsage]
 
     assert len(views) == 3
     keys = [(v.key.txn_index, v.key.split_index) for v in views]
@@ -157,7 +161,7 @@ def test_flatten_qif_txns_includes_split_views_and_whole_txn_and_skips_bad_split
 # ---------------------- extract_qif/excel_categories --------------------------
 
 
-def test_extract_qif_categories_dedup_and_sort():
+def test_extract_qif_categories_dedup_and_sort() -> None:
     """extract_qif_categories: gathers categories from both txn-level and split-level,
     normalizes case/whitespace, de-duplicates, and returns a sorted list.
     """
@@ -175,14 +179,16 @@ def test_extract_qif_categories_dedup_and_sort():
     assert cats == ["Food:Groceries", "Home:Repairs", "Utilities: Internet"]
 
 
-def test_extract_excel_categories_reads_and_dedups(monkeypatch):
+def test_extract_excel_categories_reads_and_dedups(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """extract_excel_categories: reads 'Canonical MECE Category' from Excel, strips,
     de-duplicates ignoring case, and returns sorted non-empty values.
     """
     df = pd.DataFrame(
         {"Canonical MECE Category": ["Groceries", "groceries", "Restaurants", ""]}
     )
-    monkeypatch.setattr(pd, "read_excel", lambda p: df)
+    monkeypatch.setattr(pd, "read_excel", lambda p: df)  # type: ignore[misc]
 
     out = mx.extract_excel_categories(Path("cats.xlsx"))
     assert out == ["Groceries", "Restaurants"]
@@ -191,15 +197,15 @@ def test_extract_excel_categories_reads_and_dedups(monkeypatch):
 # --------------------------------- _ratio -------------------------------------
 
 
-def test__ratio_is_case_insensitive_and_exact_for_equal_strings():
+def test__ratio_is_case_insensitive_and_exact_for_equal_strings() -> None:
     """_ratio: returns 1.0 for equal strings ignoring case."""
-    assert mx._ratio("Food:Groceries", "food:groceries") == 1.0
+    assert mx._ratio("Food:Groceries", "food:groceries") == 1.0  # type: ignore[reportPrivateUsage]
 
 
 # ---------------------------- fuzzy_autopairs ---------------------------------
 
 
-def test_fuzzy_autopairs_threshold_and_one_to_one():
+def test_fuzzy_autopairs_threshold_and_one_to_one() -> None:
     """fuzzy_autopairs: with threshold=0.80, 'Food:Restaurants' ↔ 'Restaurants' meets the
     threshold (≈0.8148) and matches; 'Food:Groceries' ↔ 'Groceries' is below threshold, so both
     remain unmatched. Also confirms 'Other' remains unmatched.
@@ -219,7 +225,7 @@ def test_fuzzy_autopairs_threshold_and_one_to_one():
     assert "Other" in ue
 
 
-def test_fuzzy_autopairs_deterministic_tie_breaks_by_alpha():
+def test_fuzzy_autopairs_deterministic_tie_breaks_by_alpha() -> None:
     """fuzzy_autopairs: when multiple pairs have identical scores, selection is deterministic
     (stable) by sorting key (e.g., (-score, qif_name, excel_name)); hence Ab↔Ab precedes Ac↔Ac.
     """
@@ -240,7 +246,9 @@ class _FakeSessionGroupMode:
     and qif_to_excel_group mapping (whole-transaction keys → group index).
     """
 
-    def __init__(self, txns, matched_txn_indices):
+    def __init__(
+        self, txns: list[dict[str, object]], matched_txn_indices: list[int]
+    ) -> None:
         self.txns = txns
         self.excel_groups = [
             ExcelTxnGroup(
@@ -257,19 +265,21 @@ class _FakeSessionLegacyMode:
     and qif_to_excel(_row) mapping (txn/split keys → row index).
     """
 
-    def __init__(self, txns, matched_keys):
+    def __init__(
+        self, txns: list[dict[str, object]], matched_keys: list[QIFItemKey]
+    ) -> None:
         self.txns = txns
         self.excel_groups = None
-        self.qif_to_excel_row = {k: 0 for k in matched_keys}
+        self.qif_to_excel_row: dict[QIFItemKey, int] = {k: 0 for k in matched_keys}
         # Alias expected by build_matched_only_txns (legacy row mode)
-        self.qif_to_excel = self.qif_to_excel_row
+        self.qif_to_excel: dict[QIFItemKey, int] = self.qif_to_excel_row
 
 
-def test_build_matched_only_txns_group_mode_includes_only_matched_txns():
+def test_build_matched_only_txns_group_mode_includes_only_matched_txns() -> None:
     """build_matched_only_txns (group-mode): includes only transactions whose whole-transaction
     key is present in qif_to_excel_group; unlinked txns are filtered out.
     """
-    txns = [
+    txns: list[dict[str, object]] = [
         {"date": "2025-08-10", "amount": "-1.00"},
         {"date": "2025-08-11", "amount": "-2.00"},
     ]
@@ -281,14 +291,16 @@ def test_build_matched_only_txns_group_mode_includes_only_matched_txns():
 
     out = mx.build_matched_only_txns(cast("MatchSession", session))
 
-    assert len(out) == 1 and out[0]["amount"] == "-1.00"
+    assert len(out) == 1 and out[0]["amount"] == "-1.00"  # type: ignore[index]
 
 
-def test_build_matched_only_txns_legacy_mode_filters_splits_and_includes_whole_txn():
+def test_build_matched_only_txns_legacy_mode_filters_splits_and_includes_whole_txn() -> (
+    None
+):
     """build_matched_only_txns (legacy row-mode): retains only the matched splits for split
     transactions and includes unsplit transactions in full if their whole-transaction key is matched.
     """
-    txns = [
+    txns: list[dict[str, object]] = [
         # txn 0 has three splits; only 0 and 2 are matched
         {
             "date": "2025-08-10",
@@ -301,11 +313,11 @@ def test_build_matched_only_txns_legacy_mode_filters_splits_and_includes_whole_t
         # txn 1 has no splits; we match the whole txn key
         {"date": "2025-08-11", "amount": "-9.99"},
     ]
-    matched = {
-        QIFItemKey(0, 0),
+    matched: list[QIFItemKey] = [
+        QIFItemKey(0, 0),  # split match
         QIFItemKey(0, 2),  # two split matches
         QIFItemKey(1, None),  # whole-transaction match
-    }
+    ]
     session = _FakeSessionLegacyMode(txns, matched_keys=matched)
 
     from typing import cast
@@ -315,9 +327,9 @@ def test_build_matched_only_txns_legacy_mode_filters_splits_and_includes_whole_t
     out = mx.build_matched_only_txns(cast("MatchSession", session))
 
     assert len(out) == 2
-    s0 = out[0]["splits"]
-    assert [s["memo"] for s in s0] == ["a", "c"]
-    assert out[1]["amount"] == "-9.99"
+    s0 = out[0]["splits"]  # type: ignore[index]
+    assert [s["memo"] for s in s0] == ["a", "c"]  # type: ignore[index]
+    assert out[1]["amount"] == "-9.99"  # type: ignore[index]
 
 
 # PREVIOUS VERSION OF THE FILE (kept for reference; not executed):

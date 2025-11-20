@@ -6,7 +6,8 @@ from quicken_helper.data_model import QuickenSections as QS
 # ---------------------------
 
 
-def test_has_flag_true_when_bit_set():
+def test_has_flag_true_when_bit_set() -> None:
+    """Test has_flag returns True when the specified bit is set in the mask."""
     # Arrange
     mask = QS.ACCOUNTS | QS.CATEGORIES
 
@@ -17,7 +18,8 @@ def test_has_flag_true_when_bit_set():
     assert result is True, "has_flag should be True when the bit is present."
 
 
-def test_has_flag_false_when_bit_not_set():
+def test_has_flag_false_when_bit_not_set() -> None:
+    """Test has_flag returns False when the specified bit is not set in the mask."""
     # Arrange
     mask = QS.ACCOUNTS  # CATEGORIES not included
 
@@ -33,7 +35,8 @@ def test_has_flag_false_when_bit_not_set():
 # ---------------------------
 
 
-def test_has_flags_true_when_all_bits_present():
+def test_has_flags_true_when_all_bits_present() -> None:
+    """Test has_flags returns True only when all required bits are present."""
     # Arrange
     mask = QS.ACCOUNTS | QS.CATEGORIES | QS.TAGS
     required = [QS.ACCOUNTS, QS.CATEGORIES]
@@ -45,7 +48,8 @@ def test_has_flags_true_when_all_bits_present():
     assert result is True, "has_flags should be True only when ALL bits are present."
 
 
-def test_has_flags_false_when_any_bit_missing():
+def test_has_flags_false_when_any_bit_missing() -> None:
+    """Test has_flags returns False if any required bit is missing from the mask."""
     # Arrange
     mask = QS.ACCOUNTS | QS.TAGS
     required = [QS.ACCOUNTS, QS.CATEGORIES]  # CATEGORIES missing
@@ -57,9 +61,10 @@ def test_has_flags_false_when_any_bit_missing():
     assert result is False, "has_flags should be False if any required bit is missing."
 
 
-def test_has_flags_empty_iterable_returns_true():
+def test_has_flags_empty_iterable_returns_true() -> None:
+    """Test has_flags returns True for empty requirements by convention."""
     # Arrange
-    mask = QS.ACCOUNTS  # value doesn’t matter here
+    mask = QS.ACCOUNTS  # value doesn't matter here
 
     # Act
     result = mask.has_flags([])
@@ -73,7 +78,8 @@ def test_has_flags_empty_iterable_returns_true():
 # ---------------------------
 
 
-def test_add_flag_returns_new_mask_with_bit_set():
+def test_add_flag_returns_new_mask_with_bit_set() -> None:
+    """Test add_flag returns immutable new mask with specified bit set."""
     # Arrange
     original = QS.NONE
     expected = QS.ACCOUNTS
@@ -88,7 +94,8 @@ def test_add_flag_returns_new_mask_with_bit_set():
     assert original == QS.NONE, "add_flag must be immutable (original mask unchanged)."
 
 
-def test_add_flag_idempotent_when_bit_already_present():
+def test_add_flag_idempotent_when_bit_already_present() -> None:
+    """Test add_flag is idempotent when the bit is already set."""
     # Arrange
     original = QS.ACCOUNTS
     expected = QS.ACCOUNTS
@@ -107,7 +114,8 @@ def test_add_flag_idempotent_when_bit_already_present():
 # ---------------------------
 
 
-def test_add_flags_returns_new_mask_with_all_bits_set():
+def test_add_flags_returns_new_mask_with_all_bits_set() -> None:
+    """Test add_flags returns immutable new mask with all specified bits set."""
     # Arrange
     original = QS.NONE
     to_add = [QS.ACCOUNTS, QS.CATEGORIES, QS.TAGS]
@@ -128,7 +136,8 @@ def test_add_flags_returns_new_mask_with_all_bits_set():
 # ---------------------------
 
 
-def test_remove_flag_returns_new_mask_with_bit_cleared():
+def test_remove_flag_returns_new_mask_with_bit_cleared() -> None:
+    """Test remove_flag returns immutable new mask with specified bit cleared."""
     # Arrange
     original = QS.ACCOUNTS | QS.CATEGORIES
     expected = QS.CATEGORIES  # ACCOUNTS cleared
@@ -145,7 +154,8 @@ def test_remove_flag_returns_new_mask_with_bit_cleared():
     ), "remove_flag must be immutable (original mask unchanged)."
 
 
-def test_remove_flag_idempotent_when_bit_absent():
+def test_remove_flag_idempotent_when_bit_absent() -> None:
+    """Test remove_flag is idempotent when the bit is not present."""
     # Arrange
     original = QS.CATEGORIES
     expected = QS.CATEGORIES  # ACCOUNTS not present → no change
@@ -164,7 +174,8 @@ def test_remove_flag_idempotent_when_bit_absent():
 # ---------------------------
 
 
-def test_remove_flags_returns_new_mask_with_all_bits_cleared():
+def test_remove_flags_returns_new_mask_with_all_bits_cleared() -> None:
+    """Test remove_flags returns immutable new mask with all specified bits cleared."""
     # Arrange
     original = QS.ACCOUNTS | QS.CATEGORIES | QS.TAGS
     to_remove = [QS.ACCOUNTS, QS.TAGS]

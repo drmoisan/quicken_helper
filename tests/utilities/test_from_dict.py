@@ -42,16 +42,16 @@ class WithListOfChildren:
     """Dataclass with a list of nested dataclasses."""
 
     title: str
-    children: list[Child] = field(default_factory=list)
+    children: list[Child] = field(default_factory=lambda: [])
 
 
 # --------------------------------- Tests -----------------------------------
 
 
-def test_from_dict_simple_nested_and_containers():
+def test_from_dict_simple_nested_and_containers() -> None:
     """Positive: builds a Parent with nested Child, list/tuple/dict fields mapped correctly."""
     # Arrange
-    payload = {
+    payload: dict[str, object] = {
         "name": "Alice",
         "child": {"x": 7, "y": "seven"},
         "tags": ["a", "b"],
@@ -74,10 +74,10 @@ def test_from_dict_simple_nested_and_containers():
     assert obj.maybe is None, "Optional field should allow None"
 
 
-def test_from_dict_uses_child_default_when_field_omitted():
+def test_from_dict_uses_child_default_when_field_omitted() -> None:
     """Positive/edge: omitted optional field in a nested dataclass uses dataclass default."""
     # Arrange
-    payload = {
+    payload: dict[str, object] = {
         "name": "Bob",
         "child": {"x": 5},  # omit 'y' -> should use Child.y default
         "tags": [],
@@ -95,10 +95,10 @@ def test_from_dict_uses_child_default_when_field_omitted():
     ), "Omitted field should default via dataclass default"
 
 
-def test_from_dict_missing_optional_on_parent_is_set_none():
+def test_from_dict_missing_optional_on_parent_is_set_none() -> None:
     """Edge: missing optional field on the parent should become None (explicit contract)."""
     # Arrange
-    payload = {
+    payload: dict[str, object] = {
         "name": "Carol",
         "child": {"x": 1, "y": "one"},
         "tags": ["z"],
@@ -114,7 +114,7 @@ def test_from_dict_missing_optional_on_parent_is_set_none():
     assert obj.maybe is None, "Missing Optional[int] should be set to None"
 
 
-def test_from_dict_list_of_nested_dataclasses():
+def test_from_dict_list_of_nested_dataclasses() -> None:
     """Positive: builds a list of Child instances from a list of dicts."""
     # Arrange
     payload = {
@@ -131,7 +131,7 @@ def test_from_dict_list_of_nested_dataclasses():
     assert [(c.x, c.y) for c in obj.children] == [(1, "default-y"), (2, "two")]
 
 
-def test_from_dict_ignores_extra_keys_in_payload():
+def test_from_dict_ignores_extra_keys_in_payload() -> None:
     """Negative/robustness: extra keys in payload should not break construction."""
     # Arrange
     payload = {
@@ -155,7 +155,7 @@ def test_from_dict_ignores_extra_keys_in_payload():
     assert hasattr(obj, "name") and hasattr(obj, "child") and hasattr(obj, "meta")
 
 
-def test_from_dict_type_passthrough_for_primitives():
+def test_from_dict_type_passthrough_for_primitives() -> None:
     """Positive: calling from_dict on a primitive type should return the value unchanged."""
     # Arrange
     value = 123

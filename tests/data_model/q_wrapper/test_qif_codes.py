@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import types
+from collections.abc import Callable
 
 import pytest
 
@@ -9,7 +10,7 @@ import quicken_helper.data_model.q_wrapper.qif_codes as codes
 from quicken_helper.data_model.q_wrapper.qif_code import QifCode
 
 
-def _assert_qifcode(obj: QifCode, expect_code: str):
+def _assert_qifcode(obj: QifCode, expect_code: str) -> None:
     assert isinstance(obj, QifCode), "Factory must return QifCode"
     assert obj.code == expect_code, f"Expected code '{expect_code}', got '{obj.code}'"
     assert (
@@ -26,7 +27,8 @@ def _assert_qifcode(obj: QifCode, expect_code: str):
 # ------------------------------
 
 
-def test_bank_and_split_codes_minimal_fields():
+def test_bank_and_split_codes_minimal_fields() -> None:
+    """Test bank and split code factories return valid QifCode instances."""
     # Arrange
     # (No external deps; direct calls)
 
@@ -68,7 +70,10 @@ def test_bank_and_split_codes_minimal_fields():
         (codes.amount_transfered, "$", "Amount"),
     ],
 )
-def test_investment_codes(factory, expect_code, must_contain):
+def test_investment_codes(
+    factory: Callable[[], QifCode], expect_code: str, must_contain: str
+) -> None:
+    """Test investment code factories return valid QifCode instances with correct codes."""
     # Arrange / Act
     c = factory()
 
@@ -83,7 +88,8 @@ def test_investment_codes(factory, expect_code, must_contain):
 # ------------------------------
 
 
-def test_budget_code_is_categories_scoped():
+def test_budget_code_is_categories_scoped() -> None:
+    """Test budget code factory returns category-scoped QifCode."""
     # Arrange / Act
     b = codes.budgeted_amount()
 
@@ -115,7 +121,8 @@ def test_budget_code_is_categories_scoped():
         (codes.x_invoice_taxable_flag, "XF"),
     ],
 )
-def test_invoice_subcodes(factory, expect_code):
+def test_invoice_subcodes(factory: Callable[[], QifCode], expect_code: str) -> None:
+    """Test invoice code factories return valid QifCode instances with correct codes."""
     # Arrange / Act
     c = factory()
 
@@ -129,7 +136,8 @@ def test_invoice_subcodes(factory, expect_code):
 # ------------------------------
 
 
-def test_qifcode_equality_hash_on_code_only():
+def test_qifcode_equality_hash_on_code_only() -> None:
+    """Test QifCode equality and hash are based solely on code field."""
     # Arrange
     a = QifCode("Z", "desc1", "where1", "Zex")
     b = QifCode("Z", "desc2", "where2", "Zexample-different")
@@ -151,7 +159,8 @@ def test_qifcode_equality_hash_on_code_only():
 # ------------------------------
 
 
-def test_all_callable_factories_return_qifcode():
+def test_all_callable_factories_return_qifcode() -> None:
+    """Test all public factory functions return valid QifCode instances."""
     # Arrange
     public_funcs = [
         (name, obj)

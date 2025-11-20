@@ -1,87 +1,394 @@
-c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:24:5 - error: "_MB" is private and used outside of the module in which it is declared (reportPrivateUsage)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:523:17 - error: Argument of type "MatchSession | None" cannot be assigned to parameter "session" of type "MatchSession" in function "open_normalize_modal"
-  ┬á┬áType "MatchSession | None" is not assignable to type "MatchSession"
-  ┬á┬á┬á┬á"None" is not assignable to "MatchSession" (reportArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:631:49 - error: "isoformat" is not a known attribute of "None" (reportOptionalMemberAccess)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:663:49 - error: "isoformat" is not a known attribute of "None" (reportOptionalMemberAccess)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:774:9 - error: Type of "sel" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:774:15 - error: Type of "curselection" is partially unknown
-  ┬á┬áType of "curselection" is "() -> Unknown" (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:778:9 - error: Type of "bi" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:778:13 - error: Type of "_" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:779:16 - error: Return type is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:784:9 - error: Type of "sel" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:784:15 - error: Type of "curselection" is partially unknown
-  ┬á┬áType of "curselection" is "() -> Unknown" (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:788:9 - error: Type of "ei" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:788:13 - error: Type of "_" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:789:16 - error: Return type is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:840:17 - error: Type of "idxs" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:840:24 - error: Type of "curselection" is partially unknown
-  ┬á┬áType of "curselection" is "() -> Unknown" (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:844:17 - error: Type of "_ei" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:844:22 - error: Type of "e" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:845:17 - error: Type of "first" is partially unknown
-  ┬á┬áType of "first" is "Unknown | None" (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:845:26 - error: Type of "splits" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:850:46 - error: Argument type is unknown
-  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:851:37 - error: Type of "date" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:851:37 - error: Type of "isoformat" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:852:53 - error: Argument type is unknown
-  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:853:48 - error: Type of "splits" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:853:48 - error: Argument type is partially unknown
+c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_excel_row_unit.py
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_excel_row_unit.py:125:20 - error: Argument of type "int | str | date | Decimal" cannot be assigned to parameter "txn_id" of type "str" in function "__init__"
+  ┬á┬áType "int | str | date | Decimal" is not assignable to type "str"
+  ┬á┬á┬á┬á"Decimal" is not assignable to "str" (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_excel_row_unit.py:125:20 - error: Argument of type "int | str | date | Decimal" cannot be assigned to parameter "date" of type "date" in function "__init__"
+  ┬á┬áType "int | str | date | Decimal" is not assignable to type "date"
+  ┬á┬á┬á┬á"Decimal" is not assignable to "date" (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_excel_row_unit.py:125:20 - error: Argument of type "int | str | date | Decimal" cannot be assigned to parameter "amount" of type "Decimal" in function "__init__"
+  ┬á┬áType "int | str | date | Decimal" is not assignable to type "Decimal"
+  ┬á┬á┬á┬á"date" is not assignable to "Decimal" (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_excel_row_unit.py:125:20 - error: Argument of type "int | str | date | Decimal" cannot be assigned to parameter "category" of type "str" in function "__init__"
+  ┬á┬áType "int | str | date | Decimal" is not assignable to type "str"
+  ┬á┬á┬á┬á"Decimal" is not assignable to "str" (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_excel_row_unit.py:125:20 - error: Argument of type "int | str | date | Decimal" cannot be assigned to parameter "idx" of type "int" in function "__init__"
+  ┬á┬áType "int | str | date | Decimal" is not assignable to type "int"
+  ┬á┬á┬á┬á"Decimal" is not assignable to "int" (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_excel_row_unit.py:125:20 - error: Argument of type "int | str | date | Decimal" cannot be assigned to parameter "account" of type "str" in function "__init__"
+  ┬á┬áType "int | str | date | Decimal" is not assignable to type "str"
+  ┬á┬á┬á┬á"Decimal" is not assignable to "str" (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_excel_row_unit.py:125:20 - error: Argument of type "int | str | date | Decimal" cannot be assigned to parameter "action_chk" of type "str" in function "__init__"
+  ┬á┬áType "int | str | date | Decimal" is not assignable to type "str"
+  ┬á┬á┬á┬á"Decimal" is not assignable to "str" (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_excel_row_unit.py:125:20 - error: Argument of type "int | str | date | Decimal" cannot be assigned to parameter "cleared" of type "str" in function "__init__"
+  ┬á┬áType "int | str | date | Decimal" is not assignable to type "str"
+  ┬á┬á┬á┬á"Decimal" is not assignable to "str" (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_excel_row_unit.py:125:20 - error: Argument of type "int | str | date | Decimal" cannot be assigned to parameter "payee" of type "str" in function "__init__"
+  ┬á┬áType "int | str | date | Decimal" is not assignable to type "str"
+  ┬á┬á┬á┬á"Decimal" is not assignable to "str" (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_excel_row_unit.py:125:20 - error: Argument of type "int | str | date | Decimal" cannot be assigned to parameter "memo" of type "str" in function "__init__"
+  ┬á┬áType "int | str | date | Decimal" is not assignable to type "str"
+  ┬á┬á┬á┬á"Decimal" is not assignable to "str" (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_excel_row_unit.py:125:20 - error: Argument of type "int | str | date | Decimal" cannot be assigned to parameter "rationale" of type "str" in function "__init__"
+  ┬á┬áType "int | str | date | Decimal" is not assignable to type "str"
+  ┬á┬á┬á┬á"Decimal" is not assignable to "str" (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_excel_row_unit.py:125:20 - error: Argument of type "int | str | date | Decimal" cannot be assigned to parameter "tag" of type "str" in function "__init__"
+  ┬á┬áType "int | str | date | Decimal" is not assignable to type "str"
+  ┬á┬á┬á┬á"Decimal" is not assignable to "str" (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_excel_row_unit.py:125:20 - error: Argument of type "int | str | date | Decimal" cannot be assigned to parameter "price" of type "Decimal" in function "__init__"
+  ┬á┬áType "int | str | date | Decimal" is not assignable to type "Decimal"
+  ┬á┬á┬á┬á"date" is not assignable to "Decimal" (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_excel_row_unit.py:125:20 - error: Argument of type "int | str | date | Decimal" cannot be assigned to parameter "quantity" of type "Decimal" in function "__init__"
+  ┬á┬áType "int | str | date | Decimal" is not assignable to type "Decimal"
+  ┬á┬á┬á┬á"date" is not assignable to "Decimal" (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_excel_row_unit.py:125:20 - error: Argument of type "int | str | date | Decimal" cannot be assigned to parameter "commission" of type "Decimal" in function "__init__"
+  ┬á┬áType "int | str | date | Decimal" is not assignable to type "Decimal"
+  ┬á┬á┬á┬á"date" is not assignable to "Decimal" (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_excel_row_unit.py:125:20 - error: Argument of type "int | str | date | Decimal" cannot be assigned to parameter "transfer_amount" of type "Decimal" in function "__init__"
+  ┬á┬áType "int | str | date | Decimal" is not assignable to type "Decimal"
+  ┬á┬á┬á┬á"date" is not assignable to "Decimal" (reportArgumentType)
+c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_excel_txn_group.py
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_excel_txn_group.py:23:16 - error: Argument of type "object" cannot be assigned to parameter "txn_id" of type "str" in function "__init__"
+  ┬á┬á"object" is not assignable to "str" (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_excel_txn_group.py:58:11 - error: Cannot assign to attribute "total_amount" for class "ExcelTxnGroup"
+  ┬á┬áAttribute "total_amount" is read-only (reportAttributeAccessIssue)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_excel_txn_group.py:80:28 - error: Argument of type "Literal[42]" cannot be assigned to parameter "gid" of type "str" in function "__init__"
+  ┬á┬á"Literal[42]" is not assignable to "str" (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_excel_txn_group.py:82:13 - error: Argument of type "tuple[Literal['bundle'], Literal[1]]" cannot be assigned to parameter "gid" of type "str" in function "__init__"
+  ┬á┬á"tuple[Literal['bundle'], Literal[1]]" is not assignable to "str" (reportArgumentType)
+c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:32:43 - error: Argument type is partially unknown
+  ┬á┬áArgument corresponds to parameter "value" in function "setattr"
+  ┬á┬áArgument type is "(p: Unknown) -> DataFrame" (reportUnknownArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:32:50 - error: Type of parameter "p" is unknown (reportUnknownLambdaType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:50:43 - error: Argument type is partially unknown
+  ┬á┬áArgument corresponds to parameter "value" in function "setattr"
+  ┬á┬áArgument type is "(p: Unknown) -> DataFrame" (reportUnknownArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:50:50 - error: Type of parameter "p" is unknown (reportUnknownLambdaType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:108:15 - error: "_txn_amount" is private and used outside of the module in which it is declared (reportPrivateUsage)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:113:5 - error: Type of "t" is partially unknown
+  ┬á┬áType of "t" is "dict[str, str | list[Unknown]]" (reportUnknownVariableType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:114:15 - error: "_txn_amount" is private and used outside of the module in which it is declared (reportPrivateUsage)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:114:27 - error: Argument type is partially unknown
+  ┬á┬áArgument corresponds to parameter "txn" in function "_txn_amount"
+  ┬á┬áArgument type is "dict[str, str | list[Unknown]]" (reportUnknownArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:150:16 - error: "_flatten_qif_txns" is private and used outside of the module in which it is declared (reportPrivateUsage)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:191:43 - error: Argument type is partially unknown
+  ┬á┬áArgument corresponds to parameter "value" in function "setattr"
+  ┬á┬áArgument type is "(p: Unknown) -> DataFrame" (reportUnknownArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:191:50 - error: Type of parameter "p" is unknown (reportUnknownLambdaType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:202:15 - error: "_ratio" is private and used outside of the module in which it is declared (reportPrivateUsage)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:249:24 - error: Type of parameter "txns" is unknown (reportUnknownParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:249:24 - error: Type annotation is missing for parameter "txns" (reportMissingParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:249:30 - error: Type of parameter "matched_txn_indices" is unknown (reportUnknownParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:249:30 - error: Type annotation is missing for parameter "matched_txn_indices" (reportMissingParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:257:24 - error: Argument type is unknown
+  ┬á┬áArgument corresponds to parameter "txn_index" in function "__init__" (reportUnknownArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:257:41 - error: Type of "ti" is unknown (reportUnknownVariableType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:266:24 - error: Type of parameter "txns" is unknown (reportUnknownParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:266:24 - error: Type annotation is missing for parameter "txns" (reportMissingParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:266:30 - error: Type of parameter "matched_keys" is unknown (reportUnknownParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:266:30 - error: Type annotation is missing for parameter "matched_keys" (reportMissingParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:269:9 - error: Type of "qif_to_excel_row" is partially unknown
+  ┬á┬áType of "qif_to_excel_row" is "dict[Unknown, int]" (reportUnknownMemberType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:269:43 - error: Type of "k" is unknown (reportUnknownVariableType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:271:9 - error: Type of "qif_to_excel" is partially unknown
+  ┬á┬áType of "qif_to_excel" is "dict[Unknown, int]" (reportUnknownMemberType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:271:29 - error: Type of "qif_to_excel_row" is partially unknown
+  ┬á┬áType of "qif_to_excel_row" is "dict[Unknown, int]" (reportUnknownMemberType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:290:30 - error: "__getitem__" method not defined on type "ITransaction" (reportIndexIssue)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:326:5 - error: Type of "s0" is partially unknown
+  ┬á┬áType of "s0" is "Unknown | Any" (reportUnknownVariableType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:326:10 - error: "__getitem__" method not defined on type "ITransaction" (reportIndexIssue)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:327:27 - error: Type of "s" is partially unknown
+  ┬á┬áType of "s" is "Unknown | Any" (reportUnknownVariableType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_excel.py:328:12 - error: "__getitem__" method not defined on type "ITransaction" (reportIndexIssue)
+c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:9:54 - error: "_candidate_cost" is private and used outside of the module in which it is declared (reportPrivateUsage)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:9:71 - error: "_flatten_qif_txns" is private and used outside of the module in which it is declared (reportPrivateUsage)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:12:56 - error: "_to_date" is private and used outside of the module in which it is declared (reportPrivateUsage)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:83:33 - error: Type annotation is missing for parameter "payee" (reportMissingParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:83:44 - error: Type annotation is missing for parameter "memo" (reportMissingParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:83:53 - error: Type annotation is missing for parameter "category" (reportMissingParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:83:66 - error: Type of parameter "splits" is partially unknown
+  ┬á┬áParameter type is "Unknown | None" (reportUnknownParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:83:66 - error: Type annotation is missing for parameter "splits" (reportMissingParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:151:5 - error: Type of "txns" is partially unknown
+  ┬á┬áType of "txns" is "list[dict[str, str] | dict[str, str | list[Unknown]]]" (reportUnknownVariableType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_helpers.py:161:31 - error: Argument type is partially unknown
+  ┬á┬áArgument corresponds to parameter "txns" in function "_flatten_qif_txns"
+  ┬á┬áArgument type is "list[dict[str, str] | dict[str, str | list[Unknown]]]" (reportUnknownArgumentType)
+c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session.py
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session.py:69:5 - error: Function "_isolate_convert_value" is not accessed (reportUnusedFunction)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session.py:69:28 - error: Type of parameter "monkeypatch" is unknown (reportUnknownParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session.py:69:28 - error: Type annotation is missing for parameter "monkeypatch" (reportMissingParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session.py:74:5 - error: Type of "setattr" is unknown (reportUnknownMemberType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session.py:74:53 - error: Type of parameter "_t" is unknown (reportUnknownLambdaType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session.py:74:57 - error: Type of parameter "v" is unknown (reportUnknownLambdaType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session.py:74:60 - error: Return type of lambda is unknown (reportUnknownLambdaType)
+c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_apply_updates_unit.py
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_apply_updates_unit.py:51:5 - error: Function "_identity_convert_value" is not accessed (reportUnusedFunction)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_apply_updates_unit.py:51:29 - error: Type of parameter "monkeypatch" is unknown (reportUnknownParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_apply_updates_unit.py:51:29 - error: Type annotation is missing for parameter "monkeypatch" (reportMissingParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_apply_updates_unit.py:55:5 - error: Type of "setattr" is unknown (reportUnknownMemberType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_apply_updates_unit.py:55:53 - error: Type of parameter "_t" is unknown (reportUnknownLambdaType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_apply_updates_unit.py:55:57 - error: Type of parameter "v" is unknown (reportUnknownLambdaType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_apply_updates_unit.py:55:60 - error: Return type of lambda is unknown (reportUnknownLambdaType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_apply_updates_unit.py:91:12 - error: Type of "splits" is partially unknown
+  ┬á┬áType of "splits" is "list[dict[Unknown, Unknown]] | None" (reportUnknownMemberType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_apply_updates_unit.py:91:35 - error: Type of "splits" is partially unknown
+  ┬á┬áType of "splits" is "list[dict[Unknown, Unknown]]" (reportUnknownMemberType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_apply_updates_unit.py:91:35 - error: Argument type is partially unknown
   ┬á┬áArgument corresponds to parameter "obj" in function "len"
-  ┬á┬áArgument type is "Unknown | list[Any]" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:854:51 - error: Argument type is unknown
-  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:856:41 - error: Argument type is unknown
-  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:858:56 - error: Argument type is unknown
-  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:864:17 - error: Type of "idxs" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:864:24 - error: Type of "curselection" is partially unknown
-  ┬á┬áType of "curselection" is "() -> Unknown" (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:868:17 - error: Type of "_bi" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:868:22 - error: Type of "_ei" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:868:27 - error: Type of "b" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:868:30 - error: Type of "e" is unknown (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:869:17 - error: Type of "excel_row" is partially unknown
-  ┬á┬áType of "excel_row" is "dict[str, Any | str | Unknown | int]" (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:870:38 - error: Argument type is unknown
-  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:871:29 - error: Type of "date" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:871:29 - error: Type of "isoformat" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:872:45 - error: Argument type is unknown
-  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:873:40 - error: Type of "splits" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:873:40 - error: Argument type is partially unknown
-  ┬á┬áArgument corresponds to parameter "obj" in function "len"
-  ┬á┬áArgument type is "Unknown | list[Any]" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:875:33 - error: Argument type is partially unknown
-  ┬á┬áArgument corresponds to parameter "o" in function "getattr"
-  ┬á┬áArgument type is "Unknown | None" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:875:34 - error: Type of "splits" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:875:73 - error: Type of "splits" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:878:33 - error: Argument type is partially unknown
-  ┬á┬áArgument corresponds to parameter "o" in function "getattr"
-  ┬á┬áArgument type is "Unknown | None" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:878:34 - error: Type of "splits" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:879:28 - error: Type of "splits" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:882:48 - error: Argument type is unknown
-  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:884:17 - error: Type of "qif_tx" is partially unknown
-  ┬á┬áType of "qif_tx" is "dict[str, Unknown | str | Any]" (reportUnknownVariableType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:885:29 - error: Type of "date" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:885:29 - error: Type of "isoformat" is unknown (reportUnknownMemberType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:886:43 - error: Argument type is unknown
-  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:887:38 - error: Argument type is unknown
-  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:888:41 - error: Argument type is unknown
-  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
-  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\quicken_helper\gui_viewers\merge_tab.py:889:37 - error: Argument type is unknown
-  ┬á┬áArgument corresponds to parameter "o" in function "getattr" (reportUnknownArgumentType)
-56 errors, 0 warnings, 0 informations
+  ┬á┬áArgument type is "list[dict[Unknown, Unknown]]" (reportUnknownArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_apply_updates_unit.py:92:5 - error: Type of "cats" is partially unknown
+  ┬á┬áType of "cats" is "list[Unknown]" (reportUnknownVariableType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_apply_updates_unit.py:92:32 - error: Type of "sp" is partially unknown
+  ┬á┬áType of "sp" is "dict[Unknown, Unknown]" (reportUnknownVariableType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_apply_updates_unit.py:92:38 - error: Type of "splits" is partially unknown
+  ┬á┬áType of "splits" is "list[dict[Unknown, Unknown]]" (reportUnknownMemberType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_apply_updates_unit.py:93:5 - error: Type of "memos" is partially unknown
+  ┬á┬áType of "memos" is "list[Unknown]" (reportUnknownVariableType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_apply_updates_unit.py:93:29 - error: Type of "sp" is partially unknown
+  ┬á┬áType of "sp" is "dict[Unknown, Unknown]" (reportUnknownVariableType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_apply_updates_unit.py:93:35 - error: Type of "splits" is partially unknown
+  ┬á┬áType of "splits" is "list[dict[Unknown, Unknown]]" (reportUnknownMemberType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_apply_updates_unit.py:94:5 - error: Type of "amts" is partially unknown
+  ┬á┬áType of "amts" is "list[Unknown]" (reportUnknownVariableType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_apply_updates_unit.py:94:30 - error: Type of "sp" is partially unknown
+  ┬á┬áType of "sp" is "dict[Unknown, Unknown]" (reportUnknownVariableType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_apply_updates_unit.py:94:36 - error: Type of "splits" is partially unknown
+  ┬á┬áType of "splits" is "list[dict[Unknown, Unknown]]" (reportUnknownMemberType)
+c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_unit_methods.py
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_unit_methods.py:50:5 - error: Function "_identity_convert_value" is not accessed (reportUnusedFunction)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_unit_methods.py:50:29 - error: Type of parameter "monkeypatch" is unknown (reportUnknownParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_unit_methods.py:50:29 - error: Type annotation is missing for parameter "monkeypatch" (reportMissingParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_unit_methods.py:54:5 - error: Type of "setattr" is unknown (reportUnknownMemberType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_unit_methods.py:54:53 - error: Type of parameter "_t" is unknown (reportUnknownLambdaType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_unit_methods.py:54:57 - error: Type of parameter "v" is unknown (reportUnknownLambdaType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_match_session_unit_methods.py:54:60 - error: Return type of lambda is unknown (reportUnknownLambdaType)
+c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_qif_loader_protocol.py
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_qif_loader_protocol.py:41:5 - error: Type of "transactions" is partially unknown
+  ┬á┬áType of "transactions" is "list[Unknown]" (reportUnknownVariableType)
+c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_txn_compare.py
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_txn_compare.py:30:22 - error: Argument of type "StubTxn" cannot be assigned to parameter "a" of type "ITransaction" in function "compare_txn"
+  ┬á┬á"StubTxn" is incompatible with protocol "ITransaction"
+  ┬á┬á┬á┬á"account" is not present
+  ┬á┬á┬á┬á"type" is not present
+  ┬á┬á┬á┬á"action_chk" is not present
+  ┬á┬á┬á┬á"cleared" is not present
+  ┬á┬á┬á┬á"memo" is not present
+  ┬á┬á┬á┬á"category" is not present
+  ┬á┬á┬á┬á"tag" is not present
+    ... (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_txn_compare.py:30:25 - error: Argument of type "StubTxn" cannot be assigned to parameter "b" of type "ITransaction" in function "compare_txn"
+  ┬á┬á"StubTxn" is incompatible with protocol "ITransaction"
+  ┬á┬á┬á┬á"account" is not present
+  ┬á┬á┬á┬á"type" is not present
+  ┬á┬á┬á┬á"action_chk" is not present
+  ┬á┬á┬á┬á"cleared" is not present
+  ┬á┬á┬á┬á"memo" is not present
+  ┬á┬á┬á┬á"category" is not present
+  ┬á┬á┬á┬á"tag" is not present
+    ... (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_txn_compare.py:46:22 - error: Argument of type "StubTxn" cannot be assigned to parameter "a" of type "ITransaction" in function "compare_txn"
+  ┬á┬á"StubTxn" is incompatible with protocol "ITransaction"
+  ┬á┬á┬á┬á"account" is not present
+  ┬á┬á┬á┬á"type" is not present
+  ┬á┬á┬á┬á"action_chk" is not present
+  ┬á┬á┬á┬á"cleared" is not present
+  ┬á┬á┬á┬á"memo" is not present
+  ┬á┬á┬á┬á"category" is not present
+  ┬á┬á┬á┬á"tag" is not present
+    ... (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_txn_compare.py:46:28 - error: Argument of type "StubTxn" cannot be assigned to parameter "b" of type "ITransaction" in function "compare_txn"
+  ┬á┬á"StubTxn" is incompatible with protocol "ITransaction"
+  ┬á┬á┬á┬á"account" is not present
+  ┬á┬á┬á┬á"type" is not present
+  ┬á┬á┬á┬á"action_chk" is not present
+  ┬á┬á┬á┬á"cleared" is not present
+  ┬á┬á┬á┬á"memo" is not present
+  ┬á┬á┬á┬á"category" is not present
+  ┬á┬á┬á┬á"tag" is not present
+    ... (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_txn_compare.py:47:22 - error: Argument of type "StubTxn" cannot be assigned to parameter "a" of type "ITransaction" in function "compare_txn"
+  ┬á┬á"StubTxn" is incompatible with protocol "ITransaction"
+  ┬á┬á┬á┬á"account" is not present
+  ┬á┬á┬á┬á"type" is not present
+  ┬á┬á┬á┬á"action_chk" is not present
+  ┬á┬á┬á┬á"cleared" is not present
+  ┬á┬á┬á┬á"memo" is not present
+  ┬á┬á┬á┬á"category" is not present
+  ┬á┬á┬á┬á"tag" is not present
+    ... (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_txn_compare.py:47:28 - error: Argument of type "StubTxn" cannot be assigned to parameter "b" of type "ITransaction" in function "compare_txn"
+  ┬á┬á"StubTxn" is incompatible with protocol "ITransaction"
+  ┬á┬á┬á┬á"account" is not present
+  ┬á┬á┬á┬á"type" is not present
+  ┬á┬á┬á┬á"action_chk" is not present
+  ┬á┬á┬á┬á"cleared" is not present
+  ┬á┬á┬á┬á"memo" is not present
+  ┬á┬á┬á┬á"category" is not present
+  ┬á┬á┬á┬á"tag" is not present
+    ... (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_txn_compare.py:48:23 - error: Argument of type "StubTxn" cannot be assigned to parameter "a" of type "ITransaction" in function "compare_txn"
+  ┬á┬á"StubTxn" is incompatible with protocol "ITransaction"
+  ┬á┬á┬á┬á"account" is not present
+  ┬á┬á┬á┬á"type" is not present
+  ┬á┬á┬á┬á"action_chk" is not present
+  ┬á┬á┬á┬á"cleared" is not present
+  ┬á┬á┬á┬á"memo" is not present
+  ┬á┬á┬á┬á"category" is not present
+  ┬á┬á┬á┬á"tag" is not present
+    ... (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_txn_compare.py:48:29 - error: Argument of type "StubTxn" cannot be assigned to parameter "b" of type "ITransaction" in function "compare_txn"
+  ┬á┬á"StubTxn" is incompatible with protocol "ITransaction"
+  ┬á┬á┬á┬á"account" is not present
+  ┬á┬á┬á┬á"type" is not present
+  ┬á┬á┬á┬á"action_chk" is not present
+  ┬á┬á┬á┬á"cleared" is not present
+  ┬á┬á┬á┬á"memo" is not present
+  ┬á┬á┬á┬á"category" is not present
+  ┬á┬á┬á┬á"tag" is not present
+    ... (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_txn_compare.py:64:28 - error: Argument of type "StubTxn" cannot be assigned to parameter "a" of type "ITransaction" in function "compare_txn"
+  ┬á┬á"StubTxn" is incompatible with protocol "ITransaction"
+  ┬á┬á┬á┬á"account" is not present
+  ┬á┬á┬á┬á"type" is not present
+  ┬á┬á┬á┬á"action_chk" is not present
+  ┬á┬á┬á┬á"cleared" is not present
+  ┬á┬á┬á┬á"memo" is not present
+  ┬á┬á┬á┬á"category" is not present
+  ┬á┬á┬á┬á"tag" is not present
+    ... (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_txn_compare.py:64:31 - error: Argument of type "StubTxn" cannot be assigned to parameter "b" of type "ITransaction" in function "compare_txn"
+  ┬á┬á"StubTxn" is incompatible with protocol "ITransaction"
+  ┬á┬á┬á┬á"account" is not present
+  ┬á┬á┬á┬á"type" is not present
+  ┬á┬á┬á┬á"action_chk" is not present
+  ┬á┬á┬á┬á"cleared" is not present
+  ┬á┬á┬á┬á"memo" is not present
+  ┬á┬á┬á┬á"category" is not present
+  ┬á┬á┬á┬á"tag" is not present
+    ... (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_txn_compare.py:65:26 - error: Argument of type "StubTxn" cannot be assigned to parameter "a" of type "ITransaction" in function "compare_txn"
+  ┬á┬á"StubTxn" is incompatible with protocol "ITransaction"
+  ┬á┬á┬á┬á"account" is not present
+  ┬á┬á┬á┬á"type" is not present
+  ┬á┬á┬á┬á"action_chk" is not present
+  ┬á┬á┬á┬á"cleared" is not present
+  ┬á┬á┬á┬á"memo" is not present
+  ┬á┬á┬á┬á"category" is not present
+  ┬á┬á┬á┬á"tag" is not present
+    ... (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_txn_compare.py:65:29 - error: Argument of type "StubTxn" cannot be assigned to parameter "b" of type "ITransaction" in function "compare_txn"
+  ┬á┬á"StubTxn" is incompatible with protocol "ITransaction"
+  ┬á┬á┬á┬á"account" is not present
+  ┬á┬á┬á┬á"type" is not present
+  ┬á┬á┬á┬á"action_chk" is not present
+  ┬á┬á┬á┬á"cleared" is not present
+  ┬á┬á┬á┬á"memo" is not present
+  ┬á┬á┬á┬á"category" is not present
+  ┬á┬á┬á┬á"tag" is not present
+    ... (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_txn_compare.py:68:12 - error: Operator "<=" not supported for types "float" and "object" (reportOperatorIssue)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_txn_compare.py:68:19 - error: Operator "<=" not supported for types "object" and "float" (reportOperatorIssue)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_txn_compare.py:69:12 - error: Operator "<=" not supported for types "float" and "object" (reportOperatorIssue)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_txn_compare.py:69:19 - error: Operator "<=" not supported for types "object" and "float" (reportOperatorIssue)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_txn_compare.py:80:22 - error: Argument of type "StubTxn" cannot be assigned to parameter "a" of type "ITransaction" in function "compare_txn"
+  ┬á┬á"StubTxn" is incompatible with protocol "ITransaction"
+  ┬á┬á┬á┬á"account" is not present
+  ┬á┬á┬á┬á"type" is not present
+  ┬á┬á┬á┬á"action_chk" is not present
+  ┬á┬á┬á┬á"cleared" is not present
+  ┬á┬á┬á┬á"memo" is not present
+  ┬á┬á┬á┬á"category" is not present
+  ┬á┬á┬á┬á"tag" is not present
+    ... (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_txn_compare.py:80:25 - error: Argument of type "StubTxn" cannot be assigned to parameter "b" of type "ITransaction" in function "compare_txn"
+  ┬á┬á"StubTxn" is incompatible with protocol "ITransaction"
+  ┬á┬á┬á┬á"account" is not present
+  ┬á┬á┬á┬á"type" is not present
+  ┬á┬á┬á┬á"action_chk" is not present
+  ┬á┬á┬á┬á"cleared" is not present
+  ┬á┬á┬á┬á"memo" is not present
+  ┬á┬á┬á┬á"category" is not present
+  ┬á┬á┬á┬á"tag" is not present
+    ... (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_txn_compare.py:94:22 - error: Argument of type "StubTxn" cannot be assigned to parameter "a" of type "ITransaction" in function "compare_txn"
+  ┬á┬á"StubTxn" is incompatible with protocol "ITransaction"
+  ┬á┬á┬á┬á"account" is not present
+  ┬á┬á┬á┬á"type" is not present
+  ┬á┬á┬á┬á"action_chk" is not present
+  ┬á┬á┬á┬á"cleared" is not present
+  ┬á┬á┬á┬á"memo" is not present
+  ┬á┬á┬á┬á"category" is not present
+  ┬á┬á┬á┬á"tag" is not present
+    ... (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\controllers\test_txn_compare.py:94:25 - error: Argument of type "StubTxn" cannot be assigned to parameter "b" of type "ITransaction" in function "compare_txn"
+  ┬á┬á"StubTxn" is incompatible with protocol "ITransaction"
+  ┬á┬á┬á┬á"account" is not present
+  ┬á┬á┬á┬á"type" is not present
+  ┬á┬á┬á┬á"action_chk" is not present
+  ┬á┬á┬á┬á"cleared" is not present
+  ┬á┬á┬á┬á"memo" is not present
+  ┬á┬á┬á┬á"category" is not present
+  ┬á┬á┬á┬á"tag" is not present
+    ... (reportArgumentType)
+c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_convert_value.py
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_convert_value.py:41:45 - error: Type of parameter "target_type" is unknown (reportUnknownParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_convert_value.py:41:45 - error: Type annotation is missing for parameter "target_type" (reportMissingParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_convert_value.py:41:58 - error: Type of parameter "value" is unknown (reportUnknownParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_convert_value.py:41:58 - error: Type annotation is missing for parameter "value" (reportMissingParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_convert_value.py:41:65 - error: Type of parameter "expected" is unknown (reportUnknownParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_convert_value.py:41:65 - error: Type annotation is missing for parameter "expected" (reportMissingParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_convert_value.py:44:5 - error: Type of "out" is unknown (reportUnknownVariableType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_convert_value.py:44:25 - error: Argument type is unknown
+  ┬á┬áArgument corresponds to parameter "target_type" in function "convert_value" (reportUnknownArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_convert_value.py:44:38 - error: Argument type is unknown
+  ┬á┬áArgument corresponds to parameter "value" in function "convert_value" (reportUnknownArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_convert_value.py:64:44 - error: Type of parameter "value" is unknown (reportUnknownParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_convert_value.py:64:44 - error: Type annotation is missing for parameter "value" (reportMissingParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_convert_value.py:64:51 - error: Type of parameter "expected" is unknown (reportUnknownParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_convert_value.py:64:51 - error: Type annotation is missing for parameter "expected" (reportMissingParameterType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_convert_value.py:67:31 - error: Argument type is unknown
+  ┬á┬áArgument corresponds to parameter "value" in function "convert_value" (reportUnknownArgumentType)
+c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_converters_collection.py
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_converters_collection.py:15:5 - error: "_to_deque" is private and used outside of the module in which it is declared (reportPrivateUsage)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_converters_collection.py:16:5 - error: "_to_dict" is private and used outside of the module in which it is declared (reportPrivateUsage)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_converters_collection.py:17:5 - error: "_to_frozenset" is private and used outside of the module in which it is declared (reportPrivateUsage)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_converters_collection.py:18:5 - error: "_to_list" is private and used outside of the module in which it is declared (reportPrivateUsage)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_converters_collection.py:19:5 - error: "_to_set" is private and used outside of the module in which it is declared (reportPrivateUsage)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_converters_collection.py:20:5 - error: "_to_tuple" is private and used outside of the module in which it is declared (reportPrivateUsage)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_converters_collection.py:39:5 - error: Function "_str_converter" is not accessed (reportUnusedFunction)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_converters_collection.py:465:20 - error: Return type, "list[Unknown]", is partially unknown (reportUnknownVariableType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_converters_collection.py:465:25 - error: Argument type is partially unknown
+  ┬á┬áArgument corresponds to parameter "iterable" in function "__init__"
+  ┬á┬áArgument type is "tuple[Unknown, ...]" (reportUnknownArgumentType)
+c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_converters_scalar.py
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_converters_scalar.py:16:5 - error: "_to_bool" is private and used outside of the module in which it is declared (reportPrivateUsage)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_converters_scalar.py:17:5 - error: "_to_float" is private and used outside of the module in which it is declared (reportPrivateUsage)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_converters_scalar.py:18:5 - error: "_to_int" is private and used outside of the module in which it is declared (reportPrivateUsage)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_converters_scalar.py:19:5 - error: "_to_str" is private and used outside of the module in which it is declared (reportPrivateUsage)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_converters_scalar.py:657:5 - error: Type of "result" is unknown (reportUnknownVariableType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_converters_scalar.py:657:14 - error: No overloads for "to_date" match the provided arguments (reportCallIssue)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_converters_scalar.py:657:22 - error: Argument of type "None" cannot be assigned to parameter "s" of type "str" in function "to_date"
+  ┬á┬á"None" is not assignable to "str" (reportArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_converters_scalar.py:798:9 - error: No overloads for "to_datetime" match the provided arguments (reportCallIssue)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_converters_scalar.py:798:21 - error: Argument of type "list[int]" cannot be assigned to parameter "value" of type "str" in function "to_datetime"
+  ┬á┬á"list[int]" is not assignable to "str" (reportArgumentType)
+c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_core_utilities.py
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_core_utilities.py:63:10 - error: No overloads for "open_for_read" match the provided arguments
+  ┬á┬áArgument types: (Path) (reportCallIssue)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_core_utilities.py:63:30 - error: Type of "f" is unknown (reportUnknownVariableType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_core_utilities.py:64:9 - error: Type of "data" is unknown (reportUnknownVariableType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_core_utilities.py:64:16 - error: Type of "read" is unknown (reportUnknownMemberType)
+c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_from_dict.py
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_from_dict.py:45:5 - error: Type of "children" is partially unknown
+  ┬á┬áType of "children" is "list[Unknown]" (reportUnknownVariableType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_from_dict.py:80:5 - error: Type of "payload" is partially unknown
+  ┬á┬áType of "payload" is "dict[str, str | dict[str, int] | tuple[int, int] | list[Unknown]]" (reportUnknownVariableType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\utilities\test_from_dict.py:89:29 - error: Argument type is partially unknown
+  ┬á┬áArgument corresponds to parameter "src" in function "from_dict"
+  ┬á┬áArgument type is "dict[str, str | dict[str, int] | tuple[int, int] | list[Unknown]]" (reportUnknownArgumentType)
+154 errors, 0 warnings, 0 informations

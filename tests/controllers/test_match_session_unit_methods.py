@@ -47,17 +47,17 @@ def _mk_tx(d: str, a: str, p: str = "") -> StubTxn:
 
 
 @pytest.fixture(autouse=True)
-def _identity_convert_value(monkeypatch):
+def _identity_convert_value(monkeypatch: pytest.MonkeyPatch) -> None:  # type: ignore[reportUnusedFunction]
     """Isolation: treat convert_value as identity (no adapters)."""
     import quicken_helper.controllers.match_session as ms
 
-    monkeypatch.setattr(ms, "convert_value", lambda _t, v: v)
+    monkeypatch.setattr(ms, "convert_value", lambda _t, v: v)  # type: ignore[misc]
 
 
 # ------------------------------ nonmatch_reason -------------------------------
 
 
-def test_nonmatch_reason_reports_no_equal_amount_candidates():
+def test_nonmatch_reason_reports_no_equal_amount_candidates() -> None:
     """Negative: when no Excel txn has equal amount, nonmatch_reason should say so and include the amount."""
     s = MatchSession(
         txns=[_mk_tx("2025-01-10", "-10.00", "A")],
@@ -67,7 +67,7 @@ def test_nonmatch_reason_reports_no_equal_amount_candidates():
     assert "No equal-amount candidates" in msg and "10.00" in msg
 
 
-def test_nonmatch_reason_prefers_closer_date_and_mentions_features():
+def test_nonmatch_reason_prefers_closer_date_and_mentions_features() -> None:
     """Positive: among equal-amount candidates, the closer date wins; message includes date delta and payee sim."""
     s = MatchSession(
         txns=[_mk_tx("2025-01-10", "-10.00", "Acme")],
@@ -85,7 +85,7 @@ def test_nonmatch_reason_prefers_closer_date_and_mentions_features():
 # -------------------------------- auto_match ----------------------------------
 
 
-def test_auto_match_greedy_one_to_one_with_threshold():
+def test_auto_match_greedy_one_to_one_with_threshold() -> None:
     """Positive: auto_match yields one-to-one pairs, respects threshold, and leaves unmatched lists consistent."""
     s = MatchSession(
         txns=[_mk_tx("2025-08-01", "10.00", "A"), _mk_tx("2025-08-02", "20.00", "B")],
@@ -105,7 +105,7 @@ def test_auto_match_greedy_one_to_one_with_threshold():
 # ------------------------------- manual_match ---------------------------------
 
 
-def test_manual_match_overrides_conflicts_and_is_one_to_one():
+def test_manual_match_overrides_conflicts_and_is_one_to_one() -> None:
     """Positive: manual_match overrides any conflicting existing pairings, keeping the mapping one-to-one."""
     s = MatchSession(
         txns=[_mk_tx("2025-08-01", "10.00"), _mk_tx("2025-08-02", "20.00")],
@@ -126,7 +126,7 @@ def test_manual_match_overrides_conflicts_and_is_one_to_one():
 # ------------------------------ manual_unmatch --------------------------------
 
 
-def test_manual_unmatch_by_bank_and_by_excel_index():
+def test_manual_unmatch_by_bank_and_by_excel_index() -> None:
     """Positive: manual_unmatch removes pairs when called by either bank_index or excel_index."""
     s = MatchSession(
         txns=[_mk_tx("2025-08-01", "10.00")],

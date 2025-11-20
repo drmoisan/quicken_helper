@@ -30,7 +30,7 @@ class StubTxn:
     payee: str = ""
     memo: str = ""
     category: str = ""
-    splits: list[dict] | None = None
+    splits: list[dict[str, object]] | None = None
     # Required by ITransaction protocol
     account: IAccount = field(
         default_factory=lambda: QAccount(name="", type="", description="")
@@ -48,17 +48,17 @@ class StubTxn:
 
 
 @pytest.fixture(autouse=True)
-def _identity_convert_value(monkeypatch):
+def _identity_convert_value(monkeypatch: pytest.MonkeyPatch) -> None:  # type: ignore[reportUnusedFunction]
     """Isolation: stub convert_value to identity so tests don't depend on adapters."""
     import quicken_helper.controllers.match_session as ms
 
-    monkeypatch.setattr(ms, "convert_value", lambda _t, v: v)
+    monkeypatch.setattr(ms, "convert_value", lambda _t, v: v)  # type: ignore[misc]
 
 
 # ---------- Tests -------------------------------------------------------------
 
 
-def test_matching_does_not_modify_bank_splits():
+def test_matching_does_not_modify_bank_splits() -> None:
     """Positive: matching is read-only; existing bank splits remain unchanged after auto_match."""
     bank = [
         StubTxn(
@@ -89,15 +89,16 @@ def test_matching_does_not_modify_bank_splits():
     # Assert (paired, but bank object is unchanged)
     assert pairs == [(bank[0], excel[0])]
     assert bank[0].splits and len(bank[0].splits) == 2
-    cats = [sp["category"] for sp in bank[0].splits]
-    memos = [sp["memo"] for sp in bank[0].splits]
-    amts = [sp["amount"] for sp in bank[0].splits]
+    # Extract categories, memos, and amounts from splits
+    cats = [sp["category"] for sp in bank[0].splits]  # type: ignore
+    memos = [sp["memo"] for sp in bank[0].splits]  # type: ignore
+    amts = [sp["amount"] for sp in bank[0].splits]  # type: ignore
     assert cats == ["Old:Cat", "Old:Cat"]
     assert memos == ["old1", "old2"]
     assert amts == [Decimal("-10.00"), Decimal("-10.00")]
 
 
-def test_manual_match_and_accessors_consistency():
+def test_manual_match_and_accessors_consistency() -> None:
     """Positive: manual_match creates a single pair; accessors reflect unmatched sets deterministically."""
     bank = [
         StubTxn(date=date(2025, 8, 1), amount=Decimal("10.00")),

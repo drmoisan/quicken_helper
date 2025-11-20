@@ -21,7 +21,7 @@ from quicken_helper.legacy.qif_writer import (
 
 
 @pytest.fixture
-def memfs(monkeypatch):
+def memfs(monkeypatch: pytest.MonkeyPatch):  # type: ignore[reportUnusedFunction]
     """
     Patch builtins.open so writes go to StringIO keyed by path.
     You can then read back the content via memfs.read(path).
@@ -29,7 +29,13 @@ def memfs(monkeypatch):
     files: dict[str, io.StringIO] = {}
     real_open = builtins.open
 
-    def fake_open(file, mode="r", encoding=None, newline=None, **kwargs):
+    def fake_open(
+        file: object,
+        mode: str = "r",
+        encoding: str | None = None,
+        newline: str | None = None,
+        **kwargs: object,
+    ) -> object:
         # Normalize whatever object (Path, str, etc.) into a string key
         key = str(file)
 
@@ -46,7 +52,7 @@ def memfs(monkeypatch):
             return contextlib.nullcontext(io.StringIO(files[key].getvalue()))
 
         # Fall back to real open for anything else
-        return real_open(file, mode, encoding=encoding, newline=newline, **kwargs)
+        return real_open(file, mode, encoding=encoding, newline=newline, **kwargs)  # type: ignore[call-overload]
 
     monkeypatch.setattr(builtins, "open", fake_open, raising=True)
 
@@ -60,23 +66,27 @@ def memfs(monkeypatch):
     return MemFS()
 
 
-def test__open_for_write_uses_builtins_open(monkeypatch, tmp_path):
+def test__open_for_write_uses_builtins_open(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
     # Arrange
-    from quicken_helper.legacy.qif_writer import _open_for_write
+    from quicken_helper.legacy.qif_writer import (
+        _open_for_write,  # type: ignore[reportPrivateUsage]
+    )
 
     called = {"open": False}
 
-    def fake_open(*a, **k):
+    def fake_open(*a: object, **k: object) -> object:
         called["open"] = True
 
         class _F:
-            def __enter__(self):
+            def __enter__(self) -> _F:
                 return self
 
-            def __exit__(self, *e):
+            def __exit__(self, *e: object) -> None:
                 pass
 
-            def write(self, *_):
+            def write(self, *_: object) -> None:
                 pass
 
         return _F()
@@ -94,7 +104,7 @@ def test__open_for_write_uses_builtins_open(monkeypatch, tmp_path):
 # ---------- write_qif (bank) ----------
 
 
-def test_write_qif_basic_bank_record_in_memory(memfs):
+def test_write_qif_basic_bank_record_in_memory(memfs: object) -> None:
     txns = [
         {
             "account": "Checking",
@@ -117,7 +127,7 @@ def test_write_qif_basic_bank_record_in_memory(memfs):
     out = Path("MEM://out.data_model")
     write_qif(out, txns)
 
-    text = memfs.read(out)
+    text = memfs.read(out)  # type: ignore[attr-defined]
     # Basic structure assertions
     assert "!Account" in text
     assert "NChecking" in text
@@ -140,7 +150,7 @@ def test_write_qif_basic_bank_record_in_memory(memfs):
 # ---------- CSV (flat) ----------
 
 
-def test_write_csv_flat_in_memory(memfs):
+def test_write_csv_flat_in_memory(memfs: object) -> None:
     txns = [
         {
             "date": "2025-02-01",
@@ -168,8 +178,8 @@ def test_write_csv_flat_in_memory(memfs):
     out = Path("MEM://flat.csv")
     write_csv_flat(txns, out)
 
-    content = memfs.read(out)
-    reader = csv.DictReader(io.StringIO(content))
+    content = memfs.read(out)  # type: ignore[attr-defined]
+    reader = csv.DictReader(io.StringIO(content))  # type: ignore[arg-type]
     # Ensure columns
     assert reader.fieldnames == [
         "account",
@@ -215,7 +225,7 @@ def test_write_csv_flat_in_memory(memfs):
 # ---------- CSV (exploded) ----------
 
 
-def test_write_csv_exploded_in_memory(memfs):
+def test_write_csv_exploded_in_memory(memfs: object) -> None:
     txns = [
         {
             "date": "2025-03-01",
@@ -241,8 +251,8 @@ def test_write_csv_exploded_in_memory(memfs):
     out = Path("MEM://exploded.csv")
     write_csv_exploded(txns, out)
 
-    content = memfs.read(out)
-    reader = csv.DictReader(io.StringIO(content))
+    content = memfs.read(out)  # type: ignore[attr-defined]
+    reader = csv.DictReader(io.StringIO(content))  # type: ignore[arg-type]
     assert reader.fieldnames == [
         "account",
         "type",
@@ -280,7 +290,7 @@ def test_write_csv_exploded_in_memory(memfs):
 # ---------- CSV (Quicken Windows) ----------
 
 
-def test_write_csv_quicken_windows_in_memory(memfs):
+def test_write_csv_quicken_windows_in_memory(memfs: object) -> None:
     txns = [
         {
             "date": "2025-04-01",
@@ -300,11 +310,11 @@ def test_write_csv_quicken_windows_in_memory(memfs):
         },
     ]
 
-    out = Path("MEM://qw.csv")
+    out = Path("MEM://qwin.csv")
     write_csv_quicken_windows(txns, out)
 
-    content = memfs.read(out)
-    reader = csv.DictReader(io.StringIO(content))
+    content = memfs.read(out)  # type: ignore[attr-defined]
+    reader = csv.DictReader(io.StringIO(content))  # type: ignore[arg-type]
 
     # Exact header expected by our writer
     assert reader.fieldnames == [
@@ -333,7 +343,7 @@ def test_write_csv_quicken_windows_in_memory(memfs):
 # ---------- CSV (Quicken Mac / Mint) ----------
 
 
-def test_write_csv_quicken_mac_in_memory(memfs):
+def test_write_csv_quicken_mac_in_memory(memfs: object) -> None:
     txns = [
         {
             "date": "2025-05-01",
@@ -351,11 +361,11 @@ def test_write_csv_quicken_mac_in_memory(memfs):
         },
     ]
 
-    out = Path("MEM://qm.csv")
+    out = Path("MEM://qmac.csv")
     write_csv_quicken_mac(txns, out)
 
-    content = memfs.read(out)
-    reader = csv.DictReader(io.StringIO(content))
+    content = memfs.read(out)  # type: ignore[attr-defined]
+    reader = csv.DictReader(io.StringIO(content))  # type: ignore[arg-type]
 
     # Exact header expected by our writer
     assert reader.fieldnames == [

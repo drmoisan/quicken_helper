@@ -15,7 +15,9 @@ from quicken_helper.data_model import (
 
 
 class _StubCategory:
-    def __init__(self, name="DefaultCatName", description="DefaultCatDescription"):
+    def __init__(
+        self, name: str = "DefaultCatName", description: str = "DefaultCatDescription"
+    ) -> None:
         self.name = name
         self.description = description
         self.calls: list[bool] = []
@@ -38,7 +40,9 @@ class _StubCategory:
 
 
 class _StubTag:
-    def __init__(self, name="DefaultTagName", description="DefaultTagDescription"):
+    def __init__(
+        self, name: str = "DefaultTagName", description: str = "DefaultTagDescription"
+    ) -> None:
         self.name = name
         self.description = description
         self.calls: list[bool] = []
@@ -75,7 +79,8 @@ class _StubItem:
         return f"{self.header}\n{self.body}" if with_header else self.body
 
 
-def test_constructor_initializes_empty_lists_and_none_section():
+def test_constructor_initializes_empty_lists_and_none_section() -> None:
+    """Test QuickenFile constructor initializes with empty collections and NONE section."""
     # Arrange
     f = QuickenFile()  # account arg is ignored in current impl
 
@@ -88,7 +93,8 @@ def test_constructor_initializes_empty_lists_and_none_section():
     assert f.transactions == []
 
 
-def test_emit_section_sets_with_header_true_only_for_first_item():
+def test_emit_section_sets_with_header_true_only_for_first_item() -> None:
+    """Test emit_section sets with_header=True only for first item in section."""
     # Arrange
     f = QuickenFile()
     a = _StubItem("A")
@@ -106,7 +112,8 @@ def test_emit_section_sets_with_header_true_only_for_first_item():
     assert b.calls == [False], "Subsequent items must be called with with_header=False"
 
 
-def test_emit_qif_raises_when_no_section_selected():
+def test_emit_qif_raises_when_no_section_selected() -> None:
+    """Test emit_qif raises ValueError when sections is NONE."""
     # Arrange
     f = QuickenFile()
     f.sections = QuickenSections.NONE
@@ -116,7 +123,10 @@ def test_emit_qif_raises_when_no_section_selected():
         f.emit_qif()
 
 
-def test_emit_qif_concatenates_selected_sections_in_order_and_ends_with_newline():
+def test_emit_qif_concatenates_selected_sections_in_order_and_ends_with_newline() -> (
+    None
+):
+    """Test emit_qif concatenates selected sections in correct order."""
     # Arrange
     f = QuickenFile()
     # Enable TAGS then CATEGORIES (order matters in output)
@@ -146,7 +156,8 @@ def test_emit_qif_concatenates_selected_sections_in_order_and_ends_with_newline(
     assert c1.calls == [True]
 
 
-def test_emit_qif_can_emit_any_subset_of_sections_independently():
+def test_emit_qif_can_emit_any_subset_of_sections_independently() -> None:
+    """Test emit_qif can emit any subset of sections independently."""
     # Arrange
     f = QuickenFile()
     # Only CATEGORIES selected
@@ -166,7 +177,8 @@ def test_emit_qif_can_emit_any_subset_of_sections_independently():
     assert c2.calls == [False]
 
 
-def test_emit_transactions_returns_empty_when_no_transactions():
+def test_emit_transactions_returns_empty_when_no_transactions() -> None:
+    """Test emit_transactions returns empty string when no transactions exist."""
     # Arrange
     f = QuickenFile()
     f.transactions = []

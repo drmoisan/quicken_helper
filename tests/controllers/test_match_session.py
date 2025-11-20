@@ -66,18 +66,18 @@ def _mk_excel(*rows: tuple[str, str, str]) -> list[StubTxn]:
 
 
 @pytest.fixture(autouse=True)
-def _isolate_convert_value(monkeypatch):
+def _isolate_convert_value(monkeypatch: pytest.MonkeyPatch) -> None:  # type: ignore[reportUnusedFunction]
     """
     Isolation: stub out convert_value so tests don't depend on concrete implementations
     or the _PROTOCOL_IMPLEMENTATION mapping. It becomes identity.
     """
-    monkeypatch.setattr(ms, "convert_value", lambda _t, v: v)
+    monkeypatch.setattr(ms, "convert_value", lambda _t, v: v)  # type: ignore[misc]
 
 
 # ---- Tests -------------------------------------------------------------------
 
 
-def test_constructor_coerces_to_protocol_and_preserves_order():
+def test_constructor_coerces_to_protocol_and_preserves_order() -> None:
     """Positive: constructor coerces inputs and preserves element identity/order."""
     bank = _mk_bank(("2025-08-01", "10.00", "A"), ("2025-08-02", "20.00", "B"))
     excel = _mk_excel(("2025-08-01", "10.00", "A*"), ("2025-08-03", "30.00", "C"))
@@ -92,7 +92,7 @@ def test_constructor_coerces_to_protocol_and_preserves_order():
     assert s.excel_txns[1] is excel[1]
 
 
-def test_auto_match_basic_equal_amount_and_date_tie_break():
+def test_auto_match_basic_equal_amount_and_date_tie_break() -> None:
     """Positive: auto_match pairs equal-amount txns, preferring closest date then payee similarity."""
     # Arrange: bank has two amounts; excel has same amounts but dates/payees vary
     bank = _mk_bank(
@@ -118,7 +118,9 @@ def test_auto_match_basic_equal_amount_and_date_tie_break():
     assert s.unmatched_excel == [excel[1]]
 
 
-def test_auto_match_respects_threshold_and_rejects_low_scores(monkeypatch):
+def test_auto_match_respects_threshold_and_rejects_low_scores(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """Negative: setting a very high threshold yields no matches."""
     # Arrange: equal amounts but far dates → very low scores
     bank = _mk_bank(("2025-01-01", "50.00", "X"))
@@ -134,7 +136,7 @@ def test_auto_match_respects_threshold_and_rejects_low_scores(monkeypatch):
     assert s.unmatched_excel == excel
 
 
-def test_manual_match_overrides_and_is_one_to_one():
+def test_manual_match_overrides_and_is_one_to_one() -> None:
     """Positive: manual_match enforces one-to-one by unhooking conflicting pairs."""
     bank = _mk_bank(
         ("2025-08-01", "10.00", "A"),
@@ -157,7 +159,7 @@ def test_manual_match_overrides_and_is_one_to_one():
     assert s.unmatched_excel == [excel[0]]
 
 
-def test_manual_unmatch_by_bank_and_excel():
+def test_manual_unmatch_by_bank_and_excel() -> None:
     """Positive: manual_unmatch removes pairs by either side's index."""
     bank = _mk_bank(("2025-08-01", "10.00", "A"))
     excel = _mk_excel(("2025-08-01", "10.00", "A1"))
@@ -179,7 +181,7 @@ def test_manual_unmatch_by_bank_and_excel():
     assert s.unmatched_excel == excel
 
 
-def test_nonmatch_reason_reports_when_no_equal_amount_candidates():
+def test_nonmatch_reason_reports_when_no_equal_amount_candidates() -> None:
     """Negative: nonmatch_reason clearly reports when there are no equal-amount candidates."""
     bank = _mk_bank(("2025-08-01", "10.00", "Acme"))
     excel = _mk_excel(("2025-08-01", "11.00", "Acme"))  # different amount
@@ -193,7 +195,7 @@ def test_nonmatch_reason_reports_when_no_equal_amount_candidates():
     assert "10.00" in msg  # includes target amount
 
 
-def test_nonmatch_reason_includes_best_candidate_features():
+def test_nonmatch_reason_includes_best_candidate_features() -> None:
     """Positive: nonmatch_reason includes score, date delta, and payee similarity with reasons."""
     bank = _mk_bank(("2025-08-10", "25.00", "Globex"))
     # Same amount candidates: one is closer in date, another with worse payee
@@ -215,7 +217,7 @@ def test_nonmatch_reason_includes_best_candidate_features():
     assert "day(s) apart" in msg or "Same date" in msg
 
 
-def test_accessors_pairs_and_unmatched_after_auto_match():
+def test_accessors_pairs_and_unmatched_after_auto_match() -> None:
     """Positive: pairs/unmatched_* accessors reflect current session state deterministically."""
     bank = _mk_bank(("2025-08-01", "10.00", "A"), ("2025-08-02", "20.00", "B"))
     excel = _mk_excel(("2025-08-01", "10.00", "A1"))

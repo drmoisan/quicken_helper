@@ -5,7 +5,8 @@ import pytest
 from quicken_helper.data_model.q_wrapper.qif_code import QifCode
 
 
-def test_qif_code_stores_fields_and_is_frozen():
+def test_qif_code_stores_fields_and_is_frozen() -> None:
+    """Test QifCode stores fields correctly and is immutable (frozen)."""
     # Arrange
     c = QifCode(
         code="N",
@@ -25,12 +26,13 @@ def test_qif_code_stores_fields_and_is_frozen():
 
     # Immutability / frozen dataclass behavior
     with pytest.raises(FrozenInstanceError):
-        c.code = "X"
+        c.code = "X"  # type: ignore[misc]
     with pytest.raises(FrozenInstanceError):
-        c.description = "Changed"
+        c.description = "Changed"  # type: ignore[misc]
 
 
-def test_qif_code_equality_relies_on_code_only():
+def test_qif_code_equality_relies_on_code_only() -> None:
+    """Test QifCode equality is based solely on code field."""
     # Arrange
     a = QifCode(code="D", description="Date", used_in="All", example="D01/02'25")
     b = QifCode(
@@ -46,7 +48,8 @@ def test_qif_code_equality_relies_on_code_only():
     assert a != c, "Different code → not equal."
 
 
-def test_qif_code_hash_uses_code_only_and_dedupes_in_sets_and_dicts():
+def test_qif_code_hash_uses_code_only_and_dedupes_in_sets_and_dicts() -> None:
+    """Test QifCode hash is based on code only and deduplicates in collections."""
     # Arrange
     a = QifCode(code="P", description="Payee", used_in="All", example="PCoffee Shop")
     b = QifCode(code="P", description="Different", used_in="Bank", example="PStore")
@@ -64,7 +67,8 @@ def test_qif_code_hash_uses_code_only_and_dedupes_in_sets_and_dicts():
     assert d[b] == "overwrites_first", "b should reference same dict key as a."
 
 
-def test_qif_code_eq_with_non_qifcode_returns_false_not_error():
+def test_qif_code_eq_with_non_qifcode_returns_false_not_error() -> None:
+    """Test QifCode equality with non-QifCode types returns False."""
     # Arrange
     a = QifCode(code="M", description="Memo", used_in="All", example="MLatte")
 

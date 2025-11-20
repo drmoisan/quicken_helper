@@ -85,6 +85,5 @@ exclude = [
   ".ruff_cache",
   ".venv",
   "build",
-  "dist",
-  "tests"
+  "dist"
 ]

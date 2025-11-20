@@ -23,7 +23,7 @@ def _mk_qif(
 # -------------------------------- read_bytes ----------------------------------
 
 
-def test_read_bytes_reads_exact_file_bytes(tmp_path: Path):
+def test_read_bytes_reads_exact_file_bytes(tmp_path: Path) -> None:
     """read_bytes: returns the identical bytes written to the file (binary-safe)."""
     p = tmp_path / "blob.bin"
     data = b"\x00\x01ABC\xff"
@@ -34,7 +34,7 @@ def test_read_bytes_reads_exact_file_bytes(tmp_path: Path):
 # --------------------------------- hex_head -----------------------------------
 
 
-def test_hex_head_returns_lowercase_hex_of_prefix():
+def test_hex_head_returns_lowercase_hex_of_prefix() -> None:
     """hex_head: formats the first N bytes as lowercase hex, length == 2*N."""
     data = b"\x00\x01\xab\xcd\xef"
     out = qdx.hex_head(data, length=4)
@@ -45,17 +45,17 @@ def test_hex_head_returns_lowercase_hex_of_prefix():
 # ---------------------------------- entropy -----------------------------------
 
 
-def test_entropy_zero_stream_is_zero_and_uniform_0_255_is_eight_bits():
+def test_entropy_zero_stream_is_zero_and_uniform_0_255_is_eight_bits() -> None:
     """entropy: 0.0 bits/byte for constant stream; ~8.0 for a uniform 0..255 byte set."""
     assert qdx.entropy(b"\x00" * 256) == 0.0
     # A single pass of 0..255 should evaluate to 8.0 exactly in this implementation.
-    assert pytest.approx(qdx.entropy(bytes(range(256))), rel=0, abs=1e-9) == 8.0
+    assert qdx.entropy(bytes(range(256))) == pytest.approx(8.0, rel=0, abs=1e-9)  # type: ignore[misc]
 
 
 # ------------------------------- string scans ---------------------------------
 
 
-def test_iter_ascii_strings_emits_only_runs_of_len_at_least_MIN_STR():
+def test_iter_ascii_strings_emits_only_runs_of_len_at_least_MIN_STR() -> None:
     """iter_ascii_strings: emits only ASCII runs with length >= MIN_STR; shorter runs are ignored."""
     # runs: "short"(5) ignored, "longenough"(10) captured, "123456"(6) captured
     data = b"short\x00longenough\x00abc\x00123456\x00"
@@ -64,7 +64,7 @@ def test_iter_ascii_strings_emits_only_runs_of_len_at_least_MIN_STR():
     assert not any(s == "short" for s in outs)
 
 
-def test_iter_utf16le_strings_extracts_readable_runs(tmp_path: Path):
+def test_iter_utf16le_strings_extracts_readable_runs(tmp_path: Path) -> None:
     """iter_utf16le_strings: decodes UTF-16LE runs and emits those >= MIN_STR characters."""
     s = "hello world"  # 11 chars >= default MIN_STR=6
     data = s.encode("utf-16le")
@@ -75,7 +75,7 @@ def test_iter_utf16le_strings_extracts_readable_runs(tmp_path: Path):
 # ------------------------------- container sigs -------------------------------
 
 
-def test_is_zip_and_is_gzip_detect_headers():
+def test_is_zip_and_is_gzip_detect_headers() -> None:
     """is_zip/is_gzip: detect PK.. (ZIP) and 1F 8B 08.. (GZIP) magic headers; random bytes are False."""
     assert qdx.is_zip(b"PK\x03\x04more")
     assert qdx.is_gzip(b"\x1f\x8b\x08rest")
@@ -86,7 +86,7 @@ def test_is_zip_and_is_gzip_detect_headers():
 # ------------------------------ zlib detection --------------------------------
 
 
-def test_find_zlib_streams_and_try_decompress_at_roundtrip():
+def test_find_zlib_streams_and_try_decompress_at_roundtrip() -> None:
     """find_zlib_streams/try_decompress_at: finds zlib header offsets and decompresses successfully.
     Invalid offsets return None from try_decompress_at.
     """
@@ -95,7 +95,7 @@ def test_find_zlib_streams_and_try_decompress_at_roundtrip():
     assert offs and offs[0] == 4  # immediately after "HEAD"
     # Valid offset decompresses
     out = qdx.try_decompress_at(payload, offs[0])
-    assert out.startswith(b"spam")
+    assert out is not None and out.startswith(b"spam")
     # Invalid offset yields None
     assert qdx.try_decompress_at(payload, 1) is None
 
@@ -103,7 +103,7 @@ def test_find_zlib_streams_and_try_decompress_at_roundtrip():
 # -------------------------------- preview_text --------------------------------
 
 
-def test_preview_text_truncates_and_falls_back_to_latin1():
+def test_preview_text_truncates_and_falls_back_to_latin1() -> None:
     """preview_text: decodes as UTF-8 with ignore; falls back to latin-1; trims; truncates with ellipsis."""
     # Force latin-1 fallback (\xff) and length > maxlen to trigger ellipsis.
     blob = b"\xff" + b"x" * 100
@@ -115,7 +115,7 @@ def test_preview_text_truncates_and_falls_back_to_latin1():
 # -------------------------------- QIF counter ---------------------------------
 
 
-def test_count_qif_transactions_counts_caret_lines(tmp_path: Path):
+def test_count_qif_transactions_counts_caret_lines(tmp_path: Path) -> None:
     """count_qif_transactions: counts lines that are exactly '^' as transactions."""
     qif = _mk_qif(tmp_path, body="!Type:Bank\n^\n^\n^\n")
     assert qdx.count_qif_transactions(qif) == 3
@@ -124,7 +124,9 @@ def test_count_qif_transactions_counts_caret_lines(tmp_path: Path):
 # ------------------------------- run_probe (I/O) -------------------------------
 
 
-def test_run_probe_returns_report_and_no_artifacts_when_out_none(tmp_path: Path):
+def test_run_probe_returns_report_and_no_artifacts_when_out_none(
+    tmp_path: Path,
+) -> None:
     """run_probe: on a zlib-only blob, returns a report as a string and no artifacts when out=None.
     The report includes container info, zlib candidate preview, and QIF comparison.
     """
@@ -132,8 +134,8 @@ def test_run_probe_returns_report_and_no_artifacts_when_out_none(tmp_path: Path)
     qdx_path.write_bytes(zlib.compress(b"<xml>hello</xml> moretext"))
     qif = _mk_qif(tmp_path)
 
-    report, artifacts = qdx.run_probe(qdx_path, qif=qif, out=None)
-    assert isinstance(report, str) and artifacts == []
+    report, _artifacts = qdx.run_probe(qdx_path, qif=qif, out=None)
+    assert isinstance(report, str) and _artifacts == []
     # Robust substring checks (don’t rely on exact formatting):
     assert "# QDX Probe" in report
     assert "Container" in report or "Container:" in report
@@ -144,7 +146,7 @@ def test_run_probe_returns_report_and_no_artifacts_when_out_none(tmp_path: Path)
     )  # explicit standalone line for easy asserting
 
 
-def test_run_probe_writes_txt_and_artifacts_when_out_is_file(tmp_path: Path):
+def test_run_probe_writes_txt_and_artifacts_when_out_is_file(tmp_path: Path) -> None:
     """run_probe: when 'out' is a .txt path, writes the report to that path and saves artifacts
     (e.g., decompressed zlib_* blobs) into the same directory; returns artifact paths.
     """
@@ -154,7 +156,7 @@ def test_run_probe_writes_txt_and_artifacts_when_out_is_file(tmp_path: Path):
     qif = _mk_qif(tmp_path, body="^\n^\n^\n")
     out_txt = tmp_path / "probe.txt"
 
-    report, artifacts = qdx.run_probe(qdx_path, qif=qif, out=out_txt)
+    _report, artifacts = qdx.run_probe(qdx_path, qif=qif, out=out_txt)
     assert out_txt.exists()
     # At least one decompressed blob should be saved; verify contents are plausible length.
     assert artifacts and all(p.exists() for p in artifacts)
@@ -162,13 +164,13 @@ def test_run_probe_writes_txt_and_artifacts_when_out_is_file(tmp_path: Path):
     assert any("00000004" in p.name for p in artifacts)
 
 
-def test_run_probe_writes_txt_inside_dir_when_out_is_directory(tmp_path: Path):
+def test_run_probe_writes_txt_inside_dir_when_out_is_directory(tmp_path: Path) -> None:
     """run_probe: when 'out' is a directory, writes 'qdx_probe_report.txt' inside it and saves artifacts there."""
     out_dir = tmp_path / "outdir"
     out_dir.mkdir()
     qdx_path = tmp_path / "f.qdx"
     qdx_path.write_bytes(zlib.compress(b"abc" * 10))
-    report, artifacts = qdx.run_probe(qdx_path, qif=None, out=out_dir)
+    report, _artifacts = qdx.run_probe(qdx_path, qif=None, out=out_dir)
 
     report_file = out_dir / "qdx_probe_report.txt"
     assert report_file.exists()

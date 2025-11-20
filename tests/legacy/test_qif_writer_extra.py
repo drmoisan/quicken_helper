@@ -2,46 +2,61 @@ from __future__ import annotations
 
 import csv
 import io
+from collections.abc import Sequence
 from pathlib import Path
+
+import pytest
 
 import quicken_helper.legacy.qif_writer as qw
 
 # ----------------------- helpers (CSV capture w/ args) ------------------------
 
 
-def _capture_csv_and_args(monkeypatch, call_fn, txns, *, newline=""):
+def _capture_csv_and_args(
+    monkeypatch: pytest.MonkeyPatch,
+    call_fn: object,
+    txns: Sequence[dict[str, object]],
+    *,
+    newline: str = "",
+) -> tuple[str, dict[str, object]]:
     """Monkeypatch qw._open_for_write to an in-memory stream that captures
     both the written CSV text (on close) and the arguments passed to the
     open helper (e.g., newline). Returns (csv_text, open_args).
     """
     captured = {"newline": None, "text": ""}
 
-    def fake_open(path, *, binary=False, newline=""):
+    def fake_open(
+        path: object, *, binary: bool = False, newline: str = ""
+    ) -> io.StringIO:
         captured["newline"] = newline
 
         class CapturingStringIO(io.StringIO):
-            def close(self):
+            def close(self) -> None:
                 captured["text"] = self.getvalue()
                 super().close()
 
         return CapturingStringIO()
 
     monkeypatch.setattr(qw, "_open_for_write", fake_open, raising=True)
-    call_fn(txns, Path("dummy.csv"), newline=newline)
-    return captured["text"], {"newline": captured["newline"]}
+    call_fn(txns, Path("dummy.csv"), newline=newline)  # type: ignore[operator]
+    return captured["text"], {"newline": captured["newline"]}  # type: ignore[return-value]
 
 
 # put near your other helpers in tests/test_qif_writer_extra.py
-def _capture_csv_text(monkeypatch, call_fn, txns):
+def _capture_csv_text(
+    monkeypatch: pytest.MonkeyPatch, call_fn: object, txns: Sequence[dict[str, object]]
+) -> str:
     """Monkeypatch qw._open_for_write to an in-memory stream and return the
     final CSV text written by the function under test."""
     captured = {}
 
     import io
 
-    def fake_open(path, *, binary=False, newline=""):
+    def fake_open(
+        path: object, *, binary: bool = False, newline: str = ""
+    ) -> io.StringIO:
         class CapturingStringIO(io.StringIO):
-            def close(self):
+            def close(self) -> None:
                 captured["text"] = self.getvalue()
                 super().close()
 
@@ -55,21 +70,21 @@ def _capture_csv_text(monkeypatch, call_fn, txns):
 
     from pathlib import Path
 
-    call_fn(txns, Path("dummy.csv"))
-    return captured["text"]
+    call_fn(txns, Path("dummy.csv"))  # type: ignore[operator]
+    return captured["text"]  # type: ignore[return-value]
 
 
 # ----------------------------- QIF extra coverage -----------------------------
 
 
-def test_write_qif_empty_input_produces_empty_output(tmp_path):
+def test_write_qif_empty_input_produces_empty_output(tmp_path: Path) -> None:
     """write_qif: when given an empty list of transactions, writes nothing."""
     out_path = tmp_path / "out.qif"
     qw.write_qif(out_path, [])
     assert out_path.read_text(encoding="utf-8") == ""
 
 
-def test_write_qif_skips_optional_fields_when_missing(tmp_path):
+def test_write_qif_skips_optional_fields_when_missing(tmp_path: Path) -> None:
     """write_qif: when memo/category/checknum/cleared/address/splits are absent,
     omits the corresponding lines (M/L/N/C/A/S/E/$). Only core D/T/P are present.
 
@@ -112,8 +127,8 @@ def test_write_qif_skips_optional_fields_when_missing(tmp_path):
 
 
 def test_write_qif_investment_minimal_action_only_skips_missing_security_fields(
-    tmp_path,
-):
+    tmp_path: Path,
+) -> None:
     """write_qif (Invst): if only 'action' is supplied, emit N<Action> but omit
     Y/Q/I/O when security/quantity/price/commission are missing."""
     txns = [
@@ -141,7 +156,9 @@ def test_write_qif_investment_minimal_action_only_skips_missing_security_fields(
 # ----------------------------- CSV extra coverage -----------------------------
 
 
-def test_write_csv_flat_header_only_on_empty_input(monkeypatch):
+def test_write_csv_flat_header_only_on_empty_input(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """write_csv_flat: with no transactions, writes just the header row (no data rows)."""
     csv_text, _args = _capture_csv_and_args(monkeypatch, qw.write_csv_flat, [])
     # DictReader to parse header; expect zero rows
@@ -152,7 +169,9 @@ def test_write_csv_flat_header_only_on_empty_input(monkeypatch):
     assert {"date", "amount", "payee"}.issubset(set(reader.fieldnames or []))
 
 
-def test_write_csv_exploded_header_only_on_empty_input(monkeypatch):
+def test_write_csv_exploded_header_only_on_empty_input(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """write_csv_exploded: with no transactions, writes just the header row."""
     csv_text, _args = _capture_csv_and_args(monkeypatch, qw.write_csv_exploded, [])
     reader = csv.DictReader(io.StringIO(csv_text))
@@ -162,7 +181,9 @@ def test_write_csv_exploded_header_only_on_empty_input(monkeypatch):
     )
 
 
-def test_write_csv_quicken_windows_uses_crlf_line_endings(monkeypatch):
+def test_write_csv_quicken_windows_uses_crlf_line_endings(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """write_csv_quicken_windows: emits CRLF line endings when DictWriter is
     configured with lineterminator='\\r\\n' (platform-independent)."""
     import quicken_helper.legacy.qif_writer as qw
@@ -177,7 +198,7 @@ def test_write_csv_quicken_windows_uses_crlf_line_endings(monkeypatch):
         }
     ]
 
-    text = _capture_csv_text(monkeypatch, qw.write_csv_quicken_windows, txns)
+    text = _capture_csv_text(monkeypatch, qw.write_csv_quicken_windows, txns)  # type: ignore[arg-type]
 
     lines = text.splitlines(keepends=True)
     assert len(lines) >= 2  # header + at least one data row
@@ -187,7 +208,9 @@ def test_write_csv_quicken_windows_uses_crlf_line_endings(monkeypatch):
     assert text.replace("\r\n", "").find("\n") == -1
 
 
-def test_write_csv_quicken_mac_uses_lf_line_endings(monkeypatch):
+def test_write_csv_quicken_mac_uses_lf_line_endings(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """write_csv_quicken_mac: emits LF line endings when DictWriter is
     configured with lineterminator='\\n' (platform-independent)."""
     import quicken_helper.legacy.qif_writer as qw
@@ -202,7 +225,7 @@ def test_write_csv_quicken_mac_uses_lf_line_endings(monkeypatch):
         }
     ]
 
-    text = _capture_csv_text(monkeypatch, qw.write_csv_quicken_mac, txns)
+    text = _capture_csv_text(monkeypatch, qw.write_csv_quicken_mac, txns)  # type: ignore[arg-type]
 
     lines = text.splitlines(keepends=True)
     assert len(lines) >= 2  # header + at least one data row

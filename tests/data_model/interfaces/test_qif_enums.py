@@ -6,7 +6,8 @@ from quicken_helper.data_model import EnumClearedStatus, QuickenSections
 # ---------- QifSections (IntFlag) ----------
 
 
-def test_qifsections_bitwise_membership_and_combination():
+def test_qifsections_bitwise_membership_and_combination() -> None:
+    """Test bitwise OR combines flags and AND checks membership correctly."""
     # Arrange
     flags = QuickenSections.TAGS | QuickenSections.CATEGORIES  # combine two flags
 
@@ -25,7 +26,8 @@ def test_qifsections_bitwise_membership_and_combination():
     assert not has_transactions
 
 
-def test_qifsections_add_and_remove_using_bit_ops_from_none():
+def test_qifsections_add_and_remove_using_bit_ops_from_none() -> None:
+    """Test adding and removing section flags using bitwise operations from NONE."""
     # Arrange
     flags = QuickenSections.NONE
 
@@ -50,7 +52,8 @@ def test_qifsections_add_and_remove_using_bit_ops_from_none():
     assert not after_remove_accounts
 
 
-def test_qifsections_unique_values_and_none_zero():
+def test_qifsections_unique_values_and_none_zero() -> None:
+    """Test that each section flag has a unique value and NONE equals zero."""
     # Arrange
     members = [
         QuickenSections.NONE,
@@ -73,7 +76,8 @@ def test_qifsections_unique_values_and_none_zero():
 # ---------- ClearedStatus ----------
 
 
-def test_clearedstatus_from_char_valid_and_invalid():
+def test_clearedstatus_from_char_valid_and_invalid() -> None:
+    """Test from_char parses valid QIF cleared status codes and raises on invalid."""
     # Arrange / Act
     cleared = EnumClearedStatus.from_char("*")
     not_cleared1 = EnumClearedStatus.from_char("N")
@@ -112,7 +116,8 @@ def test_clearedstatus_from_char_valid_and_invalid():
 #     assert s_unknown == ""
 
 
-def test_clearedstatus_ordering_and_equality():
+def test_clearedstatus_ordering_and_equality() -> None:
+    """Test cleared status ordering follows RECONCILED < CLEARED < NOT_CLEARED/UNKNOWN."""
     # Arrange
     r = EnumClearedStatus.RECONCILED
     c = EnumClearedStatus.CLEARED

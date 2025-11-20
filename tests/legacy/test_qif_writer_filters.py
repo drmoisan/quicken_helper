@@ -4,11 +4,14 @@ from __future__ import annotations
 import pytest
 
 import quicken_helper.legacy.qif_writer as qw
+from quicken_helper.legacy.qif_writer import (
+    _match_one,  # type: ignore[reportPrivateUsage]
+)
 
 # ------------------------------ _match_one ------------------------------------
 
 
-def test__match_one_basic_modes_and_case():
+def test__match_one_basic_modes_and_case() -> None:
     """_match_one: supports contains/exact/startswith/endswith with case handling.
 
     Verifies:
@@ -20,22 +23,20 @@ def test__match_one_basic_modes_and_case():
     payee = "Acme Market Inc"
 
     # contains (default: case-insensitive)
-    assert qw._match_one(payee, "market", mode="contains", case_sensitive=False)
-    assert not qw._match_one(payee, "xmarketx", mode="contains", case_sensitive=False)
+    assert _match_one(payee, "market", mode="contains", case_sensitive=False)
+    assert not _match_one(payee, "xmarketx", mode="contains", case_sensitive=False)
 
     # exact
-    assert qw._match_one(payee, "Acme Market Inc", mode="exact", case_sensitive=True)
-    assert not qw._match_one(
-        payee, "acme market inc", mode="exact", case_sensitive=True
-    )
+    assert _match_one(payee, "Acme Market Inc", mode="exact", case_sensitive=True)
+    assert not _match_one(payee, "acme market inc", mode="exact", case_sensitive=True)
 
     # startswith / endswith
-    assert qw._match_one(payee, "Acme", mode="startswith", case_sensitive=True)
-    assert qw._match_one(payee, "inc", mode="endswith", case_sensitive=False)
-    assert not qw._match_one(payee, "INC", mode="endswith", case_sensitive=True)
+    assert _match_one(payee, "Acme", mode="startswith", case_sensitive=True)
+    assert _match_one(payee, "inc", mode="endswith", case_sensitive=False)
+    assert not _match_one(payee, "INC", mode="endswith", case_sensitive=True)
 
 
-def test__match_one_regex_and_glob_modes():
+def test__match_one_regex_and_glob_modes() -> None:
     """_match_one: supports regex and glob, honoring case sensitivity.
 
     Verifies:
@@ -45,28 +46,28 @@ def test__match_one_regex_and_glob_modes():
     payee = "Acme Market Inc"
 
     # regex (case-insensitive)
-    assert qw._match_one(payee, r"acme\s+market", mode="regex", case_sensitive=False)
+    assert _match_one(payee, r"acme\s+market", mode="regex", case_sensitive=False)
     # regex (case-sensitive)
-    assert not qw._match_one(payee, r"acme\s+market", mode="regex", case_sensitive=True)
-    assert qw._match_one(payee, r"Acme\s+Market", mode="regex", case_sensitive=True)
+    assert not _match_one(payee, r"acme\s+market", mode="regex", case_sensitive=True)
+    assert _match_one(payee, r"Acme\s+Market", mode="regex", case_sensitive=True)
 
     # glob (case-insensitive path: pattern is compared lower-cased)
-    assert qw._match_one(payee, "acme*inc", mode="glob", case_sensitive=False)
+    assert _match_one(payee, "acme*inc", mode="glob", case_sensitive=False)
     # glob (case-sensitive path)
-    assert qw._match_one(payee, "Acme*Inc", mode="glob", case_sensitive=True)
-    assert not qw._match_one(payee, "ACME*INC", mode="glob", case_sensitive=True)
+    assert _match_one(payee, "Acme*Inc", mode="glob", case_sensitive=True)
+    assert not _match_one(payee, "ACME*INC", mode="glob", case_sensitive=True)
 
 
-def test__match_one_raises_on_unknown_mode():
+def test__match_one_raises_on_unknown_mode() -> None:
     """_match_one: raises ValueError for unsupported match mode."""
     with pytest.raises(ValueError):
-        qw._match_one("Payee", "x", mode="nope", case_sensitive=False)
+        _match_one("Payee", "x", mode="nope", case_sensitive=False)  # type: ignore[arg-type]
 
 
 # ---------------------------- filter_by_payee ---------------------------------
 
 
-def test_filter_by_payee_single_query_all_modes_basic():
+def test_filter_by_payee_single_query_all_modes_basic() -> None:
     """filter_by_payee: filters transactions by a single query using the specified mode.
 
     We verify:
@@ -96,7 +97,7 @@ def test_filter_by_payee_single_query_all_modes_basic():
 # --------------------------- filter_by_payees ---------------------------------
 
 
-def test_filter_by_payees_any_vs_all_combines_queries():
+def test_filter_by_payees_any_vs_all_combines_queries() -> None:
     """filter_by_payees: supports OR ('any') and AND ('all') combination across queries.
 
     Setup includes:
@@ -122,7 +123,7 @@ def test_filter_by_payees_any_vs_all_combines_queries():
     assert [t["payee"] for t in out_all] == ["Acme Bistro"]
 
 
-def test_filter_by_payees_regex_and_glob_modes():
+def test_filter_by_payees_regex_and_glob_modes() -> None:
     """filter_by_payees: works with regex and glob modes across multiple queries.
 
     We use:
@@ -149,7 +150,7 @@ def test_filter_by_payees_regex_and_glob_modes():
 # ------------------------- filter_by_date_range --------------------------------
 
 
-def test_filter_by_date_range_inclusive_and_formats():
+def test_filter_by_date_range_inclusive_and_formats() -> None:
     """filter_by_date_range: includes boundary dates and supports multiple formats.
 
     Dates in txns:
@@ -172,7 +173,7 @@ def test_filter_by_date_range_inclusive_and_formats():
     assert [t["payee"] for t in out] == ["A", "B", "B2"]
 
 
-def test_filter_by_date_range_open_ended_from_and_to():
+def test_filter_by_date_range_open_ended_from_and_to() -> None:
     """filter_by_date_range: supports open-ended windows (only from, only to).
 
     Verify:

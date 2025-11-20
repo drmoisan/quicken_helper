@@ -69,7 +69,7 @@ def test_frozen_immutability():
     import pytest
 
     with pytest.raises(FrozenInstanceError):
-        key.txn_index = 11
+        key.txn_index = 11  # type: ignore[misc]
 
     with pytest.raises(FrozenInstanceError):
-        key.split_index = 0
+        key.split_index = 0  # type: ignore[misc]

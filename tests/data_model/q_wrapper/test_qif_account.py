@@ -3,7 +3,8 @@ from quicken_helper.data_model.q_wrapper.q_account import QAccount
 from quicken_helper.data_model.q_wrapper.qif_header import QifHeader
 
 
-def test_header_returns_expected_qifheader():
+def test_header_returns_expected_qifheader() -> None:
+    """Test header returns expected QifHeader instance with correct code."""
     # Arrange
     acct = QAccount(name="Checking", type="Bank", description="Primary Checking")
 
@@ -19,7 +20,8 @@ def test_header_returns_expected_qifheader():
     assert h == QifHeader("!Account", "ignored desc", "ignored type")
 
 
-def test_qifentry_without_header_emits_fields_and_caret():
+def test_qifentry_without_header_emits_fields_and_caret() -> None:
+    """Test qif_entry without header emits fields and terminating caret."""
     # Arrange
     acct = QAccount(name="Checking", type="Bank", description="My checking")
 
@@ -30,7 +32,8 @@ def test_qifentry_without_header_emits_fields_and_caret():
     assert out == "NChecking\nTBank\nDMy checking\n^"
 
 
-def test_qifentry_with_header_includes_header_code_first():
+def test_qifentry_with_header_includes_header_code_first() -> None:
+    """Test qif_entry with header includes header code first."""
     # Arrange
     acct = QAccount(name="Checking", type="Bank", description="My checking")
 
@@ -42,7 +45,8 @@ def test_qifentry_with_header_includes_header_code_first():
     assert out == expected
 
 
-def test_equality_and_hash_semantics():
+def test_equality_and_hash_semantics() -> None:
+    """Test equality is based on name and type, with consistent hashing."""
     # Arrange
     a1 = QAccount(name="Checking", type="Bank", description="desc A")
     a2 = QAccount(
@@ -64,7 +68,8 @@ def test_equality_and_hash_semantics():
     assert (a1 == not_acct) is False
 
 
-def test_defaults_emit_empty_fields_and_caret():
+def test_defaults_emit_empty_fields_and_caret() -> None:
+    """Test default account emits empty fields with terminating caret."""
     # Arrange
     acct = QAccount()  # all defaults: empty strings
 
