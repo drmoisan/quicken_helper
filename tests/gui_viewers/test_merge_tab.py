@@ -13,17 +13,24 @@ from __future__ import annotations
 import importlib
 import sys
 import types
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from datetime import date
 from decimal import Decimal
 from pathlib import Path
+from typing import Any
 
 import pytest
 
-from quicken_helper.data_model import (
-    EnumClearedStatus,
-    IQuickenFile,
-    ITransaction,
+from quicken_helper.data_model.excel import (
+    ExcelRow,
+    ExcelTxnGroup,
+    map_group_to_excel_txn,
+)
+from quicken_helper.data_model.q_wrapper import (
+    QSplit,
+    QTransaction,
+    QuickenFile,
 )
 
 # --------------------------
@@ -31,34 +38,7 @@ from quicken_helper.data_model import (
 # --------------------------
 
 
-class _FileStub(IQuickenFile):
-    """Minimal IQuickenFile implementation for MergeTab tests."""
-
-    def __init__(self, path=""):
-        self.path = path
-        self.transactions = []
-        self.accounts = []
-        self.headers = []
-        self.other_sections = {}
-
-
-class _TransactionStub(ITransaction):
-    """Minimal ITransaction implementation for MergeTab tests."""
-
-    def __init__(self, **kw):
-        self.date = kw.get("date", date(1985, 11, 5))
-        self.amount = kw.get("amount", Decimal(0))
-        self.payee = kw.get("payee", "")
-        self.memo = kw.get("memo", "")
-        self.category = kw.get("category", "")
-        self.tag = kw.get("tag", "")
-        self.action_chk = kw.get("action_chk", "")
-        self.cleared = kw.get("cleared", EnumClearedStatus.UNKNOWN)
-        self.splits = kw.get("splits", [])
-        self._dict = kw.get("_dict", {})
-
-    def to_dict(self):
-        return self._dict
+# Using real QuickenFile and QTransaction from q_wrapper instead of stubs
 
 
 class _DummyVar:
@@ -67,15 +47,15 @@ class _DummyVar:
     and provides get()/set().
     """
 
-    def __init__(self, v=None, **kwargs):
+    def __init__(self, v: object = None, **kwargs: object) -> None:
         if "value" in kwargs:
             v = kwargs["value"]
-        self._v = "" if v is None else v
+        self._v: object = "" if v is None else v
 
-    def get(self):
+    def get(self) -> object:
         return self._v
 
-    def set(self, v):
+    def set(self, v: object) -> None:
         self._v = v
 
 
@@ -85,14 +65,14 @@ class _TextStub:
     Accepts height/width/state kwargs and supports common methods used by the code.
     """
 
-    def __init__(self, *args, **kwargs):
-        self._buf = ""
-        self._height = kwargs.get("height")
-        self._width = kwargs.get("width")
-        self._state = kwargs.get("state", "normal")
+    def __init__(self, *args: object, **kwargs: object) -> None:
+        self._buf: str = ""
+        self._height: object = kwargs.get("height")
+        self._width: object = kwargs.get("width")
+        self._state: object = kwargs.get("state", "normal")
 
     # Tk-style config API
-    def configure(self, **kwargs):
+    def configure(self, **kwargs: object) -> None:
         if "height" in kwargs:
             self._height = kwargs["height"]
         if "width" in kwargs:
@@ -102,7 +82,7 @@ class _TextStub:
 
     config = configure  # alias
 
-    def cget(self, key):
+    def cget(self, key: str) -> object:
         if key == "height":
             return self._height
         if key == "width":
@@ -112,155 +92,159 @@ class _TextStub:
         return None
 
     # Text content API (indices ignored; whole-buffer semantics are fine for tests)
-    def get(self, start="1.0", end="end"):
+    def get(self, start: str = "1.0", end: str = "end") -> str:
         return self._buf
 
-    def insert(self, index, s):
+    def insert(self, index: object, s: object) -> None:
         if self._state == "disabled":
             return
         self._buf += str(s)
 
-    def delete(self, start="1.0", end="end"):
+    def delete(self, start: str = "1.0", end: str = "end") -> None:
         if self._state == "disabled":
             return
         self._buf = ""
 
-    def see(self, index):
+    def see(self, index: object) -> None:
         pass
 
     # Geometry + misc
-    def pack(self, *a, **k):
+    def pack(self, *a: object, **k: object) -> None:
         pass
 
-    def pack_forget(self, *a, **k):
+    def pack_forget(self, *a: object, **k: object) -> None:
         pass
 
-    def grid(self, *a, **k):
+    def grid(self, *a: object, **k: object) -> None:
         pass
 
-    def bind(self, *a, **k):
+    def bind(self, *a: object, **k: object) -> None:
         pass
 
 
 class _ListboxStub:
     """Minimal Listbox supporting insert/get/delete/bind/selection/grid."""
 
-    def __init__(self, *a, **k):
-        self._items = []
-        self._binds = {}
-        self._sel = set()
+    def __init__(self, *a: object, **k: object) -> None:
+        self._items: list[str] = []
+        self._binds: dict[str, object] = {}
+        self._sel: set[int] = set()
 
-    def insert(self, index, s):
-        self._items.append(s)
+    def insert(self, index: object, s: object) -> None:
+        self._items.append(str(s))
 
-    def get(self, a, b=None):
+    def get(self, a: object, b: object = None) -> str | tuple[str, ...]:
         if a == 0 and (b == "end" or b is None):
             return tuple(self._items)
         if isinstance(a, int) and b is None:
             return self._items[a]
         return tuple(self._items)
 
-    def delete(self, a, b=None):
+    def delete(self, a: object, b: object = None) -> None:
         self._items.clear()
         self._sel.clear()
 
-    def bind(self, evt, fn):
+    def bind(self, evt: str, fn: object) -> None:
         self._binds[evt] = fn
 
-    def curselection(self):
+    def curselection(self) -> tuple[int, ...]:
         return tuple(sorted(self._sel))
 
-    def selection_set(self, i):
+    def selection_set(self, i: int) -> None:
         self._sel.add(i)
 
-    def pack(self, *a, **k):
+    def pack(self, *a: object, **k: object) -> None:
         pass
 
-    def grid(self, *a, **k):
+    def grid(self, *a: object, **k: object) -> None:
         pass
 
 
 class _FakeMB:
     """Messagebox shim that records calls and controls askyesno return."""
 
-    def __init__(self, askyesno_return=True):
-        self.calls = []
-        self._ask = askyesno_return
+    def __init__(self, askyesno_return: bool = True) -> None:
+        self.calls: list[tuple[str, tuple[object, ...], dict[str, object]]] = []
+        self._ask: bool = askyesno_return
 
-    def showinfo(self, *a, **k):
+    def showinfo(self, *a: object, **k: object) -> None:
         self.calls.append(("showinfo", a, k))
 
-    def showerror(self, *a, **k):
+    def showerror(self, *a: object, **k: object) -> None:
         self.calls.append(("showerror", a, k))
 
-    def askyesno(self, *a, **k):
+    def askyesno(self, *a: object, **k: object) -> bool:
         self.calls.append(("askyesno", a, k))
         return self._ask
 
 
-def _install_tk_stubs(monkeypatch, filedialog_overrides=None, toplevel_raises=False):
+def _install_tk_stubs(
+    monkeypatch: Any,
+    filedialog_overrides: Mapping[str, object] | None = None,
+    toplevel_raises: bool = False,
+) -> None:
     """Install minimal tkinter/ttk stubs so MergeTab can import & run headlessly."""
     # ---------------- tkinter ----------------
     tk = types.ModuleType("tkinter")
 
     class Tk:
-        def __init__(self, *a, **k):
+        def __init__(self, *a: object, **k: object) -> None:
             pass
 
     class Toplevel:
-        def __init__(self, *a, **k):
+        def __init__(self, *a: object, **k: object) -> None:
             if toplevel_raises:
                 raise RuntimeError("Headless Toplevel disabled for this test")
 
-        def title(self, *a, **k):
+        def title(self, *a: object, **k: object) -> None:
             pass
 
-        def geometry(self, *a, **k):
+        def geometry(self, *a: object, **k: object) -> None:
             pass
 
-        def destroy(self):
+        def destroy(self) -> None:
             pass
 
-    tk.Tk = Tk
-    tk.Toplevel = Toplevel
-    tk.StringVar = _DummyVar
-    tk.BooleanVar = _DummyVar
-    tk.Text = _TextStub
-    tk.Listbox = _ListboxStub
+    tk.Tk = Tk  # type: ignore[attr-defined]
+    tk.Toplevel = Toplevel  # type: ignore[attr-defined]
+    tk.StringVar = _DummyVar  # type: ignore[attr-defined]
+    tk.BooleanVar = _DummyVar  # type: ignore[attr-defined]
+    tk.Text = _TextStub  # type: ignore[attr-defined]
+    tk.Listbox = _ListboxStub  # type: ignore[attr-defined]
 
     # ---------------- ttk ----------------
     ttk = types.ModuleType("tkinter.ttk")
 
     class _Base:
-        def __init__(self, *a, **k):
+        def __init__(self, *a: object, **k: object) -> None:
             pass
 
-        def pack(self, *a, **k):
+        def pack(self, *a: object, **k: object) -> None:
             pass
 
-        def pack_forget(self, *a, **k):
+        def pack_forget(self, *a: object, **k: object) -> None:
             pass
 
-        def grid(self, *a, **k):
+        def grid(self, *a: object, **k: object) -> None:
             pass
 
-        def columnconfigure(self, *a, **k):
+        def columnconfigure(self, *a: object, **k: object) -> None:
             pass
 
-        def rowconfigure(self, *a, **k):
+        def rowconfigure(self, *a: object, **k: object) -> None:
             pass
 
-        def configure(self, *a, **k):
+        def configure(self, *a: object, **k: object) -> None:
             pass
 
-        def winfo_toplevel(self):
+        def winfo_toplevel(self) -> object:
             return object()
 
     class Style(_Base):
-        def map(self, *a, **k):
+        def map(self, *a: object, **k: object) -> None:
             pass
 
-        def theme_use(self, *a, **k):
+        def theme_use(self, *a: object, **k: object) -> None:
             pass
 
     class Frame(_Base):
@@ -278,18 +262,18 @@ def _install_tk_stubs(monkeypatch, filedialog_overrides=None, toplevel_raises=Fa
     class Entry(_Base):
         """Accepts textvariable=..., so `.get()` works if code reads from it."""
 
-        def __init__(self, *a, **k):
+        def __init__(self, *a: object, **k: object) -> None:
             super().__init__(*a, **k)
-            self._textvar = k.get("textvariable")
+            self._textvar: Any = k.get("textvariable")
 
-        def get(self):
+        def get(self) -> str:
             return self._textvar.get() if self._textvar else ""
 
-        def insert(self, index, s):
+        def insert(self, index: object, s: str) -> None:
             if self._textvar:
                 self._textvar.set((self._textvar.get() or "") + s)
 
-        def delete(self, start, end=None):
+        def delete(self, start: object, end: object = None) -> None:
             if self._textvar:
                 self._textvar.set("")
 
@@ -306,49 +290,49 @@ def _install_tk_stubs(monkeypatch, filedialog_overrides=None, toplevel_raises=Fa
         pass
 
     class Notebook(_Base):
-        def __init__(self, *a, **k):
+        def __init__(self, *a: object, **k: object) -> None:
             super().__init__(*a, **k)
-            self._tabs = []
+            self._tabs: list[tuple[object, object]] = []
 
-        def add(self, child, **k):
+        def add(self, child: object, **k: object) -> None:
             self._tabs.append((child, k.get("text")))
 
-    ttk.Style = Style
-    ttk.Frame = Frame
-    ttk.LabelFrame = LabelFrame
-    ttk.Label = Label
-    ttk.Button = Button
-    ttk.Entry = Entry
-    ttk.Checkbutton = Checkbutton
-    ttk.Combobox = Combobox
-    ttk.Scrollbar = Scrollbar
-    ttk.Separator = Separator
-    ttk.Notebook = Notebook
+    ttk.Style = Style  # type: ignore[attr-defined]
+    ttk.Frame = Frame  # type: ignore[attr-defined]
+    ttk.LabelFrame = LabelFrame  # type: ignore[attr-defined]
+    ttk.Label = Label  # type: ignore[attr-defined]
+    ttk.Button = Button  # type: ignore[attr-defined]
+    ttk.Entry = Entry  # type: ignore[attr-defined]
+    ttk.Checkbutton = Checkbutton  # type: ignore[attr-defined]
+    ttk.Combobox = Combobox  # type: ignore[attr-defined]
+    ttk.Scrollbar = Scrollbar  # type: ignore[attr-defined]
+    ttk.Separator = Separator  # type: ignore[attr-defined]
+    ttk.Notebook = Notebook  # type: ignore[attr-defined]
 
     # -------------- messagebox --------------
     messagebox = types.ModuleType("tkinter.messagebox")
 
-    def _noop(*a, **k):
+    def _noop(*a: object, **k: object) -> None:
         return None
 
-    messagebox.showinfo = _noop
-    messagebox.showerror = _noop
-    messagebox.askyesno = lambda *a, **k: True
+    messagebox.showinfo = _noop  # type: ignore[attr-defined]
+    messagebox.showerror = _noop  # type: ignore[attr-defined]
+    messagebox.askyesno = lambda *a: True  # type: ignore[attr-defined,assignment]
 
     # -------------- filedialog --------------
     filedialog = types.ModuleType("tkinter.filedialog")
-    filedialog.askopenfilename = (filedialog_overrides or {}).get(
-        "askopenfilename", lambda **k: ""
+    filedialog.askopenfilename = (filedialog_overrides or {}).get(  # type: ignore[attr-defined]
+        "askopenfilename", lambda **k: ""  # type: ignore[arg-type]
     )
-    filedialog.asksaveasfilename = (filedialog_overrides or {}).get(
-        "asksaveasfilename", lambda **k: ""
+    filedialog.asksaveasfilename = (filedialog_overrides or {}).get(  # type: ignore[attr-defined]
+        "asksaveasfilename", lambda **k: ""  # type: ignore[arg-type]
     )
 
     # Register stubs
-    monkeypatch.setitem(sys.modules, "tkinter", tk)
-    monkeypatch.setitem(sys.modules, "tkinter.ttk", ttk)
-    monkeypatch.setitem(sys.modules, "tkinter.messagebox", messagebox)
-    monkeypatch.setitem(sys.modules, "tkinter.filedialog", filedialog)
+    monkeypatch.setitem(sys.modules, "tkinter", tk)  # type: ignore[arg-type]
+    monkeypatch.setitem(sys.modules, "tkinter.ttk", ttk)  # type: ignore[arg-type]
+    monkeypatch.setitem(sys.modules, "tkinter.messagebox", messagebox)  # type: ignore[arg-type]
+    monkeypatch.setitem(sys.modules, "tkinter.filedialog", filedialog)  # type: ignore[arg-type]
 
 
 # --------------------------
@@ -358,19 +342,11 @@ def _install_tk_stubs(monkeypatch, filedialog_overrides=None, toplevel_raises=Fa
 
 # Lightweight data structures used by stubbed helpers
 @dataclass
-class _Row:
+class _Row:  # type: ignore[reportUnusedClass]
     item: str
     category: str
     rationale: str
     amount: Decimal  # NEW: every split row must include an amount
-
-
-@dataclass
-class _Group:
-    gid: int
-    date: date
-    total_amount: Decimal  # keep as Decimal to match protocol usage
-    rows: list[_Row]
 
 
 @dataclass
@@ -390,22 +366,24 @@ class _QTxn:
 
 
 class _MatchSessionStub:
-    def __init__(self, bank_txns, excel_txns):
-        self.bank_txns = list(bank_txns)
-        self.excel_txns = list(excel_txns)
-        self.pairs = []
+    def __init__(self, bank_txns: list[object], excel_txns: list[object]) -> None:
+        self.bank_txns: list[object] = list(bank_txns)
+        self.excel_txns: list[object] = list(excel_txns)
+        self.pairs: list[tuple[object, object]] = []
 
     @property
-    def unmatched_bank(self):
+    def unmatched_bank(self) -> list[object]:
         matched_ids = {id(b) for b, _ in self.pairs}
         return [b for b in self.bank_txns if id(b) not in matched_ids]
 
     @property
-    def unmatched_excel(self):
+    def unmatched_excel(self) -> list[object]:
         matched_ids = {id(e) for _, e in self.pairs}
         return [e for e in self.excel_txns if id(e) not in matched_ids]
 
-    def manual_match(self, bank_index=None, excel_index=None):
+    def manual_match(
+        self, bank_index: int | None = None, excel_index: int | None = None
+    ) -> tuple[bool, str]:
         if bank_index is None or excel_index is None:
             return False, "missing selection"
         if not (
@@ -420,7 +398,9 @@ class _MatchSessionStub:
         self.pairs.append((b, e))
         return True, "ok"
 
-    def manual_unmatch(self, bank_index=None, excel_index=None):
+    def manual_unmatch(
+        self, bank_index: int | None = None, excel_index: int | None = None
+    ) -> bool:
         if bank_index is not None and 0 <= bank_index < len(self.bank_txns):
             b = self.bank_txns[bank_index]
             before = len(self.pairs)
@@ -440,39 +420,38 @@ class _CategoryMatchSessionStub:
     MergeTab.open_normalize_modal (constructed with qif_cats, excel_cats).
     """
 
-    def __init__(self, qif_cats, excel_cats):
-        self.qif_cats = set(qif_cats)
-        self.excel_cats = set(excel_cats)
-        self.mapping = {}
+    def __init__(self, qif_cats: list[str], excel_cats: list[str]) -> None:
+        self.qif_cats: set[str] = set(qif_cats)
+        self.excel_cats: set[str] = set(excel_cats)
+        self.mapping: dict[str, str] = {}
 
-    def unmatched(self):
+    def unmatched(self) -> tuple[list[str], list[str]]:
         uq = [q for q in self.qif_cats if q not in self.mapping.values()]
         ue = [e for e in self.excel_cats if e not in self.mapping]
         return uq, ue
 
-    def auto_match(self, threshold: float = 0.84):
+    def auto_match(self, threshold: float = 0.84) -> None:
         if self.excel_cats and self.qif_cats:
             self.mapping[next(iter(self.excel_cats))] = next(iter(self.qif_cats))
 
-    def manual_match(self, excel_name: str, qif_category: str):
+    def manual_match(self, excel_name: str, qif_category: str) -> tuple[bool, str]:
         self.mapping[excel_name] = qif_category
         return True, "ok"
 
-    def manual_unmatch(self, excel_name: str):
+    def manual_unmatch(self, excel_name: str) -> tuple[bool, str]:
         removed = self.mapping.pop(excel_name, None)
         return (removed is not None), ("ok" if removed is not None else "not found")
 
-    def apply_to_excel(self, xlsx: Path, xlsx_out: Path):
+    def apply_to_excel(self, xlsx: Path, xlsx_out: Path) -> Path:
         xlsx_out.write_text("normalized", encoding="utf-8")
         return xlsx_out
 
 
-def nameof_module(mod) -> str:
-    return (
-        getattr(mod, "__spec__", None).name
-        if getattr(mod, "__spec__", None)
-        else mod.__name__
-    )
+def nameof_module(mod: Any) -> str:
+    spec = getattr(mod, "__spec__", None)
+    if spec is not None:
+        return spec.name  # type: ignore[no-any-return]
+    return mod.__name__  # type: ignore[no-any-return]
 
 
 def _get_module_names() -> dict[str, str]:
@@ -490,7 +469,13 @@ def _get_module_names() -> dict[str, str]:
 
     names = {
         "quicken_helper": nameof_module(quicken_helper),
-        "controllers": nameof_module(quicken_helper.controllers),
+        "controllers": nameof_module(
+            getattr(
+                quicken_helper,
+                "controllers",
+                type("M", (), {"__name__": "quicken_helper.controllers"})(),
+            )
+        ),
         "qif_loader": nameof_module(qif_loader),
         "convert_tab": nameof_module(convert_tab),
         "merge_tab": nameof_module(merge_tab),
@@ -505,13 +490,12 @@ def _get_module_names() -> dict[str, str]:
     return names
 
 
-def _install_project_stubs(monkeypatch, tmp_path=None):
+def _install_project_stubs(monkeypatch: Any, tmp_path: Path | None = None) -> None:
     """
     Install lightweight quicken_helper stubs used by MergeTab._m_load_and_auto and friends.
     Creates a proper quicken_helper package with .controllers and .legacy subpackages,
     and registers controller/legacy modules in both sys.modules and as parent attributes.
     """
-    import datetime
     import sys
     import types
     from datetime import date
@@ -538,21 +522,12 @@ def _install_project_stubs(monkeypatch, tmp_path=None):
     # ---- qif_loader (stub) ----
     ql = types.ModuleType(names["qif_loader"])
 
-    class _Key:
-        def __init__(self, idx):
-            self.txn_index = idx
-            self.transfer_account = ""
+    class _Key:  # type: ignore[misc]
+        def __init__(self, idx: int) -> None:
+            self.txn_index: int = idx
+            self.transfer_account: str = ""
 
-    class _QifTxn:
-        def __init__(self, idx):
-            self.key = _Key(idx)
-            self.date = datetime.date(2024, 1, idx if idx <= 28 else 28)
-            self.amount = float(idx)
-            self.payee = f"Payee{idx}"
-            self.category = "Cat"
-            self.memo = ""
-
-    def _legacy_load_transactions(path):
+    def _legacy_load_transactions(path: object) -> list[dict[str, Any]]:
         # Two simple dict-like txns (legacy shape)
         return [
             {"key": {"txn_index": 1}, "amount": 1.0},
@@ -565,16 +540,23 @@ def _install_project_stubs(monkeypatch, tmp_path=None):
     # def open_and_parse_qif(path):
     #     return _legacy_load_transactions(path)
 
-    def parse_qif_unified_protocol(path):
-        file = _FileStub(path)
+    def parse_qif_unified_protocol(path: object) -> QuickenFile:
+        """Parse QIF using real QuickenFile with test data."""
+        file = QuickenFile()
         file.transactions.append(
-            _TransactionStub(
-                amount=Decimal(1.0), _dict={"key": {"txn_index": 1}, "amount": 1.0}
+            QTransaction(
+                date=date(2024, 1, 1),
+                amount=Decimal("1.0"),
+                payee="Payee1",
+                category="Cat1",
             )
         )
         file.transactions.append(
-            _TransactionStub(
-                amount=Decimal(2.0), _dict={"key": {"txn_index": 2}, "amount": 2.0}
+            QTransaction(
+                date=date(2024, 1, 2),
+                amount=Decimal("2.0"),
+                payee="Payee2",
+                category="Cat2",
             )
         )
         return file
@@ -582,110 +564,37 @@ def _install_project_stubs(monkeypatch, tmp_path=None):
     # Minimal enum used by UI
     from quicken_helper.data_model.interfaces import EnumClearedStatus
 
-    class _Split:
-        def __init__(self, amount="0.00", category="", memo=""):
-            self.amount = Decimal(str(amount))
-            self.category = category
-            self.memo = memo
-
-    class _Txn(ITransaction):
-        def __init__(self, **kw):
-            self.date = kw.get("date", date(2025, 1, 1))
-            self.amount = Decimal(str(kw.get("amount", "0.00")))
-            self.payee = kw.get("payee", "")
-            self.memo = kw.get("memo", "")
-            self.category = kw.get("category", "")
-            self.tag = kw.get("tag")
-            self.action_chk = kw.get("action_chk")
-            self.cleared = kw.get("cleared", EnumClearedStatus.NOT_CLEARED)
-            self.splits = kw.get("splits", [])
-            self.key = _Key(1)
-
-    def load_transactions_protocol(path):
-        return [
-            _Txn(
-                amount="12.34",
-                category="Groceries",
-                tag="Costco",
-                cleared=EnumClearedStatus.RECONCILED,
-                splits=[
-                    _Split("10.00", "Groceries", "Apples"),
-                    _Split("2.34", "Groceries", "Bananas"),
-                ],
-            )
+    def load_transactions_protocol(path: object) -> list[QTransaction]:
+        """Load transactions using real QTransaction with test data."""
+        txn = QTransaction(
+            date=date(2025, 1, 1),
+            amount=Decimal("12.34"),
+            payee="TestPayee",
+            category="Groceries",
+            memo="Test memo",
+            cleared=EnumClearedStatus.RECONCILED,
+        )
+        txn.splits = [
+            QSplit(amount=Decimal("10.00"), category="Groceries", memo="Apples"),
+            QSplit(amount=Decimal("2.34"), category="Groceries", memo="Bananas"),
         ]
+        return [txn]
 
     # expose both shapes; MergeTab will use protocol path when available
-    ql.load_transactions_protocol = load_transactions_protocol
-    ql.load_transactions = _legacy_load_transactions
+    ql.load_transactions_protocol = load_transactions_protocol  # type: ignore[attr-defined]
+    ql.load_transactions = _legacy_load_transactions  # type: ignore[attr-defined]
     # ql.parse_qif = parse_qif
     # ql.open_and_parse_qif = open_and_parse_qif
-    ql.parse_qif_unified_protocol = parse_qif_unified_protocol
+    ql.parse_qif_unified_protocol = parse_qif_unified_protocol  # type: ignore[attr-defined]
 
-    monkeypatch.setitem(sys.modules, names["qif_loader"], ql)
+    monkeypatch.setitem(sys.modules, names["qif_loader"], ql)  # type: ignore[arg-type]
 
     # ---- data_model.excel.excel_transaction (stub) ----
     excel_txn_mod_name = "quicken_helper.data_model.excel.excel_transaction"
     excel_txn_mod = types.ModuleType(excel_txn_mod_name)
 
-    from dataclasses import dataclass as _dc_dataclass, field as _dc_field
-    from datetime import date as _date
-    from decimal import Decimal as _Decimal
-
-    @_dc_dataclass(frozen=True)
-    class _ExcelTxnProto:
-        """Protocol-shaped Excel-side ITransaction for tests."""
-
-        id: str
-        date: _date
-        amount: _Decimal
-        payee: str = ""
-        memo: str = ""
-        category: str = ""
-        splits: list = _dc_field(default_factory=list)
-
-    excel_txn_mod._ExcelTxnProto = _ExcelTxnProto
-
-    def map_group_to_excel_txn(group):
-        """Adapt a group with validated rows (each having .amount, .category) to a protocol txn."""
-        rows = tuple(getattr(group, "rows", ()) or ())
-        first = rows[0] if rows else None
-        payee = getattr(first, "item", "") if first else ""
-        memo = getattr(first, "rationale", "") if first else ""
-
-        # Build split views; rows are guaranteed to have amount/category by ingestion validation
-        splits = [
-            type(
-                "S",
-                (),
-                {
-                    "category": getattr(r, "category", "") or "",
-                    "memo": getattr(r, "item", "") or "",
-                    "amount": (
-                        r.amount
-                        if isinstance(r.amount, _Decimal)
-                        else _Decimal(str(r.amount))
-                    ),
-                },
-            )
-            for r in rows
-        ]
-
-        total = (
-            group.total_amount
-            if isinstance(group.total_amount, _Decimal)
-            else _Decimal(str(group.total_amount))
-        )
-        return excel_txn_mod._ExcelTxnProto(
-            id=str(group.gid),
-            date=group.date,
-            amount=total,
-            payee=payee,
-            memo=memo,
-            splits=splits,
-        )
-
-    excel_txn_mod.map_group_to_excel_txn = map_group_to_excel_txn
+    # Use real map_group_to_excel_txn from imports
+    excel_txn_mod.map_group_to_excel_txn = map_group_to_excel_txn  # type: ignore[attr-defined]
 
     # Ensure parent packages exist and register the stub
     pkg_dm = sys.modules.setdefault(
@@ -697,41 +606,15 @@ def _install_project_stubs(monkeypatch, tmp_path=None):
         types.ModuleType("quicken_helper.data_model.excel"),
     )
     pkg_dm_excel.__path__ = getattr(pkg_dm_excel, "__path__", [])
-    monkeypatch.setitem(sys.modules, excel_txn_mod_name, excel_txn_mod)
+    monkeypatch.setitem(sys.modules, excel_txn_mod_name, excel_txn_mod)  # type: ignore[arg-type]
 
     # ---- controllers.match_excel (validated ingestion) ----
     mex = types.ModuleType(names["match_excel"])
 
-    from dataclasses import dataclass as _dc, field as _dc_field
+    # Use real ExcelRow and ExcelTxnGroup from imports (no need for stubs)
+    # _Row2 and _Group2 are replaced by ExcelRow and ExcelTxnGroup
 
-    @_dc(frozen=True)
-    class _Row2:
-        txn_id: str
-        date: _date
-        amount: Decimal
-        category: str
-        idx: int = -1
-        account: str = ""
-        action_chk: str = ""
-        cleared: str = ""
-        payee: str = ""
-        memo: str = ""
-        rationale: str = ""
-        tag: str = ""
-        # Security fields
-        price: Decimal = Decimal("0")
-        quantity: Decimal = Decimal("0")
-        commission: Decimal = Decimal("0")
-        transfer_amount: Decimal = Decimal("0")
-
-    @_dc(frozen=True)
-    class _Group2:
-        gid: str
-        date: _date
-        total_amount: Decimal
-        rows: tuple[_Row2, ...]
-
-    def _validate_rows(rows):
+    def _validate_rows(rows: Any) -> None:
         """Raise early if any row is missing required fields."""
         for i, r in enumerate(rows or []):
             if not hasattr(r, "amount") or getattr(r, "amount", None) is None:
@@ -739,20 +622,20 @@ def _install_project_stubs(monkeypatch, tmp_path=None):
             if not hasattr(r, "category") or not getattr(r, "category", ""):
                 raise ValueError(f"Excel row #{i} missing required 'category'")
 
-    def load_excel_rows(path):
+    def load_excel_rows(path: Any) -> list[ExcelRow]:
         # Two valid rows with amounts for happy-path UI tests
         rows = [
-            _Row2(
+            ExcelRow(
                 txn_id="G1",
-                date=_date(2024, 1, 15),
+                date=date(2024, 1, 15),
                 amount=Decimal("5.00"),
                 category="Cat",
                 payee="Item1",
                 rationale="r1",
             ),
-            _Row2(
+            ExcelRow(
                 txn_id="G1",
-                date=_date(2024, 1, 15),
+                date=date(2024, 1, 15),
                 amount=Decimal("7.34"),
                 category="Cat",
                 payee="Item2",
@@ -762,33 +645,33 @@ def _install_project_stubs(monkeypatch, tmp_path=None):
         _validate_rows(rows)
         return rows
 
-    def group_excel_rows(rows):
+    def group_excel_rows(rows: list[ExcelRow]) -> list[ExcelTxnGroup]:
         _validate_rows(rows)
-        total = sum((r.amount for r in rows or []), Decimal("0"))
+        total: Decimal = sum((r.amount for r in rows or []), Decimal("0"))
         return [
-            _Group2(
+            ExcelTxnGroup(
                 gid="G1",
-                date=_date(2024, 1, 15),
+                date=date(2024, 1, 15),
                 total_amount=total,
                 rows=tuple(rows or []),
             )
         ]
 
-    def build_matched_only_txns(sess):
+    def build_matched_only_txns(sess: Any) -> list[Any]:
         return list(getattr(sess, "txns", []))
 
-    def extract_qif_categories(txns):
+    def extract_qif_categories(txns: Any) -> set[str]:
         return {"Food", "Rent"}
 
-    def extract_excel_categories(xlsx):
+    def extract_excel_categories(xlsx: Any) -> set[str]:
         return {"Groceries", "Housing"}
 
-    mex.load_excel_rows = load_excel_rows
-    mex.group_excel_rows = group_excel_rows
-    mex.build_matched_only_txns = build_matched_only_txns
-    mex.extract_qif_categories = extract_qif_categories
-    mex.extract_excel_categories = extract_excel_categories
-    monkeypatch.setitem(sys.modules, names["match_excel"], mex)
+    mex.load_excel_rows = load_excel_rows  # type: ignore[attr-defined]
+    mex.group_excel_rows = group_excel_rows  # type: ignore[attr-defined]
+    mex.build_matched_only_txns = build_matched_only_txns  # type: ignore[attr-defined]
+    mex.extract_qif_categories = extract_qif_categories  # type: ignore[attr-defined]
+    mex.extract_excel_categories = extract_excel_categories  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, names["match_excel"], mex)  # type: ignore[arg-type]
 
     # ---- data_session (stub) ----
     ds_mod = types.ModuleType("quicken_helper.controllers.data_session")
@@ -796,42 +679,31 @@ def _install_project_stubs(monkeypatch, tmp_path=None):
     class DataSession:
         """Minimal DataSession stub for MergeTab tests."""
 
-        def __init__(self):
-            self.qif_path = None
-            self.excel_path = None
-            self.excel_rows = None
+        def __init__(self) -> None:
+            self.qif_path: Any = None
+            self.excel_path: Any = None
+            self.excel_rows: Any = None
 
-        def load_qif(self, path):
+        def load_qif(self, path: Any) -> list[QTransaction]:
             self.qif_path = path
             return load_transactions_protocol(path)
 
-        def load_excel(self, path):
+        def load_excel(self, path: Any) -> list[Any]:
             self.excel_path = path
             rows = load_excel_rows(path)
             self.excel_rows = rows
             groups = group_excel_rows(rows)
             return [map_group_to_excel_txn(g) for g in groups]
 
-    ds_mod.DataSession = DataSession
-    monkeypatch.setitem(sys.modules, "quicken_helper.controllers.data_session", ds_mod)
+    ds_mod.DataSession = DataSession  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, "quicken_helper.controllers.data_session", ds_mod)  # type: ignore[arg-type]
 
     # ---- match_session (stub) ----
     ms = types.ModuleType(names["match_session"])
 
     from collections.abc import Iterable
-    from dataclasses import dataclass, field
 
-    @dataclass(frozen=True)
-    class _ExcelTxnStub:
-        """Minimal ITransaction-shaped stub for Excel side."""
-
-        id: str
-        date: _date
-        amount: _Decimal
-        payee: str = ""
-        memo: str = ""
-        category: str = ""
-        splits: list[object] = field(default_factory=list)
+    # Use real ExcelTransaction from imports (no need for _ExcelTxnStub)
 
     class MatchSession:
         """
@@ -849,7 +721,7 @@ def _install_project_stubs(monkeypatch, tmp_path=None):
             self.excel_txns = list(excel_txns)
             self.pairs: list[tuple[object, object]] = []
 
-        def auto_match(self, *_a, **_k):
+        def auto_match(self, *_a: object, **_k: object) -> None:
             if self.bank_txns and self.excel_txns:
                 self.pairs = [(self.bank_txns[0], self.excel_txns[0])]
 
@@ -898,13 +770,13 @@ def _install_project_stubs(monkeypatch, tmp_path=None):
                 return len(self.pairs) != before
             return False
 
-    ms.MatchSession = MatchSession
-    monkeypatch.setitem(sys.modules, names["match_session"], ms)
+    ms.MatchSession = MatchSession  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, names["match_session"], ms)  # type: ignore[arg-type]
 
     # ---- category_match_session (stub) ----
     cms = types.ModuleType(names["category_match_session"])
-    cms.CategoryMatchSession = _CategoryMatchSessionStub
-    monkeypatch.setitem(sys.modules, names["category_match_session"], cms)
+    cms.CategoryMatchSession = _CategoryMatchSessionStub  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, names["category_match_session"], cms)  # type: ignore[arg-type]
 
     # ---- legacy.qif_writer (stub) ----
     legacy_pkg_name = names["qif_writer"].rsplit(".", 1)[
@@ -918,18 +790,18 @@ def _install_project_stubs(monkeypatch, tmp_path=None):
 
     qw = types.ModuleType(names["qif_writer"])
 
-    def write_qif(txns, out_path):
+    def write_qif(txns: Any, out_path: Any) -> None:
         (tmp_path or Path(".")).mkdir(exist_ok=True)
         return None
 
-    qw.write_qif = write_qif
-    monkeypatch.setitem(sys.modules, names["qif_writer"], qw)
+    qw.write_qif = write_qif  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, names["qif_writer"], qw)  # type: ignore[arg-type]
 
     # ----belt and suspenders: tag stubs for cleanup ----
     for _m in (ql, qw, mex, ms, cms):
-        _m._is_merge_tab_test_stub = True
+        _m._is_merge_tab_test_stub = True  # type: ignore[attr-defined]
     if created_controllers:
-        controllers_mod._is_merge_tab_test_stub = True
+        controllers_mod._is_merge_tab_test_stub = True  # type: ignore[attr-defined]
 
     # ---- bind subpackages on parent packages ----
     # Bind controllers submodules as attributes
@@ -950,7 +822,7 @@ def _install_project_stubs(monkeypatch, tmp_path=None):
 
 
 @pytest.fixture
-def merge_mod(monkeypatch):
+def merge_mod(monkeypatch: Any) -> Any:
     """Import quicken_helper.gui_viewers.merge_tab with all deps stubbed for headless testing."""
     names_dict = _get_module_names()
     _install_tk_stubs(monkeypatch)  # GUI stubs
@@ -971,7 +843,7 @@ def merge_mod(monkeypatch):
 # --------------------------
 
 
-def test_init_builds_widgets_and_state(merge_mod):
+def test_init_builds_widgets_and_state(merge_mod: Any) -> None:
     """MergeTab initializes variables, listboxes, and info panel without raising."""
     # Arrange
     MergeTab = merge_mod.MergeTab
@@ -991,22 +863,22 @@ def test_init_builds_widgets_and_state(merge_mod):
     assert hasattr(mt, "txt_info"), "Info Text widget should exist"
 
 
-def test_browse_qif_sets_in_and_suggests_out(merge_mod, monkeypatch):
+def test_browse_qif_sets_in_and_suggests_out(merge_mod: Any, monkeypatch: Any) -> None:
     """_m_browse_qif sets m_qif_in and suggests '<stem>_updated.data_model' without touching disk."""
     import sys
 
     # Arrange: inject a memory path and reload so the module uses our filedialog
     names = _get_module_names()
     chosen_in = "MEM://in.qif"
-    fd_over = {"askopenfilename": lambda **k: chosen_in}
-    _install_tk_stubs(monkeypatch, filedialog_overrides=fd_over)
+    fd_over = {"askopenfilename": lambda **k: chosen_in}  # type: ignore[misc,arg-type,no-any-return,var-annotated]
+    _install_tk_stubs(monkeypatch, filedialog_overrides=fd_over)  # type: ignore[arg-type]
     _install_project_stubs(monkeypatch)
     sys.modules.pop(names["merge_tab"], None)
     m2 = importlib.import_module(names["merge_tab"])
 
     # Avoid FS checks
-    monkeypatch.setattr(m2.Path, "exists", lambda self: True, raising=False)
-    monkeypatch.setattr(m2.Path, "is_file", lambda self: True, raising=False)
+    monkeypatch.setattr(m2.Path, "exists", lambda self: True, raising=False)  # type: ignore[misc,arg-type,no-redef]
+    monkeypatch.setattr(m2.Path, "is_file", lambda self: True, raising=False)  # type: ignore[misc,arg-type,no-redef]
 
     mt = m2.MergeTab(master=None, mb=_FakeMB())
     mt.m_qif_out.set("")
@@ -1020,14 +892,14 @@ def test_browse_qif_sets_in_and_suggests_out(merge_mod, monkeypatch):
     assert m2.Path(mt.m_qif_out.get()).name == "in_updated.qif"
 
 
-def test_browse_out_sets_out_path(merge_mod, monkeypatch):
+def test_browse_out_sets_out_path(merge_mod: Any, monkeypatch: Any) -> None:
     """_m_browse_out sets m_qif_out from filedialog without touching disk (path-normalized)."""
     import sys
 
     names = _get_module_names()
     chosen_out = "MEM://out.data_model"
-    fd_over = {"asksaveasfilename": lambda **k: chosen_out}
-    _install_tk_stubs(monkeypatch, filedialog_overrides=fd_over)
+    fd_over = {"asksaveasfilename": lambda **k: chosen_out}  # type: ignore[misc,arg-type,no-any-return,var-annotated]
+    _install_tk_stubs(monkeypatch, filedialog_overrides=fd_over)  # type: ignore[arg-type]
     _install_project_stubs(monkeypatch)
     sys.modules.pop(names["merge_tab"], None)
     m2 = importlib.import_module(names["merge_tab"])
@@ -1043,7 +915,9 @@ def test_browse_out_sets_out_path(merge_mod, monkeypatch):
     assert actual == expected
 
 
-def test_load_and_auto_validates_missing_inputs(merge_mod, monkeypatch):
+def test_load_and_auto_validates_missing_inputs(
+    merge_mod: Any, monkeypatch: Any
+) -> None:
     """_m_load_and_auto shows errors when QIF or Excel paths are invalid (no filesystem)."""
     # Arrange: both invalid
     mt = merge_mod.MergeTab(master=None, mb=_FakeMB())
@@ -1053,8 +927,8 @@ def test_load_and_auto_validates_missing_inputs(merge_mod, monkeypatch):
     mt.m_xlsx.set(bad_xlsx)
 
     # Paths don't exist
-    monkeypatch.setattr(merge_mod.Path, "exists", lambda self: False, raising=False)
-    monkeypatch.setattr(merge_mod.Path, "is_file", lambda self: False, raising=False)
+    monkeypatch.setattr(merge_mod.Path, "exists", lambda self: False, raising=False)  # type: ignore[misc,arg-type]
+    monkeypatch.setattr(merge_mod.Path, "is_file", lambda self: False, raising=False)  # type: ignore[misc,arg-type]
 
     # Act
     mt._m_load()
@@ -1070,10 +944,10 @@ def test_load_and_auto_validates_missing_inputs(merge_mod, monkeypatch):
     mt.m_qif_in.set(valid_qif)
     # Make only the valid_qif path exist
     monkeypatch.setattr(
-        merge_mod.Path, "exists", lambda self: str(self) == valid_qif, raising=False
+        merge_mod.Path, "exists", lambda self: str(self) == valid_qif, raising=False  # type: ignore[arg-type,misc]
     )
     monkeypatch.setattr(
-        merge_mod.Path, "is_file", lambda self: str(self) == valid_qif, raising=False
+        merge_mod.Path, "is_file", lambda self: str(self) == valid_qif, raising=False  # type: ignore[arg-type,misc]
     )
 
     # Act
@@ -1085,7 +959,9 @@ def test_load_and_auto_validates_missing_inputs(merge_mod, monkeypatch):
     ), "Expected error for invalid Excel path"
 
 
-def test_load_and_auto_populates_lists_on_success(merge_mod, monkeypatch):
+def test_load_and_auto_populates_lists_on_success(
+    merge_mod: Any, monkeypatch: Any
+) -> None:
     """_m_load_and_auto creates a session, auto-matches, and fills listboxes (no filesystem)."""
     # Arrange
     mt = merge_mod.MergeTab(master=None, mb=_FakeMB())
@@ -1095,11 +971,18 @@ def test_load_and_auto_populates_lists_on_success(merge_mod, monkeypatch):
     mt.m_xlsx.set(xlsx)
 
     # Patch Path.exists so ONLY our two in-memory paths "exist"
-    monkeypatch.setattr(merge_mod.Path, "exists", lambda self: True, raising=False)
-    monkeypatch.setattr(merge_mod.Path, "is_file", lambda self: True, raising=False)
+    monkeypatch.setattr(merge_mod.Path, "exists", lambda self: True, raising=False)  # type: ignore[arg-type,misc]
+    monkeypatch.setattr(merge_mod.Path, "is_file", lambda self: True, raising=False)  # type: ignore[arg-type,misc]
 
     # Act
     mt._m_load()
+
+    # Debug: Check if there was an error
+    if mt._merge_session is None and hasattr(mt.mb, "calls"):
+        errors = [c for c in mt.mb.calls if c[0] == "showerror"]
+        if errors:
+            print(f"\\nDEBUG: Error occurred: {errors[-1]}")
+
     mt._m_auto_match()
 
     # Assert
@@ -1109,7 +992,7 @@ def test_load_and_auto_populates_lists_on_success(merge_mod, monkeypatch):
     assert isinstance(mt.m_unmatched_excel, list)
 
 
-def test_manual_match_requires_selection_and_calls_session(merge_mod):
+def test_manual_match_requires_selection_and_calls_session(merge_mod: Any) -> None:
     """_m_manual_match shows error with no selection; with selections it calls session.manual_match."""
     # Arrange
     mt = merge_mod.MergeTab(master=None, mb=_FakeMB())
@@ -1125,7 +1008,7 @@ def test_manual_match_requires_selection_and_calls_session(merge_mod):
         payee: str = ""
         memo: str = ""
         category: str = ""
-        splits: list = field(default_factory=list)
+        splits: list = field(default_factory=list)  # type: ignore[var-annotated]
 
     e = _ExcelTxn("G101", date(2024, 1, 2), Decimal("10.00"), payee="Alpha")
 
@@ -1158,7 +1041,7 @@ def test_manual_match_requires_selection_and_calls_session(merge_mod):
     assert "Matched" in mt.txt_info.get("1.0", "end")
 
 
-def test_manual_unmatch_from_pairs_calls_session(merge_mod):
+def test_manual_unmatch_from_pairs_calls_session(merge_mod: Any) -> None:
     """_m_manual_unmatch unmatches the selected pair via session.manual_unmatch."""
     # Arrange
     mt = merge_mod.MergeTab(master=None, mb=_FakeMB())
@@ -1173,7 +1056,7 @@ def test_manual_unmatch_from_pairs_calls_session(merge_mod):
         payee: str = ""
         memo: str = ""
         category: str = ""
-        splits: list = field(default_factory=list)
+        splits: list[Any] = field(default_factory=list)  # type: ignore[var-annotated]
 
     e = _ExcelTxn("G101", date(2024, 1, 2), Decimal("10.00"), payee="Alpha")
 
@@ -1196,7 +1079,7 @@ def test_manual_unmatch_from_pairs_calls_session(merge_mod):
     assert "Unmatched" in mt.txt_info.get("1.0", "end")
 
 
-def test_export_listbox_writes_file(merge_mod, monkeypatch):
+def test_export_listbox_writes_file(merge_mod: Any, monkeypatch: Any) -> None:
     """_export_listbox writes listbox items to an in-memory file (no filesystem)."""
     import builtins
 
@@ -1206,8 +1089,8 @@ def test_export_listbox_writes_file(merge_mod, monkeypatch):
 
     # Choose a memory path and stub filedialog to return it
     chosen = "MEM://unmatched_excel.txt"
-    fd_over = {"asksaveasfilename": lambda **k: chosen}
-    _install_tk_stubs(monkeypatch, filedialog_overrides=fd_over)
+    fd_over = {"asksaveasfilename": lambda **k: chosen}  # type: ignore[misc,arg-type,no-any-return,var-annotated]
+    _install_tk_stubs(monkeypatch, filedialog_overrides=fd_over)  # type: ignore[arg-type]
     _install_project_stubs(monkeypatch)
     # Rebind filedialog used by merge_mod to the newly stubbed one
     import tkinter.filedialog as fd_mod
@@ -1216,25 +1099,30 @@ def test_export_listbox_writes_file(merge_mod, monkeypatch):
 
     # In-memory file that doesn't actually close
     class _MemFile:
-        def __init__(self):
-            self._buf = []
+        def __init__(self) -> None:
+            self._buf: list[str] = []
 
-        def write(self, s):
+        def write(self, s: str) -> None:
             self._buf.append(str(s))
 
-        def __enter__(self):
+        def __enter__(self) -> _MemFile:
             return self
 
-        def __exit__(self, *a):
+        def __exit__(self, *a: object) -> None:
             pass  # no-op close
 
-        def getvalue(self):
+        def getvalue(self) -> str:
             return "".join(self._buf)
 
     mem = _MemFile()
-    opened = []
+    opened: list[str] = []
 
-    def fake_open(path, mode="r", encoding=None, newline=None):
+    def fake_open(
+        path: Any,
+        mode: str = "r",
+        encoding: str | None = None,
+        newline: str | None = None,
+    ) -> _MemFile:
         # Record the normalized path and return our in-memory handle
         opened.append(str(merge_mod.Path(path)))
         assert "w" in mode
@@ -1256,7 +1144,9 @@ def test_export_listbox_writes_file(merge_mod, monkeypatch):
     ), "Expected completion info dialog"
 
 
-def test_open_normalize_modal_headless_object_behaves(merge_mod, monkeypatch):
+def test_open_normalize_modal_headless_object_behaves(
+    merge_mod: Any, monkeypatch: Any
+) -> None:
     """Headless normalize modal exposes actions that work (no filesystem; names from session)."""
     # IMPORTANT: get real module names first (from the actual package), THEN install stubs
     names = _get_module_names()
@@ -1273,14 +1163,14 @@ def test_open_normalize_modal_headless_object_behaves(merge_mod, monkeypatch):
     mt.m_xlsx.set("MEM://in.xlsx")
 
     # No real FS
-    monkeypatch.setattr(m2.Path, "exists", lambda self: True, raising=False)
-    monkeypatch.setattr(m2.Path, "is_file", lambda self: True, raising=False)
+    monkeypatch.setattr(m2.Path, "exists", lambda self: True, raising=False)  # type: ignore[arg-type,misc]
+    monkeypatch.setattr(m2.Path, "is_file", lambda self: True, raising=False)  # type: ignore[arg-type,misc]
 
     # Don’t write files; just capture call
-    calls = []
+    calls: list[tuple[str, str]] = []
     cms = sys.modules[names["category_match_session"]]
 
-    def fake_apply(self, xlsx, xlsx_out):
+    def fake_apply(self: Any, xlsx: Any, xlsx_out: Any) -> Any:
         calls.append((str(xlsx), str(xlsx_out)))
         return m2.Path(xlsx_out)
 
@@ -1298,8 +1188,8 @@ def test_open_normalize_modal_headless_object_behaves(merge_mod, monkeypatch):
     # Pick any available names; if empty, skip matching step (still exercise pairs/apply)
     pre_pairs = list(headless.pairs())
     if ue and uq:
-        e = sorted(list(ue))[0]
-        q = sorted(list(uq))[0]
+        e: Any = sorted(list(ue))[0]  # type: ignore[arg-type]
+        q: Any = sorted(list(uq))[0]  # type: ignore[arg-type]
         ok, _ = headless.do_match(e, q)
         assert ok, "manual match should succeed"
     post_pairs = list(headless.pairs())
@@ -1318,7 +1208,9 @@ def test_open_normalize_modal_headless_object_behaves(merge_mod, monkeypatch):
 
 
 @pytest.fixture(autouse=True)
-def _purge_stubs_after_each_test(monkeypatch):
+def _purge_stubs_after_each_test(
+    monkeypatch: Any,
+) -> Any:  # pyright: ignore[reportUnusedFunction]
     yield
     # remove only modules we created (tag them when you create them)
     for name, mod in list(sys.modules.items()):
@@ -1328,7 +1220,7 @@ def _purge_stubs_after_each_test(monkeypatch):
 
 
 @pytest.fixture(autouse=True, scope="module")
-def _cleanup_module():
+def _cleanup_module() -> Any:  # pyright: ignore[reportUnusedFunction]
     yield
     # cleanup here (e.g., purge tagged sys.modules entries)
     for name, mod in list(sys.modules.items()):
@@ -1338,7 +1230,7 @@ def _cleanup_module():
 
 
 # --- Migration guard: skip normalize-related tests moved to test_category_popout.py ---
-def _skip_legacy_normalize_tests():
+def _skip_legacy_normalize_tests() -> None:
     import pytest as _pytest
 
     # Tailored selectors: name/docstring, case-insensitive

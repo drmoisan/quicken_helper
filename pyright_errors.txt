@@ -1,0 +1,26 @@
+c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\gui_viewers\test_merge_tab.py
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\gui_viewers\test_merge_tab.py:525:11 - error: Class "_Key" is not accessed (reportUnusedClass)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\gui_viewers\test_merge_tab.py:874:57 - error: Argument type is partially unknown
+  ┬á┬áArgument corresponds to parameter "filedialog_overrides" in function "_install_tk_stubs"
+  ┬á┬áArgument type is "dict[str, (**k: Unknown) -> Literal['MEM://in.qif']]" (reportUnknownArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\gui_viewers\test_merge_tab.py:902:57 - error: Argument type is partially unknown
+  ┬á┬áArgument corresponds to parameter "filedialog_overrides" in function "_install_tk_stubs"
+  ┬á┬áArgument type is "dict[str, (**k: Unknown) -> Literal['MEM://out.data_model']]" (reportUnknownArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\gui_viewers\test_merge_tab.py:947:42 - error: Type of parameter "self" is unknown (reportUnknownLambdaType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\gui_viewers\test_merge_tab.py:947:52 - error: Argument type is unknown
+  ┬á┬áArgument corresponds to parameter "object" in function "__new__" (reportUnknownArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\gui_viewers\test_merge_tab.py:950:43 - error: Type of parameter "self" is unknown (reportUnknownLambdaType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\gui_viewers\test_merge_tab.py:950:53 - error: Argument type is unknown
+  ┬á┬áArgument corresponds to parameter "object" in function "__new__" (reportUnknownArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\gui_viewers\test_merge_tab.py:1011:9 - error: Type of "splits" is partially unknown
+  ┬á┬áType of "splits" is "list[Unknown]" (reportUnknownVariableType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\gui_viewers\test_merge_tab.py:1059:9 - error: Type of "splits" is partially unknown
+  ┬á┬áType of "splits" is "list[Unknown]" (reportUnknownVariableType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\gui_viewers\test_merge_tab.py:1093:57 - error: Argument type is partially unknown
+  ┬á┬áArgument corresponds to parameter "filedialog_overrides" in function "_install_tk_stubs"
+  ┬á┬áArgument type is "dict[str, (**k: Unknown) -> Literal['MEM://unmatched_excel.txt']]" (reportUnknownArgumentType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\gui_viewers\test_merge_tab.py:1161:51 - error: Type of parameter "self" is unknown (reportUnknownLambdaType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\gui_viewers\test_merge_tab.py:1162:52 - error: Type of parameter "self" is unknown (reportUnknownLambdaType)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\gui_viewers\test_merge_tab.py:1206:5 - error: Function "_purge_stubs_after_each_test" is not accessed (reportUnusedFunction)
+  c:\Users\DanMoisan\source\repos\quicken_helper\quicken_helper\tests\gui_viewers\test_merge_tab.py:1216:5 - error: Function "_cleanup_module" is not accessed (reportUnusedFunction)
+14 errors, 0 warnings, 0 informations
