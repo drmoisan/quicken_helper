@@ -1146,69 +1146,6 @@ def test_export_listbox_writes_file(merge_mod: Any, monkeypatch: Any) -> None:
     ), "Expected completion info dialog"
 
 
-def test_open_normalize_modal_headless_object_behaves(
-    merge_mod: Any, monkeypatch: Any
-) -> None:
-    """Headless normalize modal exposes actions that work (no filesystem; names from session)."""
-    # IMPORTANT: get real module names first (from the actual package), THEN install stubs
-    names = _get_module_names()
-
-    # Arrange: force headless, stub deps, reload
-    _install_tk_stubs(monkeypatch, toplevel_raises=True)
-    _install_project_stubs(monkeypatch)
-
-    sys.modules.pop(names["merge_tab"], None)
-    m2 = importlib.import_module(names["merge_tab"])
-
-    mt = m2.MergeTab(master=None, mb=_FakeMB())
-    mt.m_qif_in.set("MEM://in.data_model")
-    mt.m_xlsx.set("MEM://in.xlsx")
-
-    # No real FS
-    monkeypatch.setattr(m2.Path, "exists", lambda self: True, raising=False)  # type: ignore[arg-type,misc]
-    monkeypatch.setattr(m2.Path, "is_file", lambda self: True, raising=False)  # type: ignore[arg-type,misc]
-
-    # Don’t write files; just capture call
-    calls: list[tuple[str, str]] = []
-    cms = sys.modules[names["category_match_session"]]
-
-    def fake_apply(self: Any, xlsx: Any, xlsx_out: Any) -> Any:
-        calls.append((str(xlsx), str(xlsx_out)))
-        return m2.Path(xlsx_out)
-
-    monkeypatch.setattr(
-        cms.CategoryMatchSession, "apply_to_excel", fake_apply, raising=False
-    )
-
-    # Act
-    headless = mt.open_normalize_modal()
-    headless.auto_match()
-
-    # Use the session’s own unmatched sets (robust to stub changes)
-    uq, ue = headless.unmatched()
-    assert isinstance(uq, list | set) and isinstance(ue, list | set)
-    # Pick any available names; if empty, skip matching step (still exercise pairs/apply)
-    pre_pairs = list(headless.pairs())
-    if ue and uq:
-        e: Any = sorted(list(ue))[0]  # type: ignore[arg-type]
-        q: Any = sorted(list(uq))[0]  # type: ignore[arg-type]
-        ok, _ = headless.do_match(e, q)
-        assert ok, "manual match should succeed"
-    post_pairs = list(headless.pairs())
-
-    # Assert: pair list grew (or at least exists), and apply/save was invoked with our path
-    assert len(post_pairs) >= len(pre_pairs)
-    out_path = "MEM://normalized.xlsx"
-    result = headless.apply_and_save(out_path=out_path)
-
-    # Normalize expectations using the module's Path (handles Windows vs POSIX)
-    expected_in = str(m2.Path("MEM://in.xlsx"))
-    expected_out = str(m2.Path(out_path))
-
-    assert calls and calls[-1] == (expected_in, expected_out)
-    assert str(result) == expected_out
-
-
 @pytest.fixture(autouse=True)
 def _purge_stubs_after_each_test(  # pyright: ignore[reportUnusedFunction]
     monkeypatch: Any,
@@ -1238,11 +1175,14 @@ def _skip_legacy_normalize_tests() -> None:
     import pytest as _pytest
 
     # Tailored selectors: name/docstring, case-insensitive
+    # Note: We explicitly check for category normalization patterns,
+    # not generic "normalize" to avoid catching "path-normalized" and similar.
+    # "normalize categor" matches "normalize categories" in docstrings
+    # "_m_normalize_categories" matches function names with underscores
     KEYWORDS = (
-        "normalize",  # broad: catches test_normalize_* variants
+        "normalize categor",  # matches "normalize categories" in docstrings
         "open_normalize_modal",  # specific old entrypoint
-        "_m_normalize_categories",  # specific old handler
-        "normalize categories",  # docstring phrase
+        "_m_normalize_categories",  # specific old handler (matches underscored names)
         "category_popout",  # new home reference
     )
 
