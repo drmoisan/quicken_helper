@@ -34,8 +34,6 @@ from quicken_helper.data_model.excel import map_group_to_excel_txn
 from quicken_helper.data_model.excel.excel_row import ExcelRow
 from quicken_helper.data_model.excel.excel_txn_group import ExcelTxnGroup
 from quicken_helper.data_model.interfaces import ISplit, ITransaction
-from quicken_helper.legacy.qif_item_key import QIFItemKey
-from quicken_helper.legacy.qif_txn_view import QIFTxnView
 
 # from match_session import MatchSession
 from quicken_helper.utilities import to_date, to_decimal
@@ -56,8 +54,6 @@ __all__ = [
 ]
 
 TxnMapping = Mapping[str, object]
-LegacyTxn = dict[str, Any]
-MatchedTxn = ITransaction | LegacyTxn
 
 
 def _normalize_split_sequence(raw: object) -> list[Mapping[str, Any]]:
@@ -397,13 +393,18 @@ def _txn_amount(txn: TxnMapping) -> Decimal:
     return to_decimal(txn.get("amount", "0"))
 
 
-def _flatten_qif_txns(txns: list[dict[str, Any]]) -> list[QIFTxnView]:
-    """Compatibility shim exposing the legacy helper from this module."""
+def _flatten_qif_txns(txns: list[dict[str, Any]]) -> list[Any]:
+    """
+    Compatibility shim exposing the legacy helper from match_helpers.
 
+    This function is maintained for backwards compatibility with existing tests
+    and will be deprecated in a future release. New code should use protocol-based
+    transactions and MatchSession directly.
+    """
     return flatten_qif_txns(txns)
 
 
-def build_matched_only_txns(session: MatchSession) -> list[MatchedTxn]:
+def build_matched_only_txns(session: MatchSession) -> list[ITransaction]:
     """
     Return the subset of bank transactions that are matched in the session, in original order.
 
@@ -413,61 +414,22 @@ def build_matched_only_txns(session: MatchSession) -> list[MatchedTxn]:
     of bank transactions and p is the number of pairs.
 
     Args:
-        session: The current matching session.
+        session: The current matching session with protocol-based transactions.
 
     Returns:
-        A new (shallow-copied) list of matched bank transactions.
+        List of bank transactions that have matches, in original order.
+
+    Example:
+        >>> session = MatchSession(bank_txns, excel_txns)
+        >>> session.auto_match()
+        >>> matched = build_matched_only_txns(session)
+        >>> # matched contains only bank_txns that appear in session.pairs
     """
-    bank_txns_attr = getattr(session, "bank_txns", None)
-    if bank_txns_attr is not None:
-        bank_txns = list(cast("Sequence[ITransaction]", bank_txns_attr))
-        bank_ids = {id(t) for t in bank_txns}
-        matched_bank_ids = {id(b) for (b, _e) in session.pairs if id(b) in bank_ids}
-        return [cast("MatchedTxn", t) for t in bank_txns if id(t) in matched_bank_ids]
+    # Build set of bank transaction identities from pairs
+    matched_ids = {id(bank_txn) for bank_txn, _ in session.pairs}
 
-    legacy_txns_attr = getattr(session, "txns", None)
-    if legacy_txns_attr is None:
-        raise AttributeError(
-            "Session lacks bank_txns/txns attributes required for filtering."
-        )
-
-    legacy_txns = cast("Sequence[LegacyTxn]", legacy_txns_attr)
-    if getattr(session, "excel_groups", None):
-        mapping = cast(
-            "dict[QIFItemKey, int]", getattr(session, "qif_to_excel_group", {}) or {}
-        )
-        matched_indices = {key.txn_index for key in mapping}
-        return [
-            cast("MatchedTxn", txn)
-            for idx, txn in enumerate(legacy_txns)
-            if idx in matched_indices
-        ]
-
-    qif_map_attr = getattr(session, "qif_to_excel", None) or getattr(
-        session, "qif_to_excel_row", None
-    )
-    qif_map = cast("dict[QIFItemKey, int]", qif_map_attr or {})
-    matched_keys = set(qif_map.keys())
-    if not matched_keys:
-        return []
-
-    filtered: list[MatchedTxn] = []
-    for idx, txn in enumerate(legacy_txns):
-        splits = _normalize_split_sequence(txn.get("splits"))
-        matched_whole = QIFItemKey(idx, None) in matched_keys
-        matched_split_indices = [
-            si for si in range(len(splits)) if QIFItemKey(idx, si) in matched_keys
-        ]
-        if splits:
-            new_splits = [splits[si] for si in matched_split_indices]
-            if new_splits:
-                clone = dict(txn)
-                clone["splits"] = new_splits
-                filtered.append(cast("MatchedTxn", clone))
-        elif matched_whole:
-            filtered.append(cast("MatchedTxn", txn))
-
-    return filtered
+    # Filter bank_txns to only matched ones, preserving order
+    return [txn for txn in session.bank_txns if id(txn) in matched_ids]
 
 
 def apply_excel_splits(
