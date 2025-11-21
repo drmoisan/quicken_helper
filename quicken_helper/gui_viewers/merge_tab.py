@@ -464,7 +464,7 @@ class MergeTab(ttk.Frame):
             qif_out.parent.mkdir(parents=True, exist_ok=True)
             with open(qif_out, "w", encoding="utf-8") as fp:
                 # Cast needed because build_matched_only_txns returns MatchedTxn (ITransaction | LegacyTxn)
-                mex.emit_qif_transactions(cast("list[ITransaction]", txns_to_write), fp)
+                mex.emit_qif_transactions(txns_to_write, fp)
 
             self._m_info(f"Updates applied. Wrote updated QIF:\n{qif_out}")
             self.mb.showinfo("Done", f"Updated QIF written:\n{qif_out}")

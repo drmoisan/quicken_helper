@@ -33,8 +33,6 @@ from quicken_helper.data_model.excel.excel_txn_group import ExcelTxnGroup
 from quicken_helper.data_model.interfaces import ISplit, ITransaction
 
 # from match_session import MatchSession
-from quicken_helper.legacy.qif_item_key import QIFItemKey
-from quicken_helper.legacy.qif_txn_view import QIFTxnView
 from quicken_helper.utilities import to_date, to_decimal
 from quicken_helper.utilities.excel_io import read_excel_df
 
