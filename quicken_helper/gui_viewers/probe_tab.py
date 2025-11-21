@@ -10,6 +10,7 @@ import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, ttk
 
+from quicken_helper.controllers.data_session import DataSession
 from quicken_helper.gui_viewers.helpers import decode_best_effort
 from quicken_helper.gui_viewers.message_box_api import MessageBoxAPI
 from quicken_helper.legacy import qdx_probe
@@ -22,15 +23,20 @@ log = logging.getLogger(__name__)
 class ProbeTab(ttk.Frame):
     """Primary function: Run QDX probe and preview artifacts."""
 
-    def __init__(self, master: tk.Misc, mb: MessageBoxAPI):
+    def __init__(
+        self, master: tk.Misc, mb: MessageBoxAPI, session: DataSession | None = None
+    ):
         """Initialize the ProbeTab UI.
 
         Args:
             master: The parent Tkinter widget.
             mb: MessageBox API for showing dialogs.
+            session: Optional DataSession for shared data access (currently unused
+                    as ProbeTab is primarily a diagnostic/inspection tool).
         """
         super().__init__(master)
         self.mb = mb
+        self.session = session
         self._build()
 
     def _build(self):
