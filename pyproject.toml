@@ -1,7 +1,7 @@
 [project]
 name = "quicken-helper"
 version = "0.1.0"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 # … your runtime dependencies …
 
 [tool.poetry.group.dev.dependencies]
