@@ -2,16 +2,16 @@
 Excel↔QIF matching helpers.
 
 This module provides utilities to ingest/normalize an Excel categorization sheet,
-flatten QIF transactions into matchable views, perform fuzzy category pairing,
-and drive an end-to-end merge/update of QIF transactions using Excel as the
-source of truth.
+perform fuzzy category pairing, and drive an end-to-end merge/update of QIF
+transactions using Excel as the source of truth.
 
 Primary responsibilities:
-• Load Excel rows into `ExcelRow` records and group them into `ExcelTxnGroup`s.
-• Flatten QIF transactions (and splits) into `QIFTxnView`s for matching.
+• Load Excel rows into ExcelRow records and group them into ExcelTxnGroups.
+• Convert Excel groups to protocol-based ITransaction objects for matching.
 • Extract and fuzzy-match category names across data sources.
-• Build a “matched-only” QIF view without mutating the source list.
-• Orchestrate a full merge (parse → match → apply updates → write).
+• Build a "matched-only" transaction list from MatchSession results.
+• Apply Excel splits to matched bank transactions.
+• Emit QIF transactions using protocol-based emitters.
 """
 
 # quicken_helper/controllers/match_excel.py
