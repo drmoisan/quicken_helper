@@ -360,22 +360,37 @@ def _patch_csv_writers(
 ) -> None:
     """Record CSV writer invocations without writing files."""
 
-    def _recorder(txns: object, out_path: object) -> None:
+    def _csv_recorder(txns: object, out_path: object) -> None:
         count = len(getattr(txns, "transactions", txns))  # type: ignore[arg-type]
         calls.append(("writer_called", count, str(out_path)))
 
-    # Writers imported into convert_tab module namespace
-    monkeypatch.setattr(
-        convert_mod, "write_csv_quicken_windows", _recorder, raising=False
-    )
-    monkeypatch.setattr(convert_mod, "write_csv_quicken_mac", _recorder, raising=False)
-    # Also patch legacy qif_writer functions used for default CSV modes, if ever used
+    # Patch the CSV profile writers that io_service delegates to
+    try:
+        from quicken_helper.gui_viewers import csv_profiles
+
+        monkeypatch.setattr(
+            csv_profiles, "write_csv_quicken_windows", _csv_recorder, raising=False
+        )
+        monkeypatch.setattr(
+            csv_profiles, "write_csv_quicken_mac", _csv_recorder, raising=False
+        )
+    except Exception:
+        pass
+
+    # Also patch legacy qif_writer functions used for default CSV modes and QIF writes
     try:
         from quicken_helper.legacy import qif_writer as mod
 
-        monkeypatch.setattr(mod, "write_csv_exploded", _recorder, raising=False)
-        monkeypatch.setattr(mod, "write_csv_flat", _recorder, raising=False)
-        monkeypatch.setattr(mod, "write_qif", _recorder, raising=False)
+        monkeypatch.setattr(mod, "write_csv_exploded", _csv_recorder, raising=False)
+        monkeypatch.setattr(mod, "write_csv_flat", _csv_recorder, raising=False)
+        monkeypatch.setattr(
+            mod,
+            "write_qif",
+            lambda path, txns, **kwargs: calls.append(
+                ("writer_called", len(list(txns)), str(path))
+            ),
+            raising=False,
+        )
     except Exception:
         pass
 
