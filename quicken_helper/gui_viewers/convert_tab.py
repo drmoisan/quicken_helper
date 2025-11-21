@@ -256,7 +256,6 @@ class ConvertTab(ttk.Frame):
         Notes:
             When session is provided and data already loaded → reuse cached data
             When session is None OR data not loaded → fall back to direct parsing
-            Attempts to memoize in session if available after loading
         """
         session = self.session
 
@@ -268,7 +267,7 @@ class ConvertTab(ttk.Frame):
             )
             return [_txn_to_dict(t) for t in session.qif_txns]
 
-        # Fall back to direct parsing, then memoize if a session exists
+        # Fall back to direct parsing
         ext = path.suffix.lower()
         txns: list[TxnDict]
 
@@ -279,16 +278,26 @@ class ConvertTab(ttk.Frame):
             txns = parse_qfx(path)
         else:
             log.debug("Parsing QIF: %s", path)
-            qf = quicken_helper.controllers.qif_loader.parse_qif_unified_protocol(path)
-            txns = [_txn_to_dict(t) for t in qf.transactions]
-
-        # Memoize in session if available
-        if session is not None and ext not in (".qfx", ".ofx"):
-            try:
-                session.load_qif(path, encoding=encoding)
-            except Exception:
-                # do not fail conversion if memoize fails; diagnostics go to log
-                log.exception("DataSession.load_qif failed; continuing without cache")
+            # Use session if available to benefit from caching for future calls
+            if session is not None:
+                try:
+                    txns = [
+                        _txn_to_dict(t)
+                        for t in session.load_qif(path, encoding=encoding)
+                    ]
+                except Exception:
+                    log.exception(
+                        "DataSession.load_qif failed; falling back to direct parsing"
+                    )
+                    qf = quicken_helper.controllers.qif_loader.parse_qif_unified_protocol(
+                        path
+                    )
+                    txns = [_txn_to_dict(t) for t in qf.transactions]
+            else:
+                qf = quicken_helper.controllers.qif_loader.parse_qif_unified_protocol(
+                    path
+                )
+                txns = [_txn_to_dict(t) for t in qf.transactions]
 
         return txns
 

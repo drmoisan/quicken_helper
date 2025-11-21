@@ -391,8 +391,11 @@ class MergeTab(ttk.Frame):
             bank_txns = self._load_qif_transactions(qif_in)
             excel_txns = self._load_excel_transactions(xlsx)
 
-            # Get row count for info message
-            rows = self.session.excel_rows if self.session else []
+            # Get row count for info message (only if session has data for THIS path)
+            if self.session and self.session.excel_path == xlsx:
+                rows = self.session.excel_rows or []
+            else:
+                rows = []
 
             # Build session but DO NOT auto-match yet
             sess = MatchSession(bank_txns, excel_txns)
