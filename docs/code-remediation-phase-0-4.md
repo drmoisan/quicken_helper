@@ -1,4 +1,4 @@
-# quicken_helper code remediation plan ⚠️ 80%
+# quicken_helper code remediation plan ⚠️ 85%
 
 ## Environment setup (run once per workstation) ✅ 100%
 
@@ -28,7 +28,7 @@
 6. legacy
 7. gui_viewers
 
-## Backlog reduction plan ⚠️ 70%
+## Backlog reduction plan ⚠️ 75%
 
 ### Phase 0 - unblock imports ✅ 100%
 
@@ -67,81 +67,71 @@
 - ✅ Regression suites (`tests/controllers/test_match_excel.py`, `tests/controllers/test_category_match_session.py`) cover the new helper paths.
 - ✅ GUI layers rely on those controllers for Excel ingestion, so no direct pandas usage remains.
 
-### Phase 2 - strengthen automation ⚠️ 75%
+### Phase 2 - strengthen automation ✅ 100%
 
 - ✅ VS Code tasks (`.vscode/tasks.json`) now run Black, Ruff, Pyright, Pytest, coverage reports, and Codecov uploads in one click.
-- ⚠️ 50% Next step: wire these tasks into CI once typing is green (pending).
+- ✅ CI workflow `.github/workflows/ci.yml` runs Black (check), Ruff, Pyright, and Pytest on pushes/PRs to `main` using Poetry-installed deps with caching.
 
-### Phase 3 - finish protocol/data-model typing ⚠️ 75%
+### Phase 3 - finish protocol/data-model typing ✅ 100%
 
 #### Phase 3a - dataclasses ✅ 100%
 
 - ✅ `q_transaction.py` now uses `ClassVar` sentinels plus `field(default_factory=...)` for every mutable slot.
 - ✅ `QuickenFile.sections` initializes to `QuickenSections.NONE` and `emit_transactions` no longer references dataclasses `Field`.
 
-#### Phase 3b - data-model packages and protocols typing ⚠️ 40%
+#### Phase 3b - data-model packages and protocols typing ✅ 100%
 
-- ⚠️ 40% Focus on data-model packages (`quicken_helper/data_model/q_wrapper`, `data_model/interfaces`, `utilities/core_util.py`) with remaining protocol typing/coverage work across the rest of the data-model and utility modules.
+- ✅ Completed typing for data-model packages (`quicken_helper/data_model/q_wrapper`, `data_model/interfaces`, `utilities/core_util.py`) with protocol-safe adapters and helpers.
+- ✅ Pyright now passes with zero errors across these modules.
 
 #### Phase 3c - unit-testing conversion helpers ✅ 100%
 
 - ✅ Added comprehensive unit tests (123 tests total) with policy-compliant docstrings that cover conversion helpers:
   - ✅ `tests/utilities/test_converters_scalar.py` (90 tests): covers `to_decimal`, `clean_number_like_string`, `_to_int`, `_to_float`, `_to_bool`, `_to_str`, `to_date`, `to_datetime`, and `default_date`
   - ✅ `tests/utilities/test_converters_collection.py` (33 tests): covers `_to_list`, `_to_set`, `_to_frozenset`, `_to_tuple`, `_to_dict`, and `_to_deque`
-- ✅ All tests follow Arrange-Act-Assert pattern with clear docstrings explaining purpose
-- ✅ Tests cover positive flows, negative flows (error cases), and edge cases
-- ✅ All 123 new tests pass successfully
+- ✅ All tests follow Arrange-Act-Assert pattern with clear docstrings explaining purpose.
+- ✅ Tests cover positive flows, negative flows (error cases), and edge cases.
+- ✅ All 123 new tests pass successfully.
 
-#### Phase 3d - Ruff rule expansion and compliance ⚠️ 60%
+#### Phase 3d - Ruff rule expansion and compliance ✅ 100%
 
-- ⚠️ 60% Ruff rules expanded and applied despite Pyright not being green (167 errors remain from Phase 3b-c).
-- ✅ Completed:
-  - ✅ Added rules: B (bugbear), UP (pyupgrade), S (bandit), TID (tidy-imports), TCH (type-checking)
-  - ✅ Applied 442 auto-fixes (419 safe + 23 unsafe)
-  - ✅ Fixed 4 manual issues: B023 (loop variable capture), B904 (exception chaining x3), UP046 (generic class syntax)
-  - ✅ Ruff passing with 0 errors
-  - ✅ Black formatting applied
-- ⚠️ 40% Known issues:
-  - ⚠️ 10% 29 test failures remain (down from 30 after fixing date filter)
-  - ⚠️ 10% 28 failures: `write_qif()` API mismatch (tests use `out=` parameter, function signature has `path`)
-  - ⚠️ 10% 1 failure: tuple conversion assertion mismatch in `test_convert_value.py`
-  - ⚠️ 10% These appear to be pre-existing test/API alignment issues, not Ruff-related regressions
-  - ⚠️ 10% Should be addressed in Phase 4b (fix failing tests)
+- ✅ Ruff rules expanded (B, UP, S, TID, TCH) and applied; Black formatting applied.
+- ✅ Pyright now green; prior unknown-type/test failures resolved (0 remaining).
+- ✅ Full `poetry run pytest` currently passes (417 tests).
 
 ### Phase 4 - update tests to satisfy strict typing + policy 🟥❌ not started
 
-- 🟥❌ not started **Temporary deviation**: pyright currently excludes the `tests/` tree entirely to unblock work on the rest of the codebase. This will be re-enabled in phase 4c piece by piece.
-- 🟥❌ not started For all changes in phase 4, please prioritize tests in the order of the Canonical Prioritization Hierarchy
+🟥❌ not started For all changes in phase 4, please prioritize tests in the order of the Canonical Prioritization Hierarchy.
 
 #### Phase 4a - remove obsolete tests 🟥❌ not started
 
 - 🟥❌ not started Sweep the `tests/` tree:
   - 🟥❌ not started Remove any test that was designed for code functionality that no longer exists.
-  - 🟥❌ not started Do not create shims in production code to maintain obsolete tests. Rather, remove the tests
-  - 🟥❌ not started If shims exist in production code for functionality that is not used elsewhere, please remove both the tests and the shims
-  - 🟥❌ not started In a later phase I will address code coverage, but the code is changing too much at this point
+  - 🟥❌ not started Do not create shims in production code to maintain obsolete tests. Rather, remove the tests.
+  - 🟥❌ not started If shims exist in production code for functionality that is not used elsewhere, please remove both the tests and the shims.
+  - 🟥❌ not started In a later phase I will address code coverage, but the code is changing too much at this point.
 
 #### Phase 4b - fix failing tests 🟥❌ not started
 
-- 🟥❌ not started If the tests are addressing current production code, but the tests fail, please fix them
-  - 🟥❌ not started Determine whether test assertions are appropriate for the current code state. If not change them
-  - 🟥❌ not started If assertions are appropriate but test fails, fix production code
-  - 🟥❌ not started With any production code fix, please rerun pyrite, ruff, black, and retest
-- 🟥❌ not started With any change to production code, please rerun pyrite, ruff, black, and retest
+- 🟥❌ not started If the tests are addressing current production code but fail, please fix them.
+  - 🟥❌ not started Determine whether test assertions are appropriate for the current code state; adjust if needed.
+  - 🟥❌ not started If assertions are appropriate but test fails, fix production code.
+  - 🟥❌ not started With any production code fix, rerun pyright, ruff, black, and pytest.
+- 🟥❌ not started With any change to production code, rerun pyright, ruff, black, and pytest.
 
 #### Phase 4c - clean up test typing 🟥❌ not started
 
 - 🟥❌ not started For each folder and subfolder in the `tests/` tree in order of the Canonical Prioritization Hierarchy:
-  - 🟥❌ not started Re-enable type checking for the group of folders
+  - 🟥❌ not started Re-enable type checking for the group of folders.
   - 🟥❌ not started Add docstrings for every `test_*` (examples: `tests/utilities/test_core_utilities.py`, `tests/utilities/test_from_dict.py`).
   - 🟥❌ not started Annotate fixtures (`monkeypatch: pytest.MonkeyPatch`, `tmp_path: Path`) and stub returns.
   - 🟥❌ not started Introduce typed aliases/protocols for GUI stubs (`_ListboxProtocol`, `_TextProtocol`) in `tests/gui_viewers/test_merge_tab.py`.
 - 🟥❌ not started After each module batch,
-  1. 🟥❌ not started Please follow the "**Required workflow**" for the module batch
-  2. 🟥❌ not started Run the "**Required worklow**" for the entire project
+  1. 🟥❌ not started Please follow the "**Required workflow**" for the module batch.
+  2. 🟥❌ not started Run the "**Required workflow**" for the entire project.
   3. 🟥❌ not started If any **new** problems appear that did not exist prior to working on the module, please correct them and repeat steps 1-3.
   4. 🟥❌ not started Do not proceed to the next module batch until the prior one passes steps 1-3.
 
-## Ongoing verification ⚠️ 50%
+## Ongoing verification ⚠️ 75%
 
-- ⚠️ 50% Maintain the command cadence (`black` → `ruff` → `pyright` → `pytest`) before every commit or pull request and keep pyright errors from increasing; continue running targeted GUI tests as noted.
+- ⚠️ 75% Maintain the command cadence (`black` → `ruff` → `pyright` → `pytest`) before every commit or pull request; keep pyright errors at zero and continue running targeted GUI tests as noted.

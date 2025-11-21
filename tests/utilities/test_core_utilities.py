@@ -24,11 +24,9 @@ def test__parse_qif_date_formats(raw: str, expect_iso: str) -> None:
     assert d.isoformat() == expect_iso
 
 
-def test__open_for_read_uses_builtins_open(
-    monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test__open_for_read_uses_builtins_open(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test open_for_read uses builtins.open and returns readable file object.
-    
+
     Policy compliance: No filesystem I/O, mocks builtins.open.
     """
     # Arrange

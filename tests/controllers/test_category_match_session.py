@@ -154,7 +154,7 @@ def test_unmatched_returns_items_not_in_mapping():
 
 
 def test_apply_to_excel_replaces_cells_and_writes_default_output(
-    monkeypatch: pytest.MonkeyPatch
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """apply_to_excel: reads an Excel file, replaces cells in the 'Canonical MECE Category'
     column using the session mapping, and writes to a default '*_normalized.xlsx' file.
@@ -162,7 +162,7 @@ def test_apply_to_excel_replaces_cells_and_writes_default_output(
     We monkeypatch pandas.read_excel to return an in-memory DataFrame and monkeypatch
     DataFrame.to_excel with a (*args, **kwargs) signature to avoid 'self' binding
     warnings and to capture the output path and mutated values.
-    
+
     Policy compliance: No filesystem I/O, all operations mocked.
     """
     # Arrange
@@ -204,11 +204,11 @@ def test_apply_to_excel_replaces_cells_and_writes_default_output(
 
 
 def test_apply_to_excel_raises_if_column_missing(
-    monkeypatch: pytest.MonkeyPatch
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """apply_to_excel: raises ValueError when the expected 'Canonical MECE Category'
     column is missing in the input Excel sheet.
-    
+
     Policy compliance: No filesystem I/O, all operations mocked.
     """
     # Arrange
@@ -225,11 +225,11 @@ def test_apply_to_excel_raises_if_column_missing(
 
 
 def test_apply_to_excel_respects_explicit_output_path(
-    monkeypatch: pytest.MonkeyPatch
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """apply_to_excel: honors an explicit output path if provided and writes there
     instead of using the default '*_normalized.xlsx' filename.
-    
+
     Policy compliance: No filesystem I/O, all operations mocked.
     """
     # Arrange

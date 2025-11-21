@@ -16,6 +16,7 @@ pytest-cov = "^7.0.0"
 [tool.poetry.group.lint.dependencies]
 black = "25.1.0"
 ruff = "0.12.12"
+pyright = "^1.1.396"
 
 
 [tool.poetry.dependencies]

@@ -8,11 +8,12 @@ should go through this module to ensure consistent error handling and logging.
 from __future__ import annotations
 
 import logging
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import asdict, dataclass, field, is_dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Protocol, TypeGuard, cast
 
+from quicken_helper.data_model.interfaces import IToDict, ITransaction
 from quicken_helper.gui_viewers.csv_profiles import (
     write_csv_quicken_mac,
     write_csv_quicken_windows,
@@ -29,7 +30,7 @@ class ParseStats:
     lines_read: int = 0
     transactions_parsed: int = 0
     transactions_skipped: int = 0
-    errors: list[str] = field(default_factory=list)
+    errors: list[str] = field(default_factory=lambda: cast("list[str]", []))
 
     def add_error(self, error: str) -> None:
         """Add an error message, keeping only the first 5."""
@@ -50,8 +51,37 @@ class ParseStats:
         return (self.transactions_parsed / total) * 100.0
 
 
+class _DataclassInstance(Protocol):
+    __dataclass_fields__: dict[str, Any]
+
+
+def _is_dataclass_instance(value: object) -> TypeGuard[_DataclassInstance]:
+    """Return True only for dataclass instances (not classes)."""
+    return is_dataclass(value) and not isinstance(value, type)
+
+
+def _normalize_txn(txn: object) -> dict[str, Any]:
+    """
+    Convert a transaction-like object into a dictionary.
+
+    Supports Mapping, ITransaction, IToDict, and dataclass instances.
+    """
+    if isinstance(txn, Mapping):
+        return dict(cast("Mapping[str, Any]", txn))
+    if isinstance(txn, ITransaction):
+        return txn.to_dict()
+    if isinstance(txn, IToDict):
+        return txn.to_dict()
+    if _is_dataclass_instance(txn):
+        return asdict(cast("Any", txn))
+    raise TypeError(
+        f"Cannot convert transaction to dict: {type(txn).__name__}; "
+        "expected Mapping, ITransaction, IToDict, or dataclass instance"
+    )
+
+
 def write_qif(
-    transactions: Sequence[Any],
+    transactions: Sequence[object],
     path: Path,
     *,
     encoding: str = "utf-8",
@@ -84,7 +114,7 @@ def write_qif(
 
 
 def write_csv(
-    transactions: Sequence[Any],
+    transactions: Sequence[object],
     path: Path,
     profile: str = "quicken-windows",
     *,
@@ -112,21 +142,7 @@ def write_csv(
     )
 
     # Convert transactions to dicts if needed
-    txn_dicts: list[dict[str, Any]] = []
-    for txn in transactions:
-        if isinstance(txn, dict):
-            txn_dicts.append(txn)
-        elif hasattr(txn, "to_dict") and callable(txn.to_dict):
-            txn_dicts.append(txn.to_dict())
-        else:
-            # Try using asdict for dataclasses
-            if is_dataclass(txn):
-                txn_dicts.append(asdict(txn))
-            else:
-                raise TypeError(
-                    f"Cannot convert transaction to dict: {type(txn).__name__}; "
-                    "expected dict, dataclass, or object with to_dict() method"
-                )
+    txn_dicts: list[dict[str, Any]] = [_normalize_txn(txn) for txn in transactions]
 
     try:
         if profile == "quicken-windows":

@@ -16,9 +16,9 @@ from __future__ import annotations
 import importlib
 import sys
 import types
-from collections.abc import Callable
+from collections.abc import Callable, Iterable, Sequence
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pytest
 
@@ -361,8 +361,13 @@ def _patch_csv_writers(
     """Record CSV writer invocations without writing files."""
 
     def _csv_recorder(txns: object, out_path: object) -> None:
-        count = len(getattr(txns, "transactions", txns))  # type: ignore[arg-type]
-        calls.append(("writer_called", count, str(out_path)))
+        items_obj = getattr(txns, "transactions", txns)
+        if isinstance(items_obj, Sequence):
+            items_seq = cast("Sequence[object]", items_obj)
+            items: list[object] = list(items_seq)
+        else:
+            items = [items_obj]
+        calls.append(("writer_called", len(items), str(out_path)))
 
     # Patch the CSV profile writers in io_service (since io_service imports them at module level)
     try:
@@ -383,14 +388,13 @@ def _patch_csv_writers(
 
         monkeypatch.setattr(mod, "write_csv_exploded", _csv_recorder, raising=False)
         monkeypatch.setattr(mod, "write_csv_flat", _csv_recorder, raising=False)
-        monkeypatch.setattr(
-            mod,
-            "write_qif",
-            lambda path, txns, **kwargs: calls.append(
-                ("writer_called", len(list(txns)), str(path))
-            ),
-            raising=False,
-        )
+
+        def _qif_recorder(
+            path: object, txns: Iterable[object], **kwargs: object
+        ) -> None:
+            calls.append(("writer_called", len(list(txns)), str(path)))
+
+        monkeypatch.setattr(mod, "write_qif", _qif_recorder, raising=False)
     except Exception:
         pass
 

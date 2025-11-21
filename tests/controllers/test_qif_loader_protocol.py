@@ -205,9 +205,9 @@ def test_load_transactions_with_stats_returns_stats(
 
     @dataclass
     class FakeFile:
-        transactions: list = None
+        transactions: list[FakeTxn] | None = None
 
-        def __post_init__(self):
+        def __post_init__(self) -> None:
             if self.transactions is None:
                 self.transactions = [FakeTxn(), FakeTxn()]
 

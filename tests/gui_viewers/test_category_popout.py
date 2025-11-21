@@ -65,7 +65,7 @@ def _install_mex_stub(  # type: ignore[reportUnusedFunction]
 def test_compute_category_sets_returns_expected_sets() -> None:
     """
     Verify compute_category_sets returns expected sets from stubbed operations.
-    
+
     Tests category set computation without filesystem I/O. Follows unit-test-policy.md.
     """
     session = _FakeSession()  # type: ignore[arg-type]
@@ -79,7 +79,7 @@ def test_compute_category_sets_returns_expected_sets() -> None:
 def test_open_normalize_modal_calls_mb_and_returns_sets() -> None:
     """
     Verify open_normalize_modal calls message box and returns sets.
-    
+
     Tests modal interaction without filesystem I/O. Follows unit-test-policy.md.
     """
     session = _FakeSession()  # type: ignore[arg-type]

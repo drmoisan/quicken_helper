@@ -13,10 +13,9 @@ Policy compliance:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from io import StringIO
 from pathlib import Path
 from typing import Any
-from unittest.mock import MagicMock, mock_open, patch
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -75,10 +74,11 @@ def test_write_qif_creates_valid_file(monkeypatch: pytest.MonkeyPatch) -> None:
     # Arrange
     txn = _make_test_transaction(date="2025-01-01", amount=100.0)
     out_file = Path("/mock/output.qif")
-    
+
     # Mock the legacy writer to track calls
     mock_writer = MagicMock(return_value=1)
     from quicken_helper.controllers import io_service
+
     monkeypatch.setattr(io_service, "legacy_write_qif", mock_writer)
 
     # Act
@@ -106,10 +106,11 @@ def test_write_qif_handles_dict_transactions(monkeypatch: pytest.MonkeyPatch) ->
         "category": "Shopping",
     }
     out_file = Path("/mock/output.qif")
-    
+
     # Mock the legacy writer
     mock_writer = MagicMock(return_value=1)
     from quicken_helper.controllers import io_service
+
     monkeypatch.setattr(io_service, "legacy_write_qif", mock_writer)
 
     # Act
@@ -129,10 +130,11 @@ def test_write_qif_handles_protocol_objects(monkeypatch: pytest.MonkeyPatch) -> 
     # Arrange
     txn = _make_test_transaction(date="2025-02-15", payee="Protocol Test", amount=200.0)
     out_file = Path("/mock/output.qif")
-    
+
     # Mock the legacy writer
     mock_writer = MagicMock(return_value=1)
     from quicken_helper.controllers import io_service
+
     monkeypatch.setattr(io_service, "legacy_write_qif", mock_writer)
 
     # Act
@@ -156,10 +158,11 @@ def test_write_qif_multiple_transactions(monkeypatch: pytest.MonkeyPatch) -> Non
         _make_test_transaction(date="2025-01-03", payee="Store C", amount=300.0),
     ]
     out_file = Path("/mock/output.qif")
-    
+
     # Mock the legacy writer
     mock_writer = MagicMock(return_value=3)
     from quicken_helper.controllers import io_service
+
     monkeypatch.setattr(io_service, "legacy_write_qif", mock_writer)
 
     # Act
@@ -179,10 +182,11 @@ def test_write_qif_with_encoding(monkeypatch: pytest.MonkeyPatch) -> None:
     # Arrange
     txn = _make_test_transaction(payee="Café français", amount=50.0)
     out_file = Path("/mock/output.qif")
-    
+
     # Mock the legacy writer
     mock_writer = MagicMock(return_value=1)
     from quicken_helper.controllers import io_service
+
     monkeypatch.setattr(io_service, "legacy_write_qif", mock_writer)
 
     # Act
@@ -190,7 +194,9 @@ def test_write_qif_with_encoding(monkeypatch: pytest.MonkeyPatch) -> None:
 
     # Assert
     mock_writer.assert_called_once()
-    assert mock_writer.call_args[1]["encoding"] == "utf-8", "Should pass encoding parameter"
+    assert (
+        mock_writer.call_args[1]["encoding"] == "utf-8"
+    ), "Should pass encoding parameter"
 
 
 # Tests for write_csv
@@ -205,10 +211,11 @@ def test_write_csv_windows_profile(monkeypatch: pytest.MonkeyPatch) -> None:
     # Arrange
     txn = _make_test_transaction(date="2025-01-01", payee="Test Store", amount=100.0)
     out_file = Path("/mock/output.csv")
-    
+
     # Mock the CSV writer
     mock_writer = MagicMock()
     from quicken_helper.controllers import io_service
+
     monkeypatch.setattr(io_service, "write_csv_quicken_windows", mock_writer)
 
     # Act
@@ -232,10 +239,11 @@ def test_write_csv_mac_profile(monkeypatch: pytest.MonkeyPatch) -> None:
     # Arrange
     txn = _make_test_transaction(date="2025-01-01", payee="Test Store", amount=100.0)
     out_file = Path("/mock/output.csv")
-    
+
     # Mock the CSV writer
     mock_writer = MagicMock()
     from quicken_helper.controllers import io_service
+
     monkeypatch.setattr(io_service, "write_csv_quicken_mac", mock_writer)
 
     # Act
@@ -276,10 +284,11 @@ def test_write_csv_handles_dict_transactions(monkeypatch: pytest.MonkeyPatch) ->
         "memo": "Test purchase",
     }
     out_file = Path("/mock/output.csv")
-    
+
     # Mock the CSV writer
     mock_writer = MagicMock()
     from quicken_helper.controllers import io_service
+
     monkeypatch.setattr(io_service, "write_csv_quicken_windows", mock_writer)
 
     # Act
@@ -300,10 +309,11 @@ def test_write_csv_handles_protocol_objects(monkeypatch: pytest.MonkeyPatch) -> 
     # Arrange
     txn = _make_test_transaction(date="2025-02-15", payee="Protocol CSV", amount=200.0)
     out_file = Path("/mock/output.csv")
-    
+
     # Mock the CSV writer
     mock_writer = MagicMock()
     from quicken_helper.controllers import io_service
+
     monkeypatch.setattr(io_service, "write_csv_quicken_windows", mock_writer)
 
     # Act
@@ -328,10 +338,11 @@ def test_write_csv_multiple_transactions(monkeypatch: pytest.MonkeyPatch) -> Non
         _make_test_transaction(date="2025-01-03", payee="Store C", amount=300.0),
     ]
     out_file = Path("/mock/output.csv")
-    
+
     # Mock the CSV writer
     mock_writer = MagicMock()
     from quicken_helper.controllers import io_service
+
     monkeypatch.setattr(io_service, "write_csv_quicken_windows", mock_writer)
 
     # Act
@@ -361,7 +372,9 @@ def test_write_csv_invalid_transaction_type_raises() -> None:
 # Error handling tests
 
 
-def test_write_qif_invalid_transaction_type_raises(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_write_qif_invalid_transaction_type_raises(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """
     Verify write_qif raises error for unsupported transaction type.
 
@@ -370,12 +383,13 @@ def test_write_qif_invalid_transaction_type_raises(monkeypatch: pytest.MonkeyPat
     # Arrange
     invalid_txn = 12345  # Integer is not a valid transaction
     out_file = Path("/mock/output.qif")
-    
+
     # Mock the legacy writer to raise TypeError
     def mock_writer_raises(*args: object, **kwargs: object) -> int:
         raise TypeError("Invalid transaction type")
-    
+
     from quicken_helper.controllers import io_service
+
     monkeypatch.setattr(io_service, "legacy_write_qif", mock_writer_raises)
 
     # Act & Assert
@@ -392,12 +406,13 @@ def test_write_qif_invalid_path_raises(monkeypatch: pytest.MonkeyPatch) -> None:
     # Arrange
     txn = _make_test_transaction()
     invalid_path = Path("/nonexistent_root_dir_12345/subdir/output.qif")
-    
+
     # Mock the legacy writer to raise IOError
     def mock_writer_raises(*args: object, **kwargs: object) -> int:
-        raise IOError("Permission denied")
-    
+        raise OSError("Permission denied")
+
     from quicken_helper.controllers import io_service
+
     monkeypatch.setattr(io_service, "legacy_write_qif", mock_writer_raises)
 
     # Act & Assert
