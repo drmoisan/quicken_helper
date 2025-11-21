@@ -133,7 +133,7 @@ class App(tk.Tk):
         self.session = DataSession()
         self.convert_tab = ConvertTab(self, self.mb, session=self.session)
         self.merge_tab = MergeTab(self, self.mb, session=self.session)
-        self.probe_tab = ProbeTab(self, self.mb)
+        self.probe_tab = ProbeTab(self, self.mb, session=self.session)
 
         # NOTEBOOK ORDER (Merge first, per your preference)
         self.nb.add(self.merge_tab, text="Excel ↔ QIF Merge")

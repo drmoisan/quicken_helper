@@ -18,6 +18,7 @@ from quicken_helper.controllers.match_session import MatchSession
 from quicken_helper.controllers.qif_loader import load_transactions_protocol
 from quicken_helper.data_model import EnumClearedStatus, ITransaction
 from quicken_helper.data_model.excel import (
+    ExcelTransaction,
     map_group_to_excel_txn,
 )
 from quicken_helper.gui_viewers.category_popout import (
@@ -322,6 +323,56 @@ class MergeTab(ttk.Frame):
         if p:
             self.m_qif_out.set(p)
 
+    # ---------- helper methods for data loading ----------
+    def _load_qif_transactions(
+        self, path: Path, encoding: str = "utf-8"
+    ) -> list[ITransaction]:
+        """Load QIF transactions, using session cache if available.
+
+        Args:
+            path: Path to QIF file
+            encoding: Character encoding (default: utf-8)
+
+        Returns:
+            List of transactions implementing ITransaction protocol
+
+        Notes:
+            When session is provided and data already loaded → reuse cached data
+            When session is None OR data not loaded → fall back to direct parsing
+        """
+        if self.session is not None:
+            # Try to reuse cached data or load via session (which caches)
+            log.debug("Loading QIF via session: %s", path)
+            return self.session.load_qif(path, encoding=encoding)
+
+        # Fallback: direct loading (for tests or when no session)
+        log.debug("Loading QIF directly (no session): %s", path)
+        return list(load_transactions_protocol(path, encoding=encoding))
+
+    def _load_excel_transactions(self, path: Path) -> list[ExcelTransaction]:
+        """Load Excel transactions, using session cache if available.
+
+        Args:
+            path: Path to Excel file
+
+        Returns:
+            List of ExcelTransaction objects (which implement ITransaction)
+
+        Notes:
+            When session is provided and data already loaded → reuse cached data
+            When session is None OR data not loaded → fall back to direct parsing
+        """
+        if self.session is not None:
+            # Try to reuse cached data or load via session (which caches)
+            log.debug("Loading Excel via session: %s", path)
+            return self.session.load_excel(path)
+
+        # Fallback: direct loading (for tests or when no session)
+        log.debug("Loading Excel directly (no session): %s", path)
+        rows = mex.load_excel_rows(path)
+        groups = mex.group_excel_rows(rows)
+        return [map_group_to_excel_txn(g) for g in groups]
+
     # ---------- actions ----------
     def _m_load(self) -> None:
         """Load inputs and build a session without auto-matching."""
@@ -336,18 +387,15 @@ class MergeTab(ttk.Frame):
                 self.mb.showerror("Error", "Please choose a valid Excel (.xlsx).")
                 return
 
-            # Bank/Excel side: prefer cached DataSession if available
-            if self.session:
-                bank_txns = self.session.load_qif(qif_in)
-                excel_txns = self.session.load_excel(xlsx)
+            # Load data using helper methods (which handle session caching)
+            bank_txns = self._load_qif_transactions(qif_in)
+            excel_txns = self._load_excel_transactions(xlsx)
+
+            # Get row count for info message (only if session has data for THIS path)
+            if self.session and self.session.excel_path == xlsx:
                 rows = self.session.excel_rows or []
             else:
-                # Bank side: already ITransaction via loader
-                bank_txns = load_transactions_protocol(qif_in)
-                # Excel side: rows -> groups -> ITransaction (via adapter)
-                rows = mex.load_excel_rows(xlsx)
-                groups = mex.group_excel_rows(rows)
-                excel_txns = [map_group_to_excel_txn(g) for g in groups]
+                rows = []
 
             # Build session but DO NOT auto-match yet
             sess = MatchSession(bank_txns, excel_txns)
