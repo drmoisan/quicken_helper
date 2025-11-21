@@ -17,35 +17,33 @@ Primary responsibilities:
 # quicken_helper/controllers/match_excel.py
 from __future__ import annotations
 
+import logging
 from collections.abc import Callable, Mapping, Sequence
 from datetime import date, datetime
 from decimal import Decimal
 from difflib import SequenceMatcher
 from pathlib import Path
-
-# --- Loading Excel (rows, then grouped by TxnID) ----------------------------
 from typing import IO, Any, cast
 
-# We re-use your parser and writer
-# from . import qif_to_csv as base
 from quicken_helper.controllers.match_helpers import flatten_qif_txns
 from quicken_helper.controllers.match_session import MatchSession
-from quicken_helper.data_model.excel import map_group_to_excel_txn
+from quicken_helper.data_model.excel import ExcelTransaction, map_group_to_excel_txn
 from quicken_helper.data_model.excel.excel_row import ExcelRow
 from quicken_helper.data_model.excel.excel_txn_group import ExcelTxnGroup
 from quicken_helper.data_model.interfaces import ISplit, ITransaction
 from quicken_helper.legacy.qif_item_key import QIFItemKey
 from quicken_helper.legacy.qif_txn_view import QIFTxnView
-
-# from match_session import MatchSession
 from quicken_helper.utilities import to_date, to_decimal
 from quicken_helper.utilities.excel_io import read_excel_df
+
+log = logging.getLogger(__name__)
 
 __all__ = [
     "build_session_from_paths",
     "load_excel_rows",
     "group_excel_rows",
     "groups_to_excel_transactions",
+    "excel_groups_to_txns",
     "extract_qif_categories",
     "extract_excel_categories",
     "fuzzy_autopairs",
@@ -145,43 +143,49 @@ def load_excel_rows(path: Path) -> list[ExcelRow]:
     - Trims string fields; preserves the original row index for deterministic ordering.
     - Requires pandas (and an Excel engine such as openpyxl).
     """
+    log.info("Loading Excel file: %s", path)
+    try:
+        df = read_excel_df(path, sheet_name=0)
+        needed = [
+            "TxnID",
+            "Date",
+            "Amount",
+            "Item",
+            "Canonical MECE Category",
+            "Categorization Rationale",
+        ]
+        missing = [c for c in needed if c not in df.columns]
+        if missing:
+            log.error("Excel is missing required columns: %s", missing)
+            raise ValueError(f"Excel is missing columns: {missing}")
 
-    df = read_excel_df(path, sheet_name=0)
-    needed = [
-        "TxnID",
-        "Date",
-        "Amount",
-        "Item",
-        "Canonical MECE Category",
-        "Categorization Rationale",
-    ]
-    missing = [c for c in needed if c not in df.columns]
-    if missing:
-        raise ValueError(f"Excel is missing columns: {missing}")
+        rows: list[ExcelRow] = []
+        for pos, (_, r) in enumerate(df.iterrows()):
+            d = r["Date"]
+            if isinstance(d, datetime):
+                dval = d.date()
+            elif isinstance(d, date):
+                dval = d
+            else:
+                dval = to_date(str(d))
 
-    rows: list[ExcelRow] = []
-    for pos, (_, r) in enumerate(df.iterrows()):
-        d = r["Date"]
-        if isinstance(d, datetime):
-            dval = d.date()
-        elif isinstance(d, date):
-            dval = d
-        else:
-            dval = to_date(str(d))
-
-        rows.append(
-            ExcelRow(
-                idx=pos,  # 'pos' is an int from enumerate
-                txn_id=str(r["TxnID"]).strip(),
-                date=dval,
-                amount=to_decimal(r["Amount"]),
-                memo=str(r["Item"] or "").strip(),
-                category=str(r["Canonical MECE Category"] or "").strip(),
-                rationale=str(r["Categorization Rationale"] or "").strip(),
+            rows.append(
+                ExcelRow(
+                    idx=pos,  # 'pos' is an int from enumerate
+                    txn_id=str(r["TxnID"]).strip(),
+                    date=dval,
+                    amount=to_decimal(r["Amount"]),
+                    memo=str(r["Item"] or "").strip(),
+                    category=str(r["Canonical MECE Category"] or "").strip(),
+                    rationale=str(r["Categorization Rationale"] or "").strip(),
+                )
             )
-        )
 
-    return rows
+        log.debug("Loaded %d rows from Excel", len(rows))
+        return rows
+    except Exception:
+        log.exception("Failed to load Excel file: %s", path)
+        raise
 
 
 def group_excel_rows(rows: list[ExcelRow]) -> list[ExcelTxnGroup]:
@@ -200,6 +204,7 @@ def group_excel_rows(rows: list[ExcelRow]) -> list[ExcelTxnGroup]:
     List[ExcelTxnGroup]
         One group per unique `TxnID`, each containing an immutable tuple of member rows.
     """
+    log.debug("Grouping %d Excel rows by TxnID", len(rows))
     by_id: dict[str, list[ExcelRow]] = {}
     for r in rows:
         by_id.setdefault(r.txn_id, []).append(r)
@@ -218,6 +223,7 @@ def group_excel_rows(rows: list[ExcelRow]) -> list[ExcelTxnGroup]:
         )
     # Stable order by date then gid
     groups.sort(key=lambda g: (g.date, g.gid))
+    log.debug("Created %d Excel transaction groups", len(groups))
     return groups
 
 
@@ -228,6 +234,23 @@ def groups_to_excel_transactions(groups: list[ExcelTxnGroup]) -> list[ITransacti
     This uses the same adapter the GUI uses (map_group_to_excel_txn) so the Excel
     side has the exact ITransaction shape that MatchSession expects.
     """
+    return [map_group_to_excel_txn(g) for g in groups]
+
+
+def excel_groups_to_txns(groups: list[ExcelTxnGroup]) -> list[ExcelTransaction]:
+    """
+    Convert Excel transaction groups to ExcelTransaction objects.
+
+    Uses existing adapter logic (map_group_to_excel_txn) to convert groups
+    into concrete ExcelTransaction instances.
+
+    Args:
+        groups: List of ExcelTxnGroup objects to convert.
+
+    Returns:
+        List of ExcelTransaction objects.
+    """
+    log.debug("Converting %d Excel groups to transactions", len(groups))
     return [map_group_to_excel_txn(g) for g in groups]
 
 
