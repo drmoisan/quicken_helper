@@ -1,13 +1,13 @@
-# quicken_helper code remediation plan
+# quicken_helper code remediation plan ✅
 
-## Environment setup (run once per workstation)
+## Environment setup (run once per workstation) ✅
 
 1. `poetry install` - creates the managed `.venv` with runtime + dev dependencies.
 2. `poetry run pre-commit install` - ensures local git hooks mirror CI once lint/type checks are tightened.
 3. Confirm the virtualenv is active for the commands below (`poetry run ...`).
 4. For a broader overview of the local tooling, see `docs/developer-tooling.md`.
 
-## **Required workflow** - should be run after **every** code change
+## **Required workflow** - should be run after **every** code change 
 
 1. **Read the policy** - skim `docs/unit-test-policy.md` before touching or adding any test to stay aligned on docstring + AAA expectations.
 2. **Review tooling** (optional) - consult `docs/developer-tooling.md` for context on Black, Ruff, Pyright, pytest, coverage, and VS Code tasks.
@@ -111,7 +111,7 @@
   - These appear to be pre-existing test/API alignment issues, not Ruff-related regressions
   - Should be addressed in Phase 4b (fix failing tests)
 
-### Phase 4 - update tests to satisfy strict typing + policy 
+### Phase 4 - update tests to satisfy strict typing + policy ✅
 
 - **Temporary deviation**: pyright currently excludes the `tests/` tree entirely to unblock work on the rest of the codebase. This will be re-enabled in phase 4c piece by piece.
 - For all changes in phase 4, please prioritize tests in the order of the Canonical Prioritization Hierarchy
@@ -132,7 +132,7 @@
   - With any production code fix, please rerun pyrite, ruff, black, and retest
 - With any change to production code, please rerun pyrite, ruff, black, and retest
 
-#### Phase 4c - clean up test typing
+#### Phase 4c - clean up test typing ✅
 
 - For each folder and subfolder in the `tests/` tree in order of the Canonical Prioritization Hierarchy:
   - Re-enable type checking for the group of folders

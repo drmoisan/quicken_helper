@@ -56,6 +56,7 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = [
     "S101",  # assert statements are expected in tests
+    "TC002", # pytest imports are used at runtime in tests, not just type-checking
 ]
 "tests/utilities/test_convert_value.py" = [
     "UP007",  # Tests for Union syntax conversion

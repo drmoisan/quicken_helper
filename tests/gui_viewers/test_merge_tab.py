@@ -1208,9 +1208,10 @@ def test_open_normalize_modal_headless_object_behaves(
 
 
 @pytest.fixture(autouse=True)
-def _purge_stubs_after_each_test(
+def _purge_stubs_after_each_test(  # pyright: ignore[reportUnusedFunction]
     monkeypatch: Any,
-) -> Any:  # pyright: ignore[reportUnusedFunction]
+) -> Any:
+    """Cleanup stub modules after each test to prevent pollution."""
     yield
     # remove only modules we created (tag them when you create them)
     for name, mod in list(sys.modules.items()):
@@ -1221,6 +1222,7 @@ def _purge_stubs_after_each_test(
 
 @pytest.fixture(autouse=True, scope="module")
 def _cleanup_module() -> Any:  # pyright: ignore[reportUnusedFunction]
+    """Cleanup stub modules after module execution."""
     yield
     # cleanup here (e.g., purge tagged sys.modules entries)
     for name, mod in list(sys.modules.items()):
