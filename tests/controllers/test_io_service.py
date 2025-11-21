@@ -13,7 +13,7 @@ from typing import Any
 
 import pytest
 
-from quicken_helper.controllers.io_service import write_csv, write_qif
+from quicken_helper.controllers.io_service import ParseStats, write_csv, write_qif
 
 # Test fixtures and helpers
 
@@ -349,3 +349,91 @@ def test_write_qif_invalid_path_raises(tmp_path: Path) -> None:
     # The function will try to create parent dirs, but /nonexistent_root should fail
     with pytest.raises(OSError):
         write_qif([txn], invalid_path)
+
+
+# Tests for ParseStats
+
+
+def test_parse_stats_default_values() -> None:
+    """
+    Verify ParseStats initializes with default values.
+
+    Tests dataclass initialization. Follows unit-test-policy.md.
+    """
+    # Arrange & Act
+    stats = ParseStats()
+
+    # Assert
+    assert stats.lines_read == 0, "Should default to 0 lines"
+    assert stats.transactions_parsed == 0, "Should default to 0 parsed"
+    assert stats.transactions_skipped == 0, "Should default to 0 skipped"
+    assert stats.errors == [], "Should default to empty error list"
+    assert not stats.has_errors, "Should have no errors initially"
+
+
+def test_parse_stats_add_error() -> None:
+    """
+    Verify ParseStats.add_error adds errors up to limit.
+
+    Tests error collection with size limit. Follows unit-test-policy.md.
+    """
+    # Arrange
+    stats = ParseStats()
+
+    # Act - add 6 errors (limit is 5)
+    for i in range(6):
+        stats.add_error(f"Error {i}")
+
+    # Assert
+    assert len(stats.errors) == 5, "Should keep only first 5 errors"
+    assert stats.errors[0] == "Error 0", "Should keep first error"
+    assert stats.errors[4] == "Error 4", "Should keep fifth error"
+    assert stats.has_errors, "Should indicate errors exist"
+
+
+def test_parse_stats_success_rate_all_parsed() -> None:
+    """
+    Verify ParseStats.success_rate calculates correctly for 100% success.
+
+    Tests success rate calculation. Follows unit-test-policy.md.
+    """
+    # Arrange
+    stats = ParseStats(transactions_parsed=10, transactions_skipped=0)
+
+    # Act
+    rate = stats.success_rate
+
+    # Assert
+    assert rate == 100.0, "Should be 100% when no transactions skipped"
+
+
+def test_parse_stats_success_rate_partial() -> None:
+    """
+    Verify ParseStats.success_rate calculates correctly for partial success.
+
+    Tests success rate calculation with failures. Follows unit-test-policy.md.
+    """
+    # Arrange
+    stats = ParseStats(transactions_parsed=7, transactions_skipped=3)
+
+    # Act
+    rate = stats.success_rate
+
+    # Assert
+    assert rate == 70.0, "Should be 70% when 7 of 10 parsed"
+
+
+def test_parse_stats_success_rate_empty() -> None:
+    """
+    Verify ParseStats.success_rate returns 100% for empty input.
+
+    Tests edge case of no transactions. Follows unit-test-policy.md.
+    """
+    # Arrange
+    stats = ParseStats(transactions_parsed=0, transactions_skipped=0)
+
+    # Act
+    rate = stats.success_rate
+
+    # Assert
+    assert rate == 100.0, "Should be 100% when no transactions at all"

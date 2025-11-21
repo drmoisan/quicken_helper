@@ -184,3 +184,50 @@ def test_splits_passthrough(monkeypatch: pytest.MonkeyPatch) -> None:
     assert (
         out[0].splits is splits  # type: ignore[attr-defined]
     ), "Identity check: loader must not copy or transform splits"
+
+
+def test_load_transactions_with_stats_returns_stats(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """
+    Verify load_transactions_with_stats returns transactions and stats.
+
+    Tests statistics collection during loading. Follows unit-test-policy.md.
+    """
+    # Arrange
+    from dataclasses import dataclass
+
+
+    @dataclass
+    class FakeTxn:
+        date: object = None
+        amount: object = None
+        payee: str = ""
+
+    @dataclass
+    class FakeFile:
+        transactions: list = None
+
+        def __post_init__(self):
+            if self.transactions is None:
+                self.transactions = [FakeTxn(), FakeTxn()]
+
+    def fake_parse(path: Path, encoding: str = "utf-8") -> FakeFile:
+        return FakeFile()
+
+    import quicken_helper.controllers.qif_loader as ql
+
+    monkeypatch.setattr(ql, "parse_qif_unified_protocol", fake_parse)
+
+    qif_file = tmp_path / "test.qif"
+    qif_file.write_text("!Type:Bank\nD01/01/2025\n^")
+
+    # Act
+    txns, stats = ql.load_transactions_with_stats(qif_file)
+
+    # Assert
+    assert len(txns) == 2, "Should load 2 transactions from fake"
+    assert stats.lines_read > 0, "Should count lines read"
+    assert stats.transactions_parsed == 2, "Should report 2 transactions parsed"
+    assert not stats.has_errors, "Should have no errors"
+    assert stats.success_rate == 100.0, "Should have 100% success rate"

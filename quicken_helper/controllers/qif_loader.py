@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from quicken_helper.controllers.io_service import ParseStats
 from quicken_helper.data_model import IQuickenFile
 
 # Protocols (structural typing) and enums
@@ -62,6 +63,43 @@ def load_transactions_protocol(
     return transactions
     # raw = open_and_parse_qif(path, encoding=encoding)
     # return [_adapt_txn(rec) for rec in raw]
+
+
+def load_transactions_with_stats(
+    path: Path, encoding: str = "utf-8"
+) -> tuple[list[ITransaction], ParseStats]:
+    """
+    Load transactions and return parse statistics.
+
+    Args:
+        path: Path to QIF file
+        encoding: Text encoding (default UTF-8)
+
+    Returns:
+        Tuple of (transactions, stats)
+    """
+    stats = ParseStats()
+
+    try:
+        # Read file and count lines
+        with open_for_read(
+            path=path, binary=False, encoding=encoding, errors="replace"
+        ) as f:
+            text = f.read()
+            stats.lines_read = len(text.splitlines())
+
+        # Parse the file using the same method as load_transactions_protocol
+        quicken_file = parse_qif_unified_protocol(path, encoding=encoding)
+        transactions = quicken_file.transactions
+
+        # Update stats
+        stats.transactions_parsed = len(transactions)
+
+    except Exception as e:
+        stats.add_error(f"Parse error: {e}")
+        transactions = []
+
+    return transactions, stats
 
 
 # --------------------------------------

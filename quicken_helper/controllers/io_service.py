@@ -9,10 +9,39 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Sequence
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
 log = logging.getLogger(__name__)
+
+
+@dataclass
+class ParseStats:
+    """Statistics from file parsing operation."""
+
+    lines_read: int = 0
+    transactions_parsed: int = 0
+    transactions_skipped: int = 0
+    errors: list[str] = field(default_factory=list)
+
+    def add_error(self, error: str) -> None:
+        """Add an error message, keeping only the first 5."""
+        if len(self.errors) < 5:
+            self.errors.append(error)
+
+    @property
+    def has_errors(self) -> bool:
+        """Check if there are any errors."""
+        return len(self.errors) > 0
+
+    @property
+    def success_rate(self) -> float:
+        """Calculate success rate as percentage."""
+        total = self.transactions_parsed + self.transactions_skipped
+        if total == 0:
+            return 100.0
+        return (self.transactions_parsed / total) * 100.0
 
 
 def write_qif(
