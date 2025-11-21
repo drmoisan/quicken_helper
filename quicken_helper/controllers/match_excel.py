@@ -17,6 +17,7 @@ Primary responsibilities:
 # quicken_helper/controllers/match_excel.py
 from __future__ import annotations
 
+import logging
 from collections.abc import Callable, Mapping, Sequence
 from datetime import date, datetime
 from decimal import Decimal
@@ -38,6 +39,8 @@ from quicken_helper.data_model.interfaces import ISplit, ITransaction
 # from match_session import MatchSession
 from quicken_helper.utilities import to_date, to_decimal
 from quicken_helper.utilities.excel_io import read_excel_df
+
+log = logging.getLogger(__name__)
 
 __all__ = [
     "build_session_from_paths",

@@ -32,6 +32,7 @@ Migration notes:
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Iterable
 from typing import (
     Any,
@@ -46,6 +47,8 @@ from quicken_helper.utilities.core_util import (
 )
 
 from .transaction_compare import MatchScore, compare_txn
+
+log = logging.getLogger(__name__)
 
 # ---------- helpers ----------
 
