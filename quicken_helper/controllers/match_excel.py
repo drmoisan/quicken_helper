@@ -27,7 +27,7 @@ from typing import IO, Any, cast
 
 from quicken_helper.controllers.match_helpers import flatten_qif_txns
 from quicken_helper.controllers.match_session import MatchSession
-from quicken_helper.data_model.excel import ExcelTransaction, map_group_to_excel_txn
+from quicken_helper.data_model.excel import map_group_to_excel_txn
 from quicken_helper.data_model.excel.excel_row import ExcelRow
 from quicken_helper.data_model.excel.excel_txn_group import ExcelTxnGroup
 from quicken_helper.data_model.interfaces import ISplit, ITransaction
@@ -43,7 +43,6 @@ __all__ = [
     "load_excel_rows",
     "group_excel_rows",
     "groups_to_excel_transactions",
-    "excel_groups_to_txns",
     "extract_qif_categories",
     "extract_excel_categories",
     "fuzzy_autopairs",
@@ -234,23 +233,6 @@ def groups_to_excel_transactions(groups: list[ExcelTxnGroup]) -> list[ITransacti
     This uses the same adapter the GUI uses (map_group_to_excel_txn) so the Excel
     side has the exact ITransaction shape that MatchSession expects.
     """
-    return [map_group_to_excel_txn(g) for g in groups]
-
-
-def excel_groups_to_txns(groups: list[ExcelTxnGroup]) -> list[ExcelTransaction]:
-    """
-    Convert Excel transaction groups to ExcelTransaction objects.
-
-    Uses existing adapter logic (map_group_to_excel_txn) to convert groups
-    into concrete ExcelTransaction instances.
-
-    Args:
-        groups: List of ExcelTxnGroup objects to convert.
-
-    Returns:
-        List of ExcelTransaction objects.
-    """
-    log.debug("Converting %d Excel groups to transactions", len(groups))
     return [map_group_to_excel_txn(g) for g in groups]
 
 
