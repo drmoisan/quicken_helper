@@ -3,10 +3,12 @@
 ## Summary
 This document details all unit test policy violations identified where tests use `tmp_path` to perform actual filesystem I/O operations, violating the "Avoid External Dependencies" requirement in unit-test-policy.md.
 
+## Status: 4 of 11 Files Fixed (36% Complete)
+
 ## Completed Fixes
 
-### ✅ tests/controllers/test_io_service.py (13 tests)
-**Status**: FIXED in commit 48639c0
+### ✅ tests/controllers/test_io_service.py (13 tests) - COMMIT 48639c0
+**Status**: FIXED
 
 **Changes Made**:
 - All tests now mock the underlying writers (`legacy_write_qif`, `write_csv_quicken_windows`, `write_csv_quicken_mac`)
@@ -28,6 +30,33 @@ def test_write_qif_creates_valid_file(monkeypatch: pytest.MonkeyPatch) -> None:
     mock_writer.assert_called_once()
     # Verify parameters passed correctly
 ```
+
+### ✅ tests/gui_viewers/test_category_popout.py (2 tests) - COMMIT 0d2041a
+**Status**: FIXED
+
+**Changes Made**:
+- Removed `tmp_path` parameter
+- Changed `tmp_path / "x.xlsx"` to `Path("/mock/x.xlsx")`
+- Path doesn't need to exist since all operations are stubbed
+- Added policy compliance note in docstrings
+
+### ✅ tests/controllers/test_category_match_session.py (3 tests) - COMMIT 0d2041a
+**Status**: FIXED
+
+**Changes Made**:
+- Removed `tmp_path` parameter from 3 test functions
+- Changed `tmp_path / "file.xlsx"` to `Path("/mock/file.xlsx")`
+- Already had pandas I/O operations fully mocked
+- Added policy compliance notes in docstrings
+
+### ✅ tests/utilities/test_core_utilities.py (1 test) - COMMIT 0d2041a
+**Status**: FIXED
+
+**Changes Made**:
+- Removed `tmp_path` parameter
+- Changed `tmp_path / "sample.data_model"` to `Path("/mock/sample.data_model")`
+- Already mocked `builtins.open`
+- Added policy compliance note in docstring
 
 ## Remaining Violations
 
