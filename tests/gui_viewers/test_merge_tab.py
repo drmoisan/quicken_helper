@@ -1177,10 +1177,12 @@ def _skip_legacy_normalize_tests() -> None:
     # Tailored selectors: name/docstring, case-insensitive
     # Note: We explicitly check for category normalization patterns,
     # not generic "normalize" to avoid catching "path-normalized" and similar.
+    # "normalize categor" matches "normalize categories" in docstrings
+    # "_m_normalize_categories" matches function names with underscores
     KEYWORDS = (
-        "normalize categor",  # category normalization (catches "categories" too)
+        "normalize categor",  # matches "normalize categories" in docstrings
         "open_normalize_modal",  # specific old entrypoint
-        "_m_normalize_categories",  # specific old handler
+        "_m_normalize_categories",  # specific old handler (matches underscored names)
         "category_popout",  # new home reference
     )
 
