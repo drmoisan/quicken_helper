@@ -12,6 +12,7 @@ from typing import Any, cast
 
 from quicken_helper.controllers import match_excel as mex
 from quicken_helper.controllers.data_session import DataSession
+from quicken_helper.controllers.io_service import write_qif
 from quicken_helper.controllers.match_session import MatchSession
 
 # from quicken_helper.qif_loader import load_transactions
@@ -508,11 +509,11 @@ class MergeTab(ttk.Frame):
                 else s.bank_txns
             )
 
-            # Emit QIF via the ITransaction emitter
-            qif_out.parent.mkdir(parents=True, exist_ok=True)
-            with open(qif_out, "w", encoding="utf-8") as fp:
-                # Cast needed because build_matched_only_txns returns MatchedTxn (ITransaction | LegacyTxn)
-                mex.emit_qif_transactions(txns_to_write, fp)
+            # Write QIF using centralized I/O service
+            log.info(
+                "MergeTab writing %d transactions to: %s", len(txns_to_write), qif_out
+            )
+            write_qif(txns_to_write, qif_out)
 
             self._m_info(f"Updates applied. Wrote updated QIF:\n{qif_out}")
             self.mb.showinfo("Done", f"Updated QIF written:\n{qif_out}")

@@ -10,10 +10,7 @@ from typing import Any, Protocol, cast
 
 import quicken_helper.controllers.qif_loader
 from quicken_helper.controllers.data_session import DataSession
-from quicken_helper.gui_viewers.csv_profiles import (
-    write_csv_quicken_mac,
-    write_csv_quicken_windows,
-)
+from quicken_helper.controllers.io_service import write_csv, write_qif
 from quicken_helper.gui_viewers.helpers import (
     apply_multi_payee_filters,
     filter_date_range,
@@ -362,16 +359,16 @@ class ConvertTab(ttk.Frame):
             self.logln(f"Transactions after filters: {len(txns)}")
             if emit == "data_model":
                 self.logln(f"Writing QIF → {out_path}")
-                mod.write_qif(out_path, txns)
+                write_qif(txns, out_path)
                 self.mb.showinfo("Done", f"Filtered QIF written:\n{out_path}")
                 return
 
             if csv_profile == "quicken-windows":
                 self.logln(f"Writing CSV (Quicken Windows profile) → {out_path}")
-                write_csv_quicken_windows(txns, out_path)
+                write_csv(txns, out_path, profile="quicken-windows")
             elif csv_profile == "quicken-mac":
                 self.logln(f"Writing CSV (Quicken Mac/Mint profile) → {out_path}")
-                write_csv_quicken_mac(txns, out_path)
+                write_csv(txns, out_path, profile="quicken-mac")
             else:
                 if explode:
                     self.logln(f"Writing CSV (exploded splits) → {out_path}")

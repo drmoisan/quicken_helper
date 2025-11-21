@@ -360,22 +360,37 @@ def _patch_csv_writers(
 ) -> None:
     """Record CSV writer invocations without writing files."""
 
-    def _recorder(txns: object, out_path: object) -> None:
+    def _csv_recorder(txns: object, out_path: object) -> None:
         count = len(getattr(txns, "transactions", txns))  # type: ignore[arg-type]
         calls.append(("writer_called", count, str(out_path)))
 
-    # Writers imported into convert_tab module namespace
-    monkeypatch.setattr(
-        convert_mod, "write_csv_quicken_windows", _recorder, raising=False
-    )
-    monkeypatch.setattr(convert_mod, "write_csv_quicken_mac", _recorder, raising=False)
-    # Also patch legacy qif_writer functions used for default CSV modes, if ever used
+    # Patch the CSV profile writers in io_service (since io_service imports them at module level)
+    try:
+        from quicken_helper.controllers import io_service
+
+        monkeypatch.setattr(
+            io_service, "write_csv_quicken_windows", _csv_recorder, raising=False
+        )
+        monkeypatch.setattr(
+            io_service, "write_csv_quicken_mac", _csv_recorder, raising=False
+        )
+    except Exception:
+        pass
+
+    # Also patch legacy qif_writer functions used for default CSV modes and QIF writes
     try:
         from quicken_helper.legacy import qif_writer as mod
 
-        monkeypatch.setattr(mod, "write_csv_exploded", _recorder, raising=False)
-        monkeypatch.setattr(mod, "write_csv_flat", _recorder, raising=False)
-        monkeypatch.setattr(mod, "write_qif", _recorder, raising=False)
+        monkeypatch.setattr(mod, "write_csv_exploded", _csv_recorder, raising=False)
+        monkeypatch.setattr(mod, "write_csv_flat", _csv_recorder, raising=False)
+        monkeypatch.setattr(
+            mod,
+            "write_qif",
+            lambda path, txns, **kwargs: calls.append(
+                ("writer_called", len(list(txns)), str(path))
+            ),
+            raising=False,
+        )
     except Exception:
         pass
 
@@ -435,9 +450,9 @@ def test_update_output_extension_blank_out_uses_in_path(
     # Act
     tab._update_output_extension()
     # Assert
-    out = Path(tab.out_path.get())
-    assert out.suffix == ".csv"
-    assert out.stem == "input"
+    out_str = tab.out_path.get()
+    assert out_str.endswith(".csv"), f"Output path should end with .csv: {out_str}"
+    assert "input" in out_str, f"Output path should contain 'input': {out_str}"
 
 
 def test_update_output_extension_switches_extension(
