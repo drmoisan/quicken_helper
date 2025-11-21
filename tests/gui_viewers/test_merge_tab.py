@@ -564,7 +564,9 @@ def _install_project_stubs(monkeypatch: Any, tmp_path: Path | None = None) -> No
     # Minimal enum used by UI
     from quicken_helper.data_model.interfaces import EnumClearedStatus
 
-    def load_transactions_protocol(path: object) -> list[QTransaction]:
+    def load_transactions_protocol(
+        path: object, encoding: str = "utf-8"
+    ) -> list[QTransaction]:
         """Load transactions using real QTransaction with test data."""
         txn = QTransaction(
             date=date(2025, 1, 1),

@@ -241,6 +241,57 @@ class ConvertTab(ttk.Frame):
             )
             self.out_path.set(new_path)
 
+    def _load_qif_transactions(
+        self, path: Path, encoding: str = "utf-8"
+    ) -> list[TxnDict]:
+        """Load QIF transactions, using session cache if available.
+
+        Args:
+            path: Path to QIF file
+            encoding: Character encoding (default: utf-8)
+
+        Returns:
+            List of transaction dictionaries
+
+        Notes:
+            When session is provided and data already loaded → reuse cached data
+            When session is None OR data not loaded → fall back to direct parsing
+            Attempts to memoize in session if available after loading
+        """
+        session = self.session
+
+        # Prefer cached session when available and matches the chosen path
+        if session is not None and session.qif_path == path:
+            log.info(
+                "Using cached transactions from DataSession (%d txns)",
+                len(session.qif_txns),
+            )
+            return [_txn_to_dict(t) for t in session.qif_txns]
+
+        # Fall back to direct parsing, then memoize if a session exists
+        ext = path.suffix.lower()
+        txns: list[TxnDict]
+
+        if ext in (".qfx", ".ofx"):
+            log.debug("Parsing QFX/OFX: %s", path)
+            from quicken_helper.legacy.qfx_to_txns import parse_qfx
+
+            txns = parse_qfx(path)
+        else:
+            log.debug("Parsing QIF: %s", path)
+            qf = quicken_helper.controllers.qif_loader.parse_qif_unified_protocol(path)
+            txns = [_txn_to_dict(t) for t in qf.transactions]
+
+        # Memoize in session if available
+        if session is not None and ext not in (".qfx", ".ofx"):
+            try:
+                session.load_qif(path, encoding=encoding)
+            except Exception:
+                # do not fail conversion if memoize fails; diagnostics go to log
+                log.exception("DataSession.load_qif failed; continuing without cache")
+
+        return txns
+
     def run_conversion(self) -> None:
         try:
             in_path = Path(self.in_path.get().strip())
@@ -271,37 +322,14 @@ class ConvertTab(ttk.Frame):
             case_sensitive = self.case_var.get()
             combine = self.combine_var.get()
 
-            txns: list[TxnDict]
-            session = self.session
-            # Prefer cached session when available and matches the chosen path
-            if session is not None and session.qif_path == in_path:
-                log.info(
-                    "Using cached transactions from DataSession (%d txns)",
-                    len(session.qif_txns),
-                )
-                txns = [_txn_to_dict(t) for t in session.qif_txns]
+            # Load transactions using helper method (handles session caching)
+            ext = in_path.suffix.lower()
+            if ext in (".qfx", ".ofx"):
+                self.logln("Parsing QFX/OFX…")
             else:
-                # Fall back to direct parsing (QIF/QFX), then memoize if a session exists
-                ext = in_path.suffix.lower()
-                if ext in (".qfx", ".ofx"):
-                    self.logln("Parsing QFX/OFX…")
-                    from quicken_helper.legacy.qfx_to_txns import parse_qfx
+                self.logln("Parsing QIF…")
 
-                    txns = parse_qfx(in_path)
-                else:
-                    self.logln("Parsing QIF…")
-                    qf = quicken_helper.controllers.qif_loader.parse_qif_unified_protocol(
-                        in_path
-                    )
-                    txns = [_txn_to_dict(t) for t in qf.transactions]
-                if session is not None:
-                    try:
-                        session.load_qif(in_path)
-                    except Exception:
-                        # do not fail conversion if memoize fails; diagnostics go to log
-                        log.exception(
-                            "DataSession.load_qif failed; continuing without cache"
-                        )
+            txns = self._load_qif_transactions(in_path)
 
             if df or dt:
                 self.logln(
