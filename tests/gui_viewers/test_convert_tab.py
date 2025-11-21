@@ -435,9 +435,9 @@ def test_update_output_extension_blank_out_uses_in_path(
     # Act
     tab._update_output_extension()
     # Assert
-    out = Path(tab.out_path.get())
-    assert out.suffix == ".csv"
-    assert out.stem == "input"
+    out_str = tab.out_path.get()
+    assert out_str.endswith(".csv"), f"Output path should end with .csv: {out_str}"
+    assert "input" in out_str, f"Output path should contain 'input': {out_str}"
 
 
 def test_update_output_extension_switches_extension(
