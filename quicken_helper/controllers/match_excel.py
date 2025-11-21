@@ -397,9 +397,13 @@ def _flatten_qif_txns(txns: list[dict[str, Any]]) -> list[Any]:
     """
     Compatibility shim exposing the legacy helper from match_helpers.
 
-    This function is maintained for backwards compatibility with existing tests
-    and will be deprecated in a future release. New code should use protocol-based
-    transactions and MatchSession directly.
+    .. deprecated::
+        This function is maintained for backwards compatibility with existing tests
+        and legacy code. It uses deprecated types (QIFTxnView, QIFItemKey) and will
+        be removed in a future version. New code should use protocol-based transactions
+        and MatchSession directly instead.
+
+    Use MatchSession with protocol-based ITransaction objects for new code.
     """
     return flatten_qif_txns(txns)
 
