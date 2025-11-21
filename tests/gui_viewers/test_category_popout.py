@@ -1,4 +1,11 @@
 # tests/gui_viewers/test_category_popout.py
+"""
+Tests for category_popout module.
+
+Policy compliance:
+- No filesystem I/O: All operations are stubbed
+- Fast & deterministic: No external dependencies
+"""
 from __future__ import annotations
 
 import sys
@@ -55,19 +62,28 @@ def _install_mex_stub(  # type: ignore[reportUnusedFunction]
 # ---------- Tests ----------
 
 
-def test_compute_category_sets_returns_expected_sets(tmp_path: Path) -> None:
+def test_compute_category_sets_returns_expected_sets() -> None:
+    """
+    Verify compute_category_sets returns expected sets from stubbed operations.
+    
+    Tests category set computation without filesystem I/O. Follows unit-test-policy.md.
+    """
     session = _FakeSession()  # type: ignore[arg-type]
-    xlsx = tmp_path / "x.xlsx"
-    xlsx.write_text("")  # path existence not required by stub
+    xlsx = Path("/mock/x.xlsx")  # Path doesn't need to exist - everything is stubbed
 
     q, x = cp.compute_category_sets(session, xlsx)  # type: ignore[arg-type]
     assert q == {"A", "B"}
     assert x == {"B", "C"}
 
 
-def test_open_normalize_modal_calls_mb_and_returns_sets(tmp_path: Path) -> None:
+def test_open_normalize_modal_calls_mb_and_returns_sets() -> None:
+    """
+    Verify open_normalize_modal calls message box and returns sets.
+    
+    Tests modal interaction without filesystem I/O. Follows unit-test-policy.md.
+    """
     session = _FakeSession()  # type: ignore[arg-type]
-    xlsx = tmp_path / "x.xlsx"
+    xlsx = Path("/mock/x.xlsx")  # Path doesn't need to exist - everything is stubbed
     mb = _FakeMB(calls=[])
 
     out = cp.open_normalize_modal(None, session, xlsx, mb=mb, show_ui=False)  # type: ignore[arg-type]

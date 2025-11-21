@@ -25,9 +25,12 @@ def test__parse_qif_date_formats(raw: str, expect_iso: str) -> None:
 
 
 def test__open_for_read_uses_builtins_open(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """Test open_for_read uses builtins.open and returns readable file object."""
+    """Test open_for_read uses builtins.open and returns readable file object.
+    
+    Policy compliance: No filesystem I/O, mocks builtins.open.
+    """
     # Arrange
     from quicken_helper.utilities.core_util import open_for_read
 
@@ -57,7 +60,7 @@ def test__open_for_read_uses_builtins_open(
         return FakeReadable()
 
     monkeypatch.setattr("builtins.open", fake_open, raising=True)
-    p = tmp_path / "sample.data_model"
+    p = Path("/mock/sample.data_model")  # Mock path - no actual file needed
 
     # Act
     with open_for_read(p) as f:  # type: ignore[attr-defined]
