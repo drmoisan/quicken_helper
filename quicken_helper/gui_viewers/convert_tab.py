@@ -4,13 +4,13 @@ from __future__ import annotations
 import logging
 import logging.config
 import tkinter as tk
+from collections.abc import Callable
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 from typing import Any, Protocol, cast
 
-import quicken_helper.controllers.qif_loader
 from quicken_helper.controllers.data_session import DataSession
-from quicken_helper.controllers.io_service import write_csv, write_qif
+from quicken_helper.controllers.io_service import ParseStats, write_csv, write_qif
 from quicken_helper.gui_viewers.helpers import (
     apply_multi_payee_filters,
     filter_date_range,
@@ -59,6 +59,7 @@ class ConvertTab(ttk.Frame):
         self.session: DataSession | None = session
         self.payees_text: tk.Text
         self.log: tk.Text
+        self._last_qif_stats: ParseStats | None = None
         self._build()
 
     # ---------- UI ----------
@@ -238,65 +239,79 @@ class ConvertTab(ttk.Frame):
             )
             self.out_path.set(new_path)
 
-    def _load_qif_transactions(
+    def _load_qif_transactions_with_stats(
         self, path: Path, encoding: str = "utf-8"
-    ) -> list[TxnDict]:
-        """Load QIF transactions, using session cache if available.
-
-        Args:
-            path: Path to QIF file
-            encoding: Character encoding (default: utf-8)
-
-        Returns:
-            List of transaction dictionaries
-
-        Notes:
-            When session is provided and data already loaded → reuse cached data
-            When session is None OR data not loaded → fall back to direct parsing
-        """
+    ) -> tuple[list[TxnDict], ParseStats]:
+        """Load QIF transactions and return parse statistics."""
         session = self.session
 
-        # Prefer cached session when available and matches the chosen path
         if session is not None and session.qif_path == path:
             log.info(
                 "Using cached transactions from DataSession (%d txns)",
                 len(session.qif_txns),
             )
-            return [_txn_to_dict(t) for t in session.qif_txns]
+            stats = session.qif_stats or ParseStats(
+                lines_read=0, transactions_parsed=len(session.qif_txns)
+            )
+            return [_txn_to_dict(t) for t in session.qif_txns], stats
 
-        # Fall back to direct parsing
         ext = path.suffix.lower()
-        txns: list[TxnDict]
-
         if ext in (".qfx", ".ofx"):
             log.debug("Parsing QFX/OFX: %s", path)
             from quicken_helper.legacy.qfx_to_txns import parse_qfx
 
             txns = parse_qfx(path)
-        else:
-            log.debug("Parsing QIF: %s", path)
-            # Use session if available to benefit from caching for future calls
-            if session is not None:
-                try:
-                    txns = [
-                        _txn_to_dict(t)
-                        for t in session.load_qif(path, encoding=encoding)
-                    ]
-                except Exception:
-                    log.exception(
-                        "DataSession.load_qif failed; falling back to direct parsing"
-                    )
-                    qf = quicken_helper.controllers.qif_loader.parse_qif_unified_protocol(
-                        path
-                    )
-                    txns = [_txn_to_dict(t) for t in qf.transactions]
-            else:
-                qf = quicken_helper.controllers.qif_loader.parse_qif_unified_protocol(
-                    path
-                )
-                txns = [_txn_to_dict(t) for t in qf.transactions]
+            stats = ParseStats(
+                lines_read=0, transactions_parsed=len(txns), transactions_skipped=0
+            )
+            return txns, stats
 
+        log.debug("Parsing QIF: %s", path)
+        from quicken_helper.controllers import qif_loader as ql
+
+        load_with_stats = getattr(ql, "load_transactions_with_stats", None)
+        if callable(load_with_stats):
+            load_with_stats_fn = cast(
+                "Callable[..., tuple[list[Any], ParseStats]]",
+                load_with_stats,
+            )
+            txns_protocol, stats = load_with_stats_fn(path, encoding=encoding)
+            txns: list[TxnDict] = [_txn_to_dict(t) for t in txns_protocol]
+            return txns, stats
+
+        qf = ql.parse_qif_unified_protocol(path)
+        txns = [_txn_to_dict(t) for t in qf.transactions]
+        stats = ParseStats(
+            lines_read=len(qf.transactions),
+            transactions_parsed=len(txns),
+            transactions_skipped=0,
+        )
+        return txns, stats
+
+    def _load_qif_transactions(
+        self, path: Path, encoding: str = "utf-8"
+    ) -> list[TxnDict]:
+        """Backward-compatible wrapper returning only transactions."""
+        txns, stats = self._load_qif_transactions_with_stats(path, encoding=encoding)
+        self._last_qif_stats = stats
         return txns
+
+    def _maybe_report_stats(self, stats: ParseStats) -> None:
+        """Log parse statistics and surface warnings to the user."""
+        self._last_qif_stats = stats
+        summary = (
+            f"Parsed {stats.transactions_parsed} transactions "
+            f"(lines={stats.lines_read}, skipped={stats.transactions_skipped})."
+        )
+        self.logln(summary)
+        if stats.errors:
+            self.logln("Parse warnings:")
+            for err in stats.errors:
+                self.logln(f"- {err}")
+            self.mb.showinfo(
+                "Parse warnings",
+                summary + "\n" + "\n".join(stats.errors),
+            )
 
     def run_conversion(self) -> None:
         try:
@@ -335,7 +350,8 @@ class ConvertTab(ttk.Frame):
             else:
                 self.logln("Parsing QIF…")
 
-            txns = self._load_qif_transactions(in_path)
+            txns, stats = self._load_qif_transactions_with_stats(in_path)
+            self._maybe_report_stats(stats)
 
             if df or dt:
                 self.logln(

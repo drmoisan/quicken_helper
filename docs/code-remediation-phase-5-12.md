@@ -1,256 +1,152 @@
-Here you go—same roadmap, just renumbered so it starts at **Phase 5** (and all internal references adjusted). Overall status: 🟥❌ not started.
+Here you go—same roadmap, just renumbered so it starts at **Phase 5** (and all internal references adjusted). Overall status: ✅ 90% (Phases 5–11 complete; Phase 12 intentionally not started).
 
 ---
 
-## High-Level Targets 🟥❌ not started
+## High-Level Targets ✅ 90%
 
-- 🟥❌ not started **Load once, work in memory, write once**
-   * 🟥❌ not started Consolidate all loading/parsing to a small set of loaders.
-   * 🟥❌ not started All transforms operate on `ITransaction` / `ExcelTransaction` instances, not on raw rows/dicts.
-- 🟥❌ not started **App is just wiring; tabs own behavior**
-   * 🟥❌ not started Remove `app.py` shims (paths, emit vars, helper methods).
-   * 🟥❌ not started Migrate shim-driven tests into tab-specific tests.
-- 🟥❌ not started **Match pipeline is protocol-centric and type-safe**
-   * 🟥❌ not started `MatchSession` and `match_excel.py` use shared protocols and no legacy `QIFTxnView` / "groups in the session".
-- 🟥❌ not started **Logging is rich and consistent**
-   * 🟥❌ not started Standard logging across tabs + controllers, good diagnostics for failures.
+- ✅ 100% **Load once, work in memory, write once**  
+   * ✅ Consolidate loading/parsing via `DataSession` + `qif_loader`/`match_excel`; tabs reuse cached data.  
+   * ✅ Transforms operate on `ITransaction`/`ExcelTransaction` (protocol adapters), not raw dicts.
+- ✅ 100% **App is just wiring; tabs own behavior**  
+   * ✅ Removed `app.py` shims; app only wires tabs and shared session.  
+   * ✅ Shim-driven tests migrated to tab-specific suites; `test_app` is wiring-only.
+- ✅ 100% **Match pipeline is protocol-centric and type-safe**  
+   * ✅ `MatchSession`/`match_excel` use protocol types; legacy `QIFTxnView` removed from controllers' surface (kept only in legacy helpers/tests).  
+   * ✅ `build_matched_only_txns` present and used for matched-only flows.
+- ✅ 90% **Logging is rich and consistent**  
+   * ✅ Module loggers in tabs/controllers; key operations and exceptions logged.  
+   * ✅ Parse stats surfaced in GUI logs/dialogs; exceptions logged; minimal remaining: optional structured UI pane (deferred).
 
 Codex can treat each phase as a separate PR or commit chain.
 
 ---
 
-## Phase 5 - Logging + Diagnostics Foundation 🟥❌ not started
+## Phase 5 - Logging + Diagnostics Foundation ✅ 100%
 
-**Objective:** 🟥❌ not started Add consistent, low-risk logging to the GUI tabs and controllers.
+**Objective:** Add consistent, low-risk logging to the GUI tabs and controllers.
 
-### 5.1 Add module-level loggers 🟥❌ not started
+### 5.1 Add module-level loggers ✅ 100%
 
-**Files:**
+**Files:** `quicken_helper/gui_viewers/convert_tab.py`, `probe_tab.py`, `merge_tab.py`, controllers (`match_excel.py`, `match_session.py`, loaders/writers).
 
-* 🟥❌ not started `quicken_helper/gui_viewers/convert_tab.py`
-* 🟥❌ not started `quicken_helper/gui_viewers/probe_tab.py`
-* 🟥❌ not started Verify `merge_tab.py` already has a logger; if not, add it there too.
-* 🟥❌ not started Optionally: `quicken_helper/controllers/match_excel.py`, `match_session.py`, loaders/writers.
-
-**Tasks:**
-
-1. 🟥❌ not started At top of each module add:
-
-   ```python
-   import logging
-   log = logging.getLogger(__name__)
-   ```
-2. 🟥❌ not started Wrap critical operations with `log.debug` / `log.info`, e.g. input/output paths selected, emit mode, start/finish of long operations.
-3. 🟥❌ not started On exception paths where a `messagebox` or similar is shown, log with `log.exception("...")` before surfacing UI error messages.
-
-**Invariants:**
-
-* 🟥❌ not started No behavior change; tests remain green.
-* 🟥❌ not started No new `Any` leaks; log calls should not force type loosening.
+**Tasks:**  
+1. ✅ Module-level `log = logging.getLogger(__name__)` added.  
+2. ✅ Critical operations and exceptions wrapped with `log.debug`/`log.info`/`log.exception`.  
+3. ✅ No behavior change; tests remain green; typing intact.
 
 ---
 
-## Phase 6 - Centralized Loading & In-Memory "DataSession" 🟥❌ not started
+## Phase 6 - Centralized Loading & In-Memory "DataSession" ✅ 100%
 
-**Objective:** 🟥❌ not started Stop re-loading files in multiple places; create a shared in-memory model.
+**Objective:** Stop re-loading files in multiple places; create a shared in-memory model.
 
-### 6.1 Introduce a `DataSession` controller 🟥❌ not started
+### 6.1 Introduce a `DataSession` controller ✅ 100%
 
-**New module:**
+**File:** `quicken_helper/controllers/data_session.py`
 
-* 🟥❌ not started `quicken_helper/controllers/data_session.py`
+**Status:**  
+* ✅ Fields for bank/excel paths and transaction lists using protocol types; tracks parse stats for QIF loads.  
+* ✅ `load_qif`/`load_excel` implemented with caching and logging.  
+* ✅ DataSession is GUI-agnostic and typed.
 
-**Responsibilities:**
+### 6.2 Convert existing loaders to feed `DataSession` ✅ 100%
 
-* 🟥❌ not started Define fields for bank/excel paths and transaction lists using protocol types.
-* 🟥❌ not started `load_bank_qif(path: Path, encoding: str = "utf-8") -> None`
-* 🟥❌ not started `load_excel(path: Path) -> None`
-* 🟥❌ not started Optional `clear()` to reset.
-
-**Constraints:**
-
-* 🟥❌ not started `DataSession` does not know about GUI or tabs.
-* 🟥❌ not started All types concrete and Pylance-clean.
-
-### 6.2 Convert existing loaders to feed `DataSession` 🟥❌ not started
-
-**Files:**
-
-* 🟥❌ not started `controllers/match_excel.py`
-* 🟥❌ not started QIF loader(s) (e.g., `q_wrapper/q_file.py` and helpers)
-
-**Tasks:**
-
-1. 🟥❌ not started Standardize the QIF loader to produce `list[ITransaction]`.
-2. 🟥❌ not started In `match_excel.py`, ensure helpers convert groups to protocol objects; add `excel_groups_to_txns` (or equivalent).
-
-**Invariants:**
-
-* 🟥❌ not started Existing tests for loaders still pass.
-* 🟥❌ not started Tabs do not use `DataSession` yet; additive change.
+**Files:** `controllers/match_excel.py`, `controllers/qif_loader.py`  
+* ✅ QIF loader returns `list[ITransaction]`.  
+* ✅ Excel helpers map groups to protocol transactions; adapters in place.  
+* ✅ Existing tests pass.
 
 ---
 
-## Phase 7 - Refactor Tabs to Use `DataSession` (Opt-In) 🟥❌ not started
+## Phase 7 - Refactor Tabs to Use `DataSession` (Opt-In) ✅ 100%
 
-**Objective:** 🟥❌ not started Allow tabs to optionally use the shared in-memory data without breaking current usage.
+**Objective:** Allow tabs to optionally use the shared in-memory data without breaking current usage.
 
-### 7.1 Allow tabs to accept an optional session 🟥❌ not started
+### 7.1 Allow tabs to accept an optional session ✅ 100%
 
-**Files:**
-
-* 🟥❌ not started `gui_viewers/merge_tab.py`
-* 🟥❌ not started `gui_viewers/convert_tab.py`
-* 🟥❌ not started `gui_viewers/probe_tab.py`
-* 🟥❌ not started `gui_viewers/app.py` (to pass the session when creating tabs)
-
-**Tasks:**
-
-1. 🟥❌ not started Update tab constructors to accept `session: DataSession | None = None` and store as `self._session`.
-2. 🟥❌ not started When files are chosen via the UI, use `self._session` to load/reuse data when provided; keep fallback behavior for `session=None`.
-
-**Invariants:**
-
-* 🟥❌ not started `app.py` builds a single `DataSession` and passes it to tabs.
-* 🟥❌ not started All tab tests still pass.
+**Files:** `merge_tab.py`, `convert_tab.py`, `probe_tab.py`, `app.py`  
+* ✅ Tab constructors accept `session: DataSession | None`; store `self._session`.  
+* ✅ Tabs reuse cached data when session provided; fallback works for `None`.  
+* ✅ `app.py` builds one `DataSession` and passes it to all tabs; tests green.
 
 ---
 
-## Phase 8 - `app.py` Shim Removal + Test Migration 🟥❌ not started
+## Phase 8 - `app.py` Shim Removal + Test Migration ✅ 100%
 
-**Objective:** 🟥❌ not started Make `App` only wire the UI and session; remove behavioral shims.
+**Objective:** Make `App` only wire the UI and session; remove behavioral shims.
 
-### 8.1 Identify and remove shims from `app.py` 🟥❌ not started
+### 8.1 Identify and remove shims from `app.py` ✅ 100%
 
-**Likely shims:**
+* ✅ Removed path/emit/payee-filter shims from `app.py`; logic lives in tabs/helpers.  
+* ✅ `App.__init__` now constructs session, notebook, tabs only.
 
-* 🟥❌ not started Public attributes like `app.in_path`, `app.out_path`, `app.emit_var`.
-* 🟥❌ not started Methods like `_update_output_extension`, `_parse_payee_filters`, `_run`, `_m_normalize_categories`, etc.
+### 8.2 Migrate and trim tests in `tests/gui_viewers/test_app.py` ✅ 100%
 
-**Tasks:**
-
-1. 🟥❌ not started Move path/extension logic into `ConvertTab`.
-2. 🟥❌ not started Move payee filter parsing into `ConvertTab` or a shared helper.
-3. 🟥❌ not started Normalize categories delegation handled directly in `MergeTab`.
-4. 🟥❌ not started In `App.__init__`, only create `DataSession`, `Notebook`, and tabs; remove shim exposure.
-
-**Invariants:**
-
-* 🟥❌ not started App still runs; tabs own behavior.
-* 🟥❌ not started No references to app-level shims remain.
-
-### 8.2 Migrate and trim tests in `tests/gui_viewers/test_app.py` 🟥❌ not started
-
-**Actions:**
-
-1. 🟥❌ not started Keep but trim initialization test to wiring only.
-2. 🟥❌ not started Migrate ConvertTab-specific tests (`_update_output_extension`, `_parse_payee_filters`, run path/overwrite behaviors) into `test_convert_tab.py` with direct tab instantiation and mocks.
-3. 🟥❌ not started Eliminate redundant tests (e.g., `test_m_normalize_categories_delegates_to_merge_tab`, redundant QIF-write tests).
-
-**Invariants:**
-
-* 🟥❌ not started `pytest tests/gui_viewers` remains green.
-* 🟥❌ not started No tests reference `App` shims.
+* ✅ `test_app` trimmed to wiring checks.  
+* ✅ ConvertTab-specific tests moved to `test_convert_tab.py`; redundant delegation tests removed.  
+* ✅ GUI viewer test suite passes.
 
 ---
 
-## Phase 9 - Align `match_excel.py` with `MatchSession` and the New Flow 🟥❌ not started
+## Phase 9 - Align `match_excel.py` with `MatchSession` and the New Flow ✅ 100%
 
-**Objective:** 🟥❌ not started Modernize `match_excel.py` to match the protocol-centric `MatchSession` API and be Pylance-clean.
+**Objective:** Modernize `match_excel.py` to match the protocol-centric `MatchSession` API and be Pylance-clean.
 
-### 9.1 Remove legacy types and maps 🟥❌ not started
+### 9.1 Remove legacy types and maps ✅ 100%
 
-**Files:**
+* ✅ Controllers no longer expose `QIFTxnView`/`QIFItemKey`; legacy remains only in legacy helpers/tests.  
+* ✅ `MatchSession` exposes protocol-centric fields (`bank_txns`, `excel_txns`, `pairs`, `unmatched_*`; `auto_match`).
 
-* 🟥❌ not started `controllers/match_excel.py`
-* 🟥❌ not started `controllers/match_session.py` (for imports and API consistency)
+### 9.2 Re-implement `build_matched_only_txns(session)` ✅ 100%
 
-**Tasks:**
+* ✅ Implemented in `match_excel.py`, O(n + p), preserves order; typed.
 
-1. 🟥❌ not started Delete/stop importing `QIFTxnView`, `QIFItemKey`, and any `session.excel_groups` or `session.qif_to_excel_group` references.
-2. 🟥❌ not started Verify `MatchSession` exposes protocol-centric fields (`bank_txns`, `excel_txns`, `pairs`, `unmatched_bank`, `unmatched_excel`; optional `auto_match`).
+### 9.3 Modernize merge entry points ✅ 100%
 
-### 9.2 Re-implement `build_matched_only_txns(session)` with new API 🟥❌ not started
+* ✅ Added pure helper `run_excel_qif_merge(qif_in, xlsx, encoding, min_score_default, auto_match)` returning `(pairs, unmatched_bank, unmatched_excel)`; keeps I/O-free behavior.  
+* ✅ Session construction from paths uses protocol txns and group-to-excel adapters.
 
-**Target signature:** 🟥❌ not started ensure `build_matched_only_txns(session: MatchSession) -> list[ITransaction]`.
+### 9.4 QIF writing with `MatchSession` ✅ 100%
 
-**Implementation outline:** 🟥❌ not started build set/dict for indices, return matched bank transactions without mutating session.
-
-**Invariants:** 🟥❌ not started Type annotations concrete; no session mutation.
-
-### 9.3 Modernize `run_excel_qif_merge(...)` 🟥❌ not started
-
-**Tasks:**
-
-1. 🟥❌ not started Load QIF as `list[ITransaction]` via canonical loader.
-2. 🟥❌ not started Load Excel rows/groups, map to protocol transactions.
-3. 🟥❌ not started Build `MatchSession` and run matching; return `(pairs, unmatched_bank, unmatched_excel)`.
-4. 🟥❌ not started Keep function pure (no writes).
-
-### 9.4 Decide how writing QIF uses `MatchSession` (and update `MergeTab`) 🟥❌ not started
-
-**Options:**
-
-* 🟥❌ not started Option A: Writer accepts `ITransaction` directly; `MergeTab` uses matched-only or full bank list then calls `write_qif`.
-* 🟥❌ not started Option B: Convert to legacy dicts right before writing; keep protocols elsewhere.
-
-**Invariants:** 🟥❌ not started `MergeTab` no longer expects obsolete session fields; match/QIF tests pass.
+* ✅ Tabs use `io_service.write_qif` with protocol txns; matched-only path available via `build_matched_only_txns`.
 
 ---
 
-## Phase 10 - Move Transformations Fully "In-Memory" 🟥❌ not started
+## Phase 10 - Move Transformations Fully "In-Memory" ✅ 100%
 
-**Objective:** 🟥❌ not started Ensure all non-I/O operations are transformations over already-loaded objects from `DataSession`.
+**Objective:** Ensure all non-I/O operations are transformations over already-loaded objects from `DataSession`.
 
-### 10.1 Audit tabs for direct file reads 🟥❌ not started
+### 10.1 Audit tabs for direct file reads ✅ 100%
 
-**Tasks:**
+* ✅ Tabs consult `DataSession` when provided; fall back to local parsing for standalone use/testing.
 
-1. 🟥❌ not started Replace ad-hoc file parsing with `DataSession` access (`bank_txns`, `excel_txns`).
-2. 🟥❌ not started Maintain fallback behavior for tests using `session=None`.
+### 10.2 Centralize write paths ✅ 100%
 
-### 10.2 Centralize write paths 🟥❌ not started
+**Module:** `quicken_helper/controllers/io_service.py`
 
-**Module:**
-
-* 🟥❌ not started `quicken_helper/controllers/io_service.py`
-
-**Responsibilities:**
-
-* 🟥❌ not started `write_qif(txns: Sequence[ITransaction], path: Path, encoding: str = "utf-8")`
-* 🟥❌ not started `write_csv(txns: Sequence[ITransaction], path: Path, dialect/options)`
-
-**Invariants:** 🟥❌ not started Tabs call services instead of writing directly; options passed explicitly.
+* ✅ `write_qif`/`write_csv` accept protocol-friendly objects; tabs invoke services rather than raw file writes.
 
 ---
 
-## Phase 11 - Richer Error Reporting & UX Hooks 🟥❌ not started
+## Phase 11 - Richer Error Reporting & UX Hooks ✅ 100%
 
-**Objective:** 🟥❌ not started Provide better visibility when things go wrong.
+**Objective:** Provide better visibility when things go wrong.
 
-**Tasks:**
-
-1. 🟥❌ not started Collect parse stats (lines read, parsed/skipped, sample errors).
-2. 🟥❌ not started Expose structured error/summary from controllers to tabs.
-3. 🟥❌ not started Tabs show UI messages while logs capture full details.
-
-**Invariants:** 🟥❌ not started Controllers remain UI-agnostic; tabs translate to UI.
+* ✅ `ParseStats` implemented; `qif_loader.load_transactions_with_stats` used by `DataSession`, `ConvertTab`, and `MergeTab`.  
+* ✅ GUI surfaces stats via log panels and info dialogs when warnings occur.  
+* ✅ Exceptions logged consistently across tabs/controllers.
 
 ---
 
 ## Phase 12 - Future Enhancements (Optional / Later) 🟥❌ not started
 
-1. 🟥❌ not started **Cross-reference registry** - build module to map transactions across sources using keys/heuristics.
-2. 🟥❌ not started **Backgroundable tasks / progress hooks** - structure long-running operations for future progress reporting.
-3. 🟥❌ not started **Configurable pipelines** - allow named "recipes" for conversion and merge steps.
+1. 🟥❌ not started **Cross-reference registry**  
+2. 🟥❌ not started **Backgroundable tasks / progress hooks**  
+3. 🟥❌ not started **Configurable pipelines**
 
 ---
 
-## How Codex Can Use This Roadmap 🟥❌ not started
+## How Codex Can Use This Roadmap ✅ 90%
 
-When you feed this to Codex in VSCode, you can ask it to:
-
-1. 🟥❌ not started **Compare current code vs roadmap** (e.g., "Show me where Phase 8.1 is already done and where it's not.")
-2. 🟥❌ not started **Implement phase by phase** (e.g., "Implement Phase 7.1 exactly as described." or "Refactor `match_excel.py` per Phase 9`...")
-
-This should now slot cleanly after the existing "Phase 1-4" remediation roadmap.
+1. ✅ Compare current code vs roadmap (Phases 5–11 complete; Phase 12 open).  
+2. ✅ Focus follow-ups on optional enhancements (Phase 12) if prioritized.

@@ -27,6 +27,7 @@ from typing import IO, Any, cast
 
 from quicken_helper.controllers.match_helpers import flatten_qif_txns
 from quicken_helper.controllers.match_session import MatchSession
+from quicken_helper.controllers.qif_loader import load_transactions_protocol
 from quicken_helper.data_model.excel import map_group_to_excel_txn
 from quicken_helper.data_model.excel.excel_row import ExcelRow
 from quicken_helper.data_model.excel.excel_txn_group import ExcelTxnGroup
@@ -50,6 +51,7 @@ __all__ = [
     "_flatten_qif_txns",
     "build_matched_only_txns",
     "apply_excel_splits",
+    "run_excel_qif_merge",
 ]
 
 TxnMapping = Mapping[str, object]
@@ -113,6 +115,36 @@ def build_session_from_paths(
     rows = load_excel_rows(excel_path)  # existing loader
     groups = group_excel_rows(rows)  # existing grouper
     return make_session(bank_txns, groups, min_score_default=min_score_default)
+
+
+def run_excel_qif_merge(
+    qif_in: Path,
+    xlsx: Path,
+    *,
+    encoding: str = "utf-8",
+    min_score_default: int = 50,
+    auto_match: bool = True,
+) -> tuple[
+    list[tuple[ITransaction, ITransaction]],
+    list[ITransaction],
+    list[ITransaction],
+]:
+    """
+    Load QIF + Excel inputs, build a MatchSession, and return match results.
+
+    This helper performs pure parsing/matching and returns data without writing files.
+
+    Returns:
+        Tuple of (pairs, unmatched_bank, unmatched_excel).
+    """
+    bank_txns = load_transactions_protocol(qif_in, encoding=encoding)
+    excel_rows = load_excel_rows(xlsx)
+    excel_groups = group_excel_rows(excel_rows)
+    excel_txns = [map_group_to_excel_txn(g) for g in excel_groups]
+    session = MatchSession(bank_txns, excel_txns, min_score_default=min_score_default)
+    if auto_match:
+        session.auto_match()
+    return session.pairs, session.unmatched_bank, session.unmatched_excel
 
 
 def load_excel_rows(path: Path) -> list[ExcelRow]:

@@ -7,7 +7,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from quicken_helper.controllers import match_excel as mex
-from quicken_helper.controllers.qif_loader import load_transactions_protocol
+from quicken_helper.controllers.io_service import ParseStats
+from quicken_helper.controllers.qif_loader import load_transactions_with_stats
 from quicken_helper.data_model.excel import (
     ExcelRow,
     ExcelTransaction,
@@ -50,6 +51,7 @@ class DataSession:
 
     qif_path: Path | None = None
     qif_txns: list[ITransaction] = field(default_factory=_empty_txn_list)
+    qif_stats: ParseStats | None = None
 
     excel_path: Path | None = None
     excel_rows: list[ExcelRow] = field(default_factory=_empty_excel_row_list)
@@ -60,8 +62,10 @@ class DataSession:
         path = Path(path)
         if self.qif_path != path or not self.qif_txns:
             log.info("Loading QIF: %s", path)
-            self.qif_txns = list(load_transactions_protocol(path, encoding=encoding))
+            txns, stats = load_transactions_with_stats(path, encoding=encoding)
+            self.qif_txns = txns
             self.qif_path = path
+            self.qif_stats = stats
             log.debug("Loaded %d transactions from %s", len(self.qif_txns), path)
         else:
             log.debug(

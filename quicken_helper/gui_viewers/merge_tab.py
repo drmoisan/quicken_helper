@@ -4,6 +4,7 @@ from __future__ import annotations
 import logging
 import logging.config
 import tkinter as tk
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
@@ -12,7 +13,7 @@ from typing import Any, cast
 
 from quicken_helper.controllers import match_excel as mex
 from quicken_helper.controllers.data_session import DataSession
-from quicken_helper.controllers.io_service import write_qif
+from quicken_helper.controllers.io_service import ParseStats, write_qif
 from quicken_helper.controllers.match_session import MatchSession
 
 # from quicken_helper.qif_loader import load_transactions
@@ -68,6 +69,7 @@ class MergeTab(ttk.Frame):
         self.mb = mb
         self.session = session
         self._merge_session: MatchSession | None = None
+        self._last_qif_stats: ParseStats | None = None
 
         # Ensure test-visible lists always exist (even if load/refresh bails early)
         self.m_pairs: list[tuple[ITransaction, ITransaction]] = []
@@ -344,11 +346,39 @@ class MergeTab(ttk.Frame):
         if self.session is not None:
             # Try to reuse cached data or load via session (which caches)
             log.debug("Loading QIF via session: %s", path)
-            return self.session.load_qif(path, encoding=encoding)
+            txns = self.session.load_qif(path, encoding=encoding)
+            self._last_qif_stats = self.session.qif_stats
+            return txns
 
         # Fallback: direct loading (for tests or when no session)
         log.debug("Loading QIF directly (no session): %s", path)
-        return list(load_transactions_protocol(path, encoding=encoding))
+        try:
+            from quicken_helper.controllers import qif_loader as ql
+
+            load_with_stats = getattr(ql, "load_transactions_with_stats", None)
+            if callable(load_with_stats):
+                load_with_stats_fn = cast(
+                    "Callable[..., tuple[list[ITransaction], ParseStats]]",
+                    load_with_stats,
+                )
+                txns, stats = load_with_stats_fn(path, encoding=encoding)
+            else:
+                txns = list(load_transactions_protocol(path, encoding=encoding))
+                stats = ParseStats(
+                    lines_read=len(txns),
+                    transactions_parsed=len(txns),
+                    transactions_skipped=0,
+                )
+        except Exception:
+            log.exception("load_transactions_with_stats failed; using protocol loader")
+            txns = list(load_transactions_protocol(path, encoding=encoding))
+            stats = ParseStats(
+                lines_read=len(txns),
+                transactions_parsed=len(txns),
+                transactions_skipped=0,
+            )
+        self._last_qif_stats = stats
+        return txns
 
     def _load_excel_transactions(self, path: Path) -> list[ExcelTransaction]:
         """Load Excel transactions, using session cache if available.
@@ -403,6 +433,18 @@ class MergeTab(ttk.Frame):
 
             # Publish session and refresh UI
             self._merge_session = sess
+            stats_msg = ""
+            if self._last_qif_stats:
+                stats = self._last_qif_stats
+                stats_msg = (
+                    "\n"
+                    f"QIF parse: {stats.transactions_parsed} txns, "
+                    f"lines={stats.lines_read}, skipped={stats.transactions_skipped}"
+                )
+                if stats.errors:
+                    stats_msg += "\nWarnings:\n" + "\n".join(
+                        f"- {err}" for err in stats.errors
+                    )
             self._m_refresh_lists()
             self._m_info(
                 "Loaded "
@@ -410,6 +452,7 @@ class MergeTab(ttk.Frame):
                 f"{len(excel_txns)} Excel groups (as transactions) "
                 f"({len(rows)} split rows).\n"
                 "Ready to auto-match: click the Auto-Match button."
+                f"{stats_msg}"
             )
         except Exception as e:
             # Keep the test-visible failure simple
