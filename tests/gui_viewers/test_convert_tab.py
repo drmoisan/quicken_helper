@@ -364,15 +364,15 @@ def _patch_csv_writers(
         count = len(getattr(txns, "transactions", txns))  # type: ignore[arg-type]
         calls.append(("writer_called", count, str(out_path)))
 
-    # Patch the CSV profile writers that io_service delegates to
+    # Patch the CSV profile writers in io_service (since io_service imports them at module level)
     try:
-        from quicken_helper.gui_viewers import csv_profiles
+        from quicken_helper.controllers import io_service
 
         monkeypatch.setattr(
-            csv_profiles, "write_csv_quicken_windows", _csv_recorder, raising=False
+            io_service, "write_csv_quicken_windows", _csv_recorder, raising=False
         )
         monkeypatch.setattr(
-            csv_profiles, "write_csv_quicken_mac", _csv_recorder, raising=False
+            io_service, "write_csv_quicken_mac", _csv_recorder, raising=False
         )
     except Exception:
         pass

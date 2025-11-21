@@ -71,12 +71,24 @@ def load_transactions_with_stats(
     """
     Load transactions and return parse statistics.
 
+    This function loads transactions from a QIF file and provides detailed
+    statistics about the parsing operation, useful for diagnostics and
+    error reporting.
+
     Args:
         path: Path to QIF file
         encoding: Text encoding (default UTF-8)
 
     Returns:
-        Tuple of (transactions, stats)
+        Tuple of (transactions, stats) where:
+        - transactions: List of parsed ITransaction objects
+        - stats: ParseStats with the following fields:
+            - lines_read: Number of lines in the input file
+            - transactions_parsed: Number of transactions successfully parsed
+            - transactions_skipped: Number of transactions skipped (not implemented yet)
+            - errors: List of error messages (up to 5), empty if no errors
+            - has_errors: Boolean property indicating if errors occurred
+            - success_rate: Float percentage of successful parses
     """
     stats = ParseStats()
 

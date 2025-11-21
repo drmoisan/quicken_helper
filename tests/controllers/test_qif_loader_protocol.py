@@ -197,7 +197,6 @@ def test_load_transactions_with_stats_returns_stats(
     # Arrange
     from dataclasses import dataclass
 
-
     @dataclass
     class FakeTxn:
         date: object = None

@@ -9,9 +9,15 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Sequence
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field, is_dataclass
 from pathlib import Path
 from typing import Any
+
+from quicken_helper.gui_viewers.csv_profiles import (
+    write_csv_quicken_mac,
+    write_csv_quicken_windows,
+)
+from quicken_helper.legacy.qif_writer import write_qif as legacy_write_qif
 
 log = logging.getLogger(__name__)
 
@@ -67,9 +73,6 @@ def write_qif(
     """
     log.info("Writing %d transactions to QIF: %s", len(transactions), path)
 
-    # Delegate to existing QIF writer
-    from quicken_helper.legacy.qif_writer import write_qif as legacy_write_qif
-
     try:
         written = legacy_write_qif(
             path, transactions, encoding=encoding, newline=newline
@@ -117,8 +120,6 @@ def write_csv(
             txn_dicts.append(txn.to_dict())
         else:
             # Try using asdict for dataclasses
-            from dataclasses import asdict, is_dataclass
-
             if is_dataclass(txn):
                 txn_dicts.append(asdict(txn))
             else:
@@ -126,12 +127,6 @@ def write_csv(
                     f"Cannot convert transaction to dict: {type(txn).__name__}; "
                     "expected dict, dataclass, or object with to_dict() method"
                 )
-
-    # Delegate to CSV profile writers
-    from quicken_helper.gui_viewers.csv_profiles import (
-        write_csv_quicken_mac,
-        write_csv_quicken_windows,
-    )
 
     try:
         if profile == "quicken-windows":
