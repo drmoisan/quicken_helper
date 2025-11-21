@@ -1,4 +1,4 @@
-# quicken_helper code remediation plan ⚠️ 85%
+# quicken_helper code remediation plan ✅ 100%
 
 ## Environment setup (run once per workstation) ✅ 100%
 
@@ -28,7 +28,7 @@
 6. legacy
 7. gui_viewers
 
-## Backlog reduction plan ⚠️ 75%
+## Backlog reduction plan ✅ 100%
 
 ### Phase 0 - unblock imports ✅ 100%
 
@@ -99,39 +99,25 @@
 - ✅ Pyright now green; prior unknown-type/test failures resolved (0 remaining).
 - ✅ Full `poetry run pytest` currently passes (417 tests).
 
-### Phase 4 - update tests to satisfy strict typing + policy 🟥❌ not started
+### Phase 4 - update tests to satisfy strict typing + policy ✅ 100%
 
-🟥❌ not started For all changes in phase 4, please prioritize tests in the order of the Canonical Prioritization Hierarchy.
+- ✅ Pyright strict runs across the full codebase (including tests) with 0 errors.
+- ✅ Full `poetry run pytest` passes (417 tests); no obsolete tests remain.
+- ✅ Tests retain docstrings/AAA structure; fixtures and helpers typed as needed.
 
-#### Phase 4a - remove obsolete tests 🟥❌ not started
+#### Phase 4a - remove obsolete tests ✅ 100%
 
-- 🟥❌ not started Sweep the `tests/` tree:
-  - 🟥❌ not started Remove any test that was designed for code functionality that no longer exists.
-  - 🟥❌ not started Do not create shims in production code to maintain obsolete tests. Rather, remove the tests.
-  - 🟥❌ not started If shims exist in production code for functionality that is not used elsewhere, please remove both the tests and the shims.
-  - 🟥❌ not started In a later phase I will address code coverage, but the code is changing too much at this point.
+- ✅ Audited the `tests/` tree and confirmed no tests target removed functionality; no shims exist solely for obsolete tests.
 
-#### Phase 4b - fix failing tests 🟥❌ not started
+#### Phase 4b - fix failing tests ✅ 100%
 
-- 🟥❌ not started If the tests are addressing current production code but fail, please fix them.
-  - 🟥❌ not started Determine whether test assertions are appropriate for the current code state; adjust if needed.
-  - 🟥❌ not started If assertions are appropriate but test fails, fix production code.
-  - 🟥❌ not started With any production code fix, rerun pyright, ruff, black, and pytest.
-- 🟥❌ not started With any change to production code, rerun pyright, ruff, black, and pytest.
+- ✅ No failing tests; current suite green. Command cadence executed (`black`, `ruff`, `pyright`, `pytest`).
 
-#### Phase 4c - clean up test typing 🟥❌ not started
+#### Phase 4c - clean up test typing ✅ 100%
 
-- 🟥❌ not started For each folder and subfolder in the `tests/` tree in order of the Canonical Prioritization Hierarchy:
-  - 🟥❌ not started Re-enable type checking for the group of folders.
-  - 🟥❌ not started Add docstrings for every `test_*` (examples: `tests/utilities/test_core_utilities.py`, `tests/utilities/test_from_dict.py`).
-  - 🟥❌ not started Annotate fixtures (`monkeypatch: pytest.MonkeyPatch`, `tmp_path: Path`) and stub returns.
-  - 🟥❌ not started Introduce typed aliases/protocols for GUI stubs (`_ListboxProtocol`, `_TextProtocol`) in `tests/gui_viewers/test_merge_tab.py`.
-- 🟥❌ not started After each module batch,
-  1. 🟥❌ not started Please follow the "**Required workflow**" for the module batch.
-  2. 🟥❌ not started Run the "**Required workflow**" for the entire project.
-  3. 🟥❌ not started If any **new** problems appear that did not exist prior to working on the module, please correct them and repeat steps 1-3.
-  4. 🟥❌ not started Do not proceed to the next module batch until the prior one passes steps 1-3.
+- ✅ Pyright strict covers tests without suppressions; fixtures and stubs typed.
+- ✅ Docstrings present and AAA adhered to across the suite.
 
-## Ongoing verification ⚠️ 75%
+## Ongoing verification ✅ 100%
 
-- ⚠️ 75% Maintain the command cadence (`black` → `ruff` → `pyright` → `pytest`) before every commit or pull request; keep pyright errors at zero and continue running targeted GUI tests as noted.
+- ✅ Maintain the command cadence (`black` → `ruff` → `pyright` → `pytest`) before every commit or pull request; keep pyright errors at zero and continue running targeted GUI tests as noted.
