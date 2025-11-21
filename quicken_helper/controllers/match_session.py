@@ -40,7 +40,6 @@ from typing import (
     cast,
 )
 
-# Protocols / utilities
 from quicken_helper.data_model.interfaces import ITransaction
 from quicken_helper.utilities.core_util import (
     convert_value as _core_convert_value,
@@ -170,8 +169,16 @@ class MatchSession:
             excel_txns: Excel side transactions or objects convertible to ITransaction.
             min_score_default: default threshold used by auto_match if not overridden.
         """
+        log.debug(
+            "Initializing MatchSession with min_score_default=%d", min_score_default
+        )
         self._bank_txns: list[ITransaction] = _coerce_txns(txns)
         self._excel_txns: list[ITransaction] = _coerce_txns(excel_txns)
+        log.debug(
+            "Coerced %d bank and %d Excel transactions",
+            len(self._bank_txns),
+            len(self._excel_txns),
+        )
 
         # Greedy assignment state (index pairs). Keep simple for GUI wiring.
         self._pairs_ix: dict[int, int] = {}  # bank_index -> excel_index
@@ -234,6 +241,7 @@ class MatchSession:
         threshold: int = (
             self._min_score_default if min_score is None else int(min_score)
         )
+        log.info("Starting auto_match with threshold=%d", threshold)
 
         self._pairs_ix.clear()
         self._auto_pairs_cache.clear()
@@ -272,6 +280,7 @@ class MatchSession:
             ei = self._pairs_ix[bi]
             self._auto_pairs_cache.append((self._bank_txns[bi], self._excel_txns[ei]))
 
+        log.info("Auto-match complete: %d pairs matched", len(self._auto_pairs_cache))
         return list(self._auto_pairs_cache)
 
     # --- manual operations ---
@@ -281,6 +290,7 @@ class MatchSession:
         Manually pair a single bank transaction with a single excel transaction.
         Overrides any existing pairing involving either index to keep one-to-one constraint.
         """
+        log.debug("Manual match: bank[%d] with excel[%d]", bank_index, excel_index)
         self._assert_index(bank_index, side="bank")
         self._assert_index(excel_index, side="excel")
 
@@ -304,6 +314,9 @@ class MatchSession:
 
         If both are None, this is a no-op. If both are provided, both are honored.
         """
+        log.debug(
+            "Manual unmatch: bank_index=%s, excel_index=%s", bank_index, excel_index
+        )
         if bank_index is not None:
             self._assert_index(bank_index, side="bank")
             self._pairs_ix.pop(bank_index, None)
